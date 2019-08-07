@@ -1,0 +1,15 @@
+{
+  "pages": [
+    "pages/MaintenanceInformation/main",
+    "pages/index/main",
+    "pages/logs/main"
+
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationStyle":"custom",
+    "navigationBarTitleText": "维保助手",
+    "navigationBarTextStyle": "black"
+  }
+}
