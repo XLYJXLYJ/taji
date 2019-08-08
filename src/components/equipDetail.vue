@@ -1,52 +1,20 @@
 <template>
     <div class="card-contain">
+        <p class="title">塔机监控设备信息</p>
         <ul>
             <!-- <div class="img-contain" v-if="!list">
                 <img src="/static/images/none.png">
             </div> -->
             <li>
                 <div class="one">
-                    <span class="identifier">编号 W2124256</span>
-                    <span style="color:rgba(0,0,0,0.45)"> / </span>
-                    <span class="name">2号塔机监控系统</span>
+                    <span class="identifier">编号 0000000001TC2017010085</span>
                 </div>
                 <div class="two">
-                    <span class="repair">保养 | 维保记录 2018-08-02</span>
-                    <img class="go-icon" src="/static/images/right.png" alt="">
+                    <span class="repair">2 号塔机监控设备</span>
                 </div>
                 <div class="three">
-                    <span>2019-06-10 16:43</span>
-                    <span>深圳市</span>
-                </div>
-            </li>
-            <li>
-                <div class="one">
-                    <span class="identifier">编号 W2124256</span>
-                    <span style="color:rgba(0,0,0,0.45)"> / </span>
-                    <span class="name">2号塔机监控系统</span>
-                </div>
-                <div class="two">
-                    <span class="repair">保养 | 维保记录 2018-08-02</span>
-                    <img class="go-icon" src="/static/images/right.png" alt="">
-                </div>
-                <div class="three">
-                    <span>2019-06-10 16:43</span>
-                    <span>深圳市</span>
-                </div>
-            </li>
-            <li>
-                <div class="one">
-                    <span class="identifier">编号 W2124256</span>
-                    <span style="color:rgba(0,0,0,0.45)"> / </span>
-                    <span class="name">2号塔机监控系统</span>
-                </div>
-                <div class="two">
-                    <span class="repair">保养 | 维保记录 2018-08-02</span>
-                    <img class="go-icon" src="/static/images/right.png" alt="">
-                </div>
-                <div class="three">
-                    <span>2019-06-10 16:43</span>
-                    <span>深圳市</span>
+                    <span>平臂塔式起重机</span>
+                    <span>TXL-6</span>
                 </div>
             </li>
         </ul>
@@ -63,6 +31,13 @@ export default {
 .card-contain {
     width: 100%;
     height: 100%;
+    .title{
+        font-size: 34rpx;
+        color: black;
+        font-family: 'PingFangSC-Medium';
+        font-weight: 550;
+        margin-left: 42rpx;
+    }
     ul{
         .img-contain{
             width: 100%;

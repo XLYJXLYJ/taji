@@ -1,6 +1,5 @@
 <template>
-    <div class="register">
-        <goBackNav title="维保信息"></goBackNav>
+    <div class="card-contain">
         <div v-if="isAlert">
             <selfAlert
                 v-bind:changeModel="ischangeModel"
@@ -8,6 +7,10 @@
                 v-bind:val="0"
                 @func="controlAlert"
             ></selfAlert>
+        </div>
+        <div class="titleNav">
+            <p class="one">维保信息</p>
+            <p class="two">管理</p>
         </div>
         <div class="contain">
             <form>
@@ -21,7 +24,6 @@
                             placeholder="请输入编号"
                             autocomplete="off"
                         />
-                        <p> <button type="primary" @click="GetQbCode"></button></p>
                     </div>
                 </div>
 
@@ -73,9 +75,9 @@
                         :isMaxHiddenChoose=true
                     ></mp-uploader>
                 </div>
-                <div>
+                <!-- <div>
                     <button class="confirm" @click="submitEquip">添加维保记录</button>
-                </div>
+                </div> -->
                 <!-- <p class="title">
                     建筑业优秀班组数据库是建造工平台提供的服务，点击提交即表示同意
                     <span style="color:rgb(252 184 19)">《建造工用户协议》</span>
@@ -88,12 +90,10 @@
 <script>
 import mpPicker from 'mpvue-weui/src/picker';
 import mpDatepicker from 'mpvue-weui/src/date-picker';
-import goBackNav from "@/components/goBackNav.vue";
 import mpUploader from "mpvue-weui/src/uploader";
 import fly from "@/services/WxApi";
 export default {
     components: {
-        goBackNav,
         mpUploader,
         mpPicker,
         mpDatepicker
@@ -306,15 +306,34 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.register {
+.card-contain {
     width: 100%;
     height: 100%;
+    display: block;
+    background: #fff;
+    margin-bottom: 48rpx;
+    .titleNav{
+        padding: 0rpx 42rpx;
+        padding-top:48rpx;
+        display: flex;
+        justify-content: space-between;
+        .one{
+            font-size: 34rpx;
+            color: block;
+            font-family: "PingFangSC-Regular";
+            font-weight: 550;
+        }
+        .two{
+            font-size: 28rpx;
+            color: #1890FF;
+            font-family: "PingFangSC-Regular";
+        }
+    }
     .contain {
         width: 670rpx;
         margin: 0 auto;
         margin-top: 40rpx;
         .get-block {
-            border-bottom: 1px solid rgb(204, 204, 204);
             margin-bottom: 48rpx;
             .get-code {
                 display: flex;
