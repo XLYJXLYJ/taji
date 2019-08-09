@@ -1,10 +1,10 @@
 <template>
     <div class="card-contain">
         <ul>
-            <!-- <div class="img-contain" v-if="!list">
+            <div class="img-contain" v-if="!list">
                 <img src="/static/images/none.png">
-            </div> -->
-            <li>
+            </div>
+            <!-- <li>
                 <div class="one">
                     <span class="identifier">编号 W2124256</span>
                     <span style="color:rgba(0,0,0,0.45)"> / </span>
@@ -48,7 +48,7 @@
                     <span>2019-06-10 16:43</span>
                     <span>深圳市</span>
                 </div>
-            </li>
+            </li> -->
         </ul>
     </div>
 </template>
@@ -66,10 +66,11 @@ export default {
     ul{
         .img-contain{
             width: 100%;
-            height: 660rpx;
+            height: 244rpx;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: rgba(16,142,233,0.04);
             img{
                 width: 128rpx;
                 height: 134rpx;
