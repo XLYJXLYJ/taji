@@ -54,8 +54,24 @@
 </template>
 
 <script>
+import fly from "@/services/WxApi";
 export default {
-    props: ["text"]
+    props: ["text"],
+    mounted() {
+        let This = this
+        This.getData()
+    },
+    methods: {
+        getData(){
+            let data = {
+                pageNo:1,
+                pageSize:5
+            }
+            fly.post('/maintain/getUserMaintainList',data).then(function (res) {
+                console.log(res)
+            })
+        }
+    },
 };
 </script>
 

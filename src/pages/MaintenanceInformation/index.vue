@@ -21,7 +21,7 @@
                             placeholder="请输入编号"
                             autocomplete="off"
                         />
-                        <p> <button type="primary" @click="GetQbCode"></button></p>
+                        <p @click="GetQbCode"><img src="/static/images/qb.png" alt=""></p>
                     </div>
                 </div>
 
@@ -319,7 +319,7 @@ export default {
             .get-code {
                 display: flex;
                 justify-content: space-between;
-                button{
+                img{
                     height: 39rpx;
                     width: 45rpx;
                 }

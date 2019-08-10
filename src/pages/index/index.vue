@@ -26,7 +26,7 @@
         </section>
         <!-- <section class="maintenance">
             <p class="record">请先授权获取您的微信昵称、头像等公开信息，以便开始使用维保助手</p>
-            <button>授权微信公开信息</button>
+            <button open-type="getUserInfo" @getuserinfo="getUserInfo">授权微信公开信息</button>
         </section> -->
         <section class="add">
             <bottomNavigationBar :selectNavIndex="selectNavIndex"></bottomNavigationBar>
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import fly from "@/services/WxApi";
 import navigationBar from "@/components/navigationBar.vue";
 import bottomNavigationBar from "@/components/bottomNavigationBar.vue";
 import card from "@/components/card.vue";
@@ -66,7 +67,51 @@ export default {
                 }
             ]
         };
-    }
+    },
+    mounted() {
+        let This = this
+        This.login()
+        if(wx.getStorageSync('token')){
+            This.getData()
+        }
+    },
+    methods: {
+        login(){
+            wx.login({
+                success (res) {
+                    if (res.code) {
+                    //发起网络请求
+                            let This = this
+                            let data = {
+                                code:res.code
+                            }
+                            fly.post('/user/wxLogin',data).then(function (res) {
+                                wx.setStorageSync('sessionKey', res.response.sessionKey) 
+                                wx.setStorageSync('openid', res.response.openid) 
+                                wx.setStorageSync('token', res.response.token)
+                            })
+                    } else {
+                        console.log('登录失败！' + res.errMsg)
+                    }
+                }
+            })
+        },
+        getUserInfo (e) {
+            let This = this
+            let userInfo = e.mp.detail
+            console.log(e)
+            let data = {
+                sessionKey:wx.getStorageSync('sessionKey'),
+                encryptedData:userInfo.encryptedData,
+                iv:userInfo.iv
+            }
+            fly.post('/user/getWxUserInfo',data).then(function (res) {
+                console.log(res)
+                // This.getData()
+            })
+        },
+
+    },
 };
 </script>
 
