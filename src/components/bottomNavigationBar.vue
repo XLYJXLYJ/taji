@@ -92,8 +92,8 @@ export default {
     bottom: 0;
     width: 100%;
     height: 50px;
-    border-top: 1px solid #eee;
-    background-color: #f8f8f8;
+    border-top: 1px solid #e5e5e5;
+    background-color: #fff;
 }
 
 .tabBar-nav {

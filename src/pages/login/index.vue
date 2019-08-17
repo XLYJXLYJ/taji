@@ -92,19 +92,20 @@ export default {
         send(){
             let This = this
             let data = {
-                mobile:This.phone
+                phone:This.phone,
+                type:1
             }
-            fly.post('/contractor/getVerificationCode',data).then(function (res) {
+            fly.post('/common/getVerificationCode',data).then(function (res) {
                 console.log(res)
             })
         },
         login(){
             let This = this
             let data = {
-                mobile:This.phone,
-                vaCode:This.phone_code
+                phoneNum:This.phone,
+                code:This.phone_code
             }
-            fly.post('/contractor/login',data).then(function (res) {
+            fly.post('/user/sendSmsBindUser',data).then(function (res) {
                 console.log(res)
                 // wx.showToast({
                 //     title: "申请加入成功",

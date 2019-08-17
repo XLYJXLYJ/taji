@@ -28,7 +28,7 @@
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <input type="text" v-model="equip_type" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
+                    <input type="text" v-model="type" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
                     <mp-picker ref="typePicker" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
                 </div>
 
@@ -53,7 +53,7 @@
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="company" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
 
 
@@ -101,7 +101,7 @@ export default {
 
     data() {
         return {
-            equip_type: "",
+            type: "",
             equip_code: "",
             time: "",
             notes: "",
@@ -151,9 +151,9 @@ export default {
         let This = this
         fly.post('/contractor/getMySharingPlan').then(function (res) {
             let data = res.response
-            This.equip_type=data.mobile,
+            This.type=data.mobile,
             This.name=data.username,
-            This.company=data.companyName,
+            This.explain=data.companyName,
             This.status=data.statusName
         })
     },
@@ -184,9 +184,10 @@ export default {
                     // let img = 'data:image/png;base64,' + res.data
                     let img = res.data
                     let data = {
-                        imgs:img
+                        files:img,
+                        isNeedHttp:1
                     }
-                    fly.post('/uploadImg',data).then(function (res) {
+                    fly.post('/common/uploadImg',data).then(function (res) {
                         console.log(res)
                         This.imgMessage.push(res.response)
                         console.log(This.imgMessage)    
@@ -207,9 +208,9 @@ export default {
         },
         submitEquip(){
             let This = this
-            if(!This.equip_type){
+            if(!This.type){
                 wx.showToast({
-                    title: "手机号不能为空",
+                    title: "维保类型不能为空",
                     icon: "none",
                     duration: 2000
                 });
@@ -217,7 +218,7 @@ export default {
             }
             if(!This.equip_code){
                 wx.showToast({
-                    title: "验证码不能为空",
+                    title: "设备编号不能为空",
                     icon: "none",
                     duration: 2000
                 });
@@ -231,9 +232,9 @@ export default {
                 });
                 return;
             }
-            if(!This.company){
+            if(!This.explain){
                 wx.showToast({
-                    title: "公司名不能为空",
+                    title: "说明不能为空",
                     icon: "none",
                     duration: 2000
                 });
@@ -256,10 +257,10 @@ export default {
                 return;
             }
             let data = {
-                mobile:This.equip_type,
+                mobile:This.type,
                 vaCode:This.equip_code,
                 time:This.time,
-                companyName:This.company,
+                explain:This.explain,
                 statusName:This.status,
                 imgs:This.imgMessage.join(",")
             }

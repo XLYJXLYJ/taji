@@ -1,15 +1,18 @@
 <template>
     <div class="company">
         <goBackNav title="企业归属"></goBackNav>
-
-        <alertOk changeModel='true' isModel='true' val=''></alertOk>
         <div v-if="isAlert">
-            <selfAlert
-                v-bind:changeModel="ischangeModel"
-                v-bind:isModel="ifMode"
-                v-bind:val="0"
-                @func="controlAlert"
-            ></selfAlert>
+            <!--弹窗的页面-->
+            <div class="modalMask" v-show="isModel" @click="hidePanel"></div>
+            <div class="modalDialog" v-show="changeModel">
+                <div class="modalContent">
+                    <p class="contentTip">确认接触绑定？</p>
+                    <div class="modalBottom">
+                        <button @click="tapCancel">取消</button>
+                        <button @click="confirmSend">确认</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="contain">
             <form>
@@ -19,25 +22,22 @@
                     <div class="get-code">
                         <input
                             type="text"
-                            v-model="company_code"
+                            v-model="companyNumber"
                             placeholder="请输入编号"
                             autocomplete="off"
                         />
-                        <p>解除绑定</p>
+                        <p @click="cancel">解除绑定</p>
                     </div>
                 </div>
-
                 <p class="title-explain">
                     公司编码请联系该公司的超级管理员（对方可在管理平台-系统设置进行查看）
                 </p>
-
                 <div class="get-block" style="border:none">
                     <p class="title">企业名称</p>
-                    <input type="text" disabled v-model="equip_type" placeholder="-" autocomplete="off" @focus="showType"/>
+                    <input type="text" disabled v-model="companyName" placeholder="-" autocomplete="off" @focus="showType"/>
                 </div>
-
                 <div>
-                    <button class="confirm" @click="submitEquip">保存</button>
+                    <button class="confirm" @click="save">保存</button>
                 </div>
             </form>
         </div>
@@ -63,24 +63,143 @@ export default {
 
     data() {
         return {
-            equip_type: "",
-            company_code: "",
+            isAlert:'',
+            changeModel:'',
+            isModel:'',
+            companyName: "",
+            companyNumber: "",
         };
     },
     mounted() {
         let This = this
-        fly.post('/contractor/getMySharingPlan').then(function (res) {
-
+        fly.post('/user/getBelongCompany').then(function (res) {
+            let resData = res.response
+            This.companyNumber = resData.companyNumber
+            This.companyName = resData.companyName || '-'
         })
     },
     methods: {
-       submitEquip(){
-           this.$refs.mpModal.show();
-       }
+         //  弹框取消
+        tapCancel() {
+            console.log("取消");
+            this.isAlert = this.isAlert
+            this.changeModel = !this.changeModel;
+            this.isModel = !this.isModel;
+        },
+        //  确认
+        confirmSend() {
+            console.log("确认");
+            let This = this
+            this.isAlert = !this.isAlert
+            this.changeModel = !this.changeModel;
+            this.isModel = !this.isModel;
+            if (!This.companyNumber) {
+                wx.showToast({
+                    title: "企业编号不能为空",
+                    icon: "none",
+                    duration: 2000
+                })
+                return;
+            }
+            let data = {
+                companyNumber:This.companyNumber
+            }
+            fly.post('/user/searchCompByCode',data).then(function (res) {
+                let resData = res.response
+            }) 
+        },
+        cancel(){
+            this.isAlert = true
+            this.changeModel = true;
+            this.isModel = true;
+        },
+        save(){
+            if (!This.companyNumber) {
+                wx.showToast({
+                    title: "企业编号不能为空",
+                    icon: "none",
+                    duration: 2000
+                })
+                return;
+            }
+            let This = this
+            let data = {
+                companyNumber:This.companyNumber
+            }
+            fly.post('/user/bindCompany',data).then(function (res) {
+                let resData = res.response
+            }) 
+        }
     }
 };
 </script>
 <style lang="scss" scoped>
+.modalMask {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    opacity: 0.5;
+    overflow: hidden;
+    z-index: 9000;
+    color: #fff;
+}
+.modalDialog {
+    box-sizing: border-box;
+    width: 590rpx;
+    height: auto;
+    overflow: hidden;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 9999;
+    background: #fff;
+    margin: -180rpx 95rpx;
+    border-radius: 8rpx;
+    border-radius: 30rpx;
+}
+.modalContent {
+    box-sizing: border-box;
+    display: flex;
+    font-size: 32rpx;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    img {
+        width: 590rpx;
+        height: 340rpx;
+        margin-bottom: 40rpx;
+    }
+    .contentTip {
+        font-size: 34rpx;
+        color: black;
+        font-family: "PingFangSC-Regular";
+        display: flex;
+        justify-content: center;
+        width: 514rpx;
+        padding-top: 42rpx;
+    }
+
+    .modalBottom{
+        display: flex;
+        justify-content: space-around;
+        button {
+            width: 295rpx;
+            height: 96rpx;
+            margin-top: 40rpx;
+            font-size: 34rpx;
+            color: black;
+            font-family: "PingFangSC-Medium";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            border-bottom: none;
+        }
+    }
+}
 .company {
     width: 100%;
     height: 100%;

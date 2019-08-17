@@ -110,7 +110,16 @@ export default {
                 // This.getData()
             })
         },
-
+        getData(){
+            let data ={
+                pageNo:1,
+                pageSize:20
+            }
+            fly.post('/maintain/getUserMaintainList',data).then(function (res) {
+                console.log(res)
+                // This.getData()
+            })
+        }
     },
 };
 </script>

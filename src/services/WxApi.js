@@ -17,27 +17,29 @@ fly.interceptors.request.use((request) => {
 fly.interceptors.response.use(res => {
   if (res.status == 200) {
     console.log(res)
+    if(res.data.status!=200){
+        wx.showToast({
+          title: res.data.message,
+          icon: "none",
+          duration: 2000
+      });
+    }
     return res.data
   }else{
-    wx.showModal({
-      title: '提示',
-      content: res.data.message,
-    })
+    wx.showToast({
+        title: res.data.message,
+        icon: "none",
+        duration: 2000
+    });
   }
   return Promise.reject(res)
 }, error => {
   const { response } = error;
-  wx.showModal({
-    title: '提示',
-    content: error.response.data.message,
-    success(res) {
-      if (res.confirm) {
-        console.log('用户点击确定')
-      } else if (res.cancel) {
-        console.log('用户点击取消')
-      }
-    }
-  })
+  wx.showToast({
+      title: error.response.data.message,
+      icon: "none",
+      duration: 2000
+  });
 })
 
 export default fly;

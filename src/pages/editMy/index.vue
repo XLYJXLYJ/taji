@@ -2,18 +2,23 @@
     <div class="login">
         <goBackNav title="个人信息"></goBackNav>
         <div v-if="isAlert">
-            <selfAlert
-                v-bind:changeModel="ischangeModel"
-                v-bind:isModel="ifMode"
-                v-bind:val="0"
-                @func="controlAlert"
-            ></selfAlert>
+            <!--弹窗的页面-->
+            <div class="modalMask" v-show="isModel" @click="hidePanel"></div>
+            <div class="modalDialog" v-show="changeModel">
+                <div class="modalContent">
+                    <p class="contentTip">微信手机号码获取失败</p>
+                    <div class="modalBottom">
+                        <button @click="tapCancel">返回重试</button>
+                        <button @click="confirmSend">手动输入</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="contain">
             <form>
                 <div class="get-block" style="border:none">
                     <p class="title">维保人员编号</p>
-                    <input type="text" v-model="phone" disabled autocomplete="off" />
+                    <input type="text" v-model="userNumber" disabled autocomplete="off" />
                 </div>
 
                 <div class="get-block">
@@ -30,13 +35,14 @@
                             placeholder="请输入您的手机号码"
                             autocomplete="off"
                         />
-                        <p @click="GetClassCode" class="getCode">获取微信手机号码</p>
+                        <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" class="getCode">获取微信手机号码</button>
                     </div>
                 </div>
 
                 <div class="get-block">
                     <p class="title">性别</p>
-                    <input type="text" v-model="gender" placeholder="请输入您的性别" autocomplete="off" />
+                    <p @click="showg" style="color:#5f5f5f">{{gender}}</p>
+                    <mp-picker ref="mpPicker" :mode="mode" themeColor="rgb(24,144,255)" :deepLength=deepLength :pickerValueDefault="pickerValueDefault" @onChange="onChange" @onConfirm="onConfirm" @onCancel="onCancel" :pickerValueArray="pickerValueArray"></mp-picker>
                 </div>
 
                 <div class="get-block" style="border:none">
@@ -59,18 +65,23 @@
 </template>
 
 <script>
+import mpPicker from 'mpvue-weui/src/picker';
 import goBackNav from "@/components/goBackNav.vue";
 import mpUploader from "mpvue-weui/src/uploader";
 import fly from "@/services/WxApi";
 export default {
     components: {
         goBackNav,
-        mpUploader
+        mpUploader,
+        mpPicker
     },
 
     data() {
         return {
-            phone: "",
+            isAlert:'',
+            changeModel:'',
+            isModel:'',
+            userNumber: "",
             phone_code: "",
             name: "",
             company: "",
@@ -80,32 +91,171 @@ export default {
             btnTxt: "点击获取验证码",
             disabled: false,
             time: 0, // 验证码时间初始化
-            btn: true
+            btn: true,
+            pickerValueArray:[{
+                label: '男',
+                value: 1
+                },
+                {
+                label: '女',
+                value: 2
+            }],
+            pickerValueDefault: [0,0],
         };
     },
     mounted() {
         let This = this   
-        This.gender = wx.getStorageSync('gender') 
-        This.phone = wx.getStorageSync('mobile') 
-        This.wx = wx.getStorageSync('nickName') 
-        This.name = wx.getStorageSync('username') 
+        
+        fly.post('/user/getUserDetail').then(function (res) {
+            console.log(res)
+            let resData = res.response
+            This.userNumber = resData.userNumber
+            This.name = resData.fullName
+            This.phone_code = resData.phoneNum
+            This.gender = resData.gender==1?'男':'女'
+            This.wx = resData.wxNickName
+        })
     },
     methods: {
+        //  弹框取消
+        tapCancel() {
+            console.log("取消");
+            this.changeModel = !this.changeModel;
+            this.isModel = !this.isModel;
+        },
+        //  确认
+        confirmSend() {
+            console.log("确认");
+            this.changeModel = !this.changeModel;
+            this.isModel = !this.isModel;
+            wx.navigateTo({
+                url:'/pages/login/main'
+            });
+        },
+
+        showg(){
+            console.log('你还不弹？？？？')
+            let This = this
+            This.$refs.mpPicker.show();
+        },
+        onConfirm(e) {
+            console.log(e)
+            let This = this
+            This.gender = e.label
+        },
+        onChange(e) {
+            console.log(e);
+        },
+        onCancel(e) {
+            console.log(e);
+        },
         selfSave(){
             let This = this
-            let data = {
-                username:This.name,
-                gender:This.gender='男'?1:0
+            let who = ''
+            if(This.gender=='男'){
+                who = 1
+            }else{
+                who = 0
             }
-            fly.post('/contractor/saveMyInfo',data).then(function (res) {
-                wx.setStorageSync('gender', This.name)
-                wx.setStorageSync('username', This.gender)
+            let data = {
+                fullName:This.name,
+                phoneNum:This.phone_code,
+                gender:who
+            }
+            fly.post('/user/updateUserDetail',data).then(function (res) {
+                console.log(res)
+            })
+        },
+        getPhoneNumber(e){
+            console.log(e)
+            let This = this
+            let data = {
+                sessionKey:wx.getStorageSync('sessionKey') ,
+                openId:wx.getStorageSync('openid'),
+                encryptedData:e.mp.detail.encryptedData,
+                iv:e.mp.detail.iv
+            }
+            fly.post('/user/getWxUserPhone',data).then(function (res) {
+                console.log(res)
+                if(res.status!=200){
+                    This.isAlert = true
+                    This.changeModel = true;
+                    This.isModel = true
+                }else{
+                    This.phone = res.response.purePhoneNumber
+                }
             })
         }
     }
 }
 </script>
 <style lang="scss" scoped>
+.modalMask {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    opacity: 0.5;
+    overflow: hidden;
+    z-index: 9000;
+    color: #fff;
+}
+.modalDialog {
+    box-sizing: border-box;
+    width: 590rpx;
+    height: auto;
+    overflow: hidden;
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 9999;
+    background: #fff;
+    margin: -180rpx 95rpx;
+    border-radius: 8rpx;
+    border-radius: 30rpx;
+}
+.modalContent {
+    box-sizing: border-box;
+    display: flex;
+    font-size: 32rpx;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    img {
+        width: 590rpx;
+        height: 340rpx;
+        margin-bottom: 40rpx;
+    }
+    .contentTip {
+        font-size: 34rpx;
+        color: black;
+        font-family: "PingFangSC-Regular";
+        display: flex;
+        justify-content: center;
+        width: 514rpx;
+        padding-top: 42rpx;
+    }
+
+    .modalBottom{
+        display: flex;
+        justify-content: space-around;
+        button {
+            width: 295rpx;
+            height: 96rpx;
+            margin-top: 40rpx;
+            font-size: 34rpx;
+            color: black;
+            font-family: "PingFangSC-Medium";
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            border-bottom: none;
+        }
+    }
+}
 .login {
     width: 100%;
     height: 100%;
@@ -143,11 +293,23 @@ export default {
             position: fixed;
             width: 670rpx;
             bottom: 40rpx;
+            border:none;
+        }
+        .confirm::after {
+            border:none;
         }
     }
 }
 .getCode {
     color: rgb(24, 144, 255);
+    height: 60rpx;
     font-size: 32rpx;
+    background: #fff;
+    margin: 0;
+    padding:0;
+    margin-top: -20rpx;
+}
+.getCode::after{
+    border: none;
 }
 </style>
