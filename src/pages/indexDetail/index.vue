@@ -3,18 +3,18 @@
         <section class="sec-nav">
             <goBackNav title="维保详情"></goBackNav>
         </section>
-        <section class="img-contain">
-            <equipDetail></equipDetail>
+        <section class="img-contain" v-if="getData.terminal">
+            <equipDetail :getData='getData'></equipDetail>
         </section>
-        <section class="img-contain">
-             <equipMessage></equipMessage>
+        <section class="img-contain" v-if="getData.tower">
+             <equipMessage :getData='getData'></equipMessage>
         </section>
         <section>
-            <editMessage></editMessage>
+            <editMessage :getData='getData'></editMessage>
         </section>
         <section>
             <p class="atitle">历史维保信息</p>
-            <card></card>
+            <historyCard></historyCard>
         </section>
     </div>
 </template>
@@ -24,19 +24,38 @@ import editMessage from "@/components/editMessage.vue";
 import navigationBar from "@/components/navigationBar.vue";
 import equipDetail from "@/components/equipDetail.vue";
 import equipMessage  from "@/components/equipMessage.vue";
-import card from "@/components/card.vue";
+import historyCard from "@/components/historyCard.vue";
 import goBackNav from "@/components/goBackNav.vue";
 import add from "@/components/add.vue";
+import fly from "@/services/WxApi";
 export default {
     components: {
-        card,
         navigationBar,
-        card,
+        historyCard,
         add,
         goBackNav,
         equipMessage,
         equipDetail,
         editMessage
+    },
+    onLoad: function (options) {
+        console.log(options)
+        let This = this
+        This.id = options.id
+    },
+    created() {
+        let This = this
+        let data1 = {
+            id:5
+        }
+        fly.post('/maintain/getMaintainDetail',data1).then(function (res) {
+            This.$nextTick(
+                function(){
+                    This.getData = res.response
+                }
+            )
+            console.log(res)
+        })
     },
     data() {
         return {
@@ -53,7 +72,9 @@ export default {
                     id: 2,
                     url: "https://images.unsplash.com/photo-1551446591-142875a901a1?w=640"
                 }
-            ]
+            ],
+            id:'',
+            getData:''
         };
     }
 };

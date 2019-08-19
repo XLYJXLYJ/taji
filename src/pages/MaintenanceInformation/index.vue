@@ -28,7 +28,7 @@
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <input type="text" v-model="type" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
+                    <input type="text" v-model="type1" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
                     <mp-picker ref="typePicker" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
                 </div>
 
@@ -42,7 +42,7 @@
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <input type="text" v-model="status" placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
+                    <input type="text" v-model="status1" placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
                      <mp-picker ref="statusPicker" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
                 </div>
 
@@ -102,12 +102,17 @@ export default {
     data() {
         return {
             type: "",
+            type1:'',
             equip_code: "",
             time: "",
+            time1:'',
             notes: "",
             status: "",
+            status1:'',
             time: '',
             TypeMode: "selector",
+            arrayBuffer :'',
+            imgData:[],
             typePickerValueArray:[
                 {
                     label: '类型一',
@@ -149,12 +154,31 @@ export default {
     },
     mounted() {
         let This = this
-        fly.post('/contractor/getMySharingPlan').then(function (res) {
+        let data1 = {
+            code:'maintain_type',
+            isShowAll:1
+        }
+        fly.post('/common/getSelectDiction',data1).then(function (res) {
             let data = res.response
-            This.type=data.mobile,
-            This.name=data.username,
-            This.explain=data.companyName,
-            This.status=data.statusName
+            console.log(res)
+            let arr = []
+            res.response.map((value,index,arry)=>{
+                arr.push({ 'label': value.name, 'value': value.code})
+            })
+            This.typePickerValueArray = arr
+        })
+        let data2 = {
+            code:'maintain_status',
+            isShowAll:1
+        }
+        fly.post('/common/getSelectDiction',data2).then(function (res) {
+            let data = res.response
+            console.log(res)
+            let arr = []
+            res.response.map((value,index,arry)=>{
+                arr.push({ 'label': value.name, 'value': value.code})
+            })
+            This.statusPickerValueArray = arr
         })
     },
     methods: {
@@ -169,29 +193,35 @@ export default {
         },
         GetQbCode() {
             wx.scanCode({
-            success(res) {
-               console.log(res) 
-            }
+                success(res) {
+                    console.log(res)
+                }
             })
         },
         upLoadSuccess(successRes){
             let This = this
+            let size = successRes.tempFiles[0].size
             console.log(successRes)
-            wx.getFileSystemManager().readFile({
-                filePath: successRes.tempFilePaths[0], //选择图片返回的相对路径
-                encoding: 'base64', //编码格式
-                success:(res) =>{
-                    // let img = 'data:image/png;base64,' + res.data
-                    let img = res.data
-                    let data = {
-                        files:img,
-                        isNeedHttp:1
-                    }
-                    fly.post('/common/uploadImg',data).then(function (res) {
-                        console.log(res)
-                        This.imgMessage.push(res.response)
-                        console.log(This.imgMessage)    
-                    })
+            console.log(size)
+            const tempFilePaths = successRes.tempFilePaths
+            let token = wx.getStorageSync('token') || '';
+            wx.uploadFile({
+                url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                filePath: tempFilePaths[0],
+                name: 'file',
+                header: {
+                    'content-type': 'multipart/form-data',
+                    'Authorization':token
+                },
+                formData:{
+                    'isNeedHttp':1
+                },
+                success (res){
+                    const data = JSON.parse(res.data)
+                    console.log(data)
+                    let jdata = JSON.stringify({"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null})
+                    This.imgData.push(jdata)
+                    //do something
                 }
             })
         },
@@ -242,13 +272,13 @@ export default {
             }
             if(!This.status){
                 wx.showToast({
-                    title: "职位不能为空",
+                    title: "状态不能为空",
                     icon: "none",
                     duration: 2000
                 });
                 return;
             }
-            if(!This.imgMessage){
+            if(!This.imgData){
                 wx.showToast({
                     title: "请上传在职证明",
                     icon: "none",
@@ -257,14 +287,16 @@ export default {
                 return;
             }
             let data = {
-                mobile:This.type,
-                vaCode:This.equip_code,
-                time:This.time,
+                id:'',
+                terminalNumber:This.equip_code,
+                type:This.type,
+                maintainTime:This.time1,
+                status:This.status,
+                title:This.notes,
                 explain:This.explain,
-                statusName:This.status,
-                imgs:This.imgMessage.join(",")
+                images:This.imgData
             }
-            fly.post('/contractor/applyJoinSharingPlan',data).then(function (res) {
+            fly.post('/maintain/saveMaintain',data).then(function (res) {
                 console.log(res)
                 wx.showToast({
                     title: "申请加入成功",
@@ -278,6 +310,9 @@ export default {
         },
         onTypeConfirm(e) {
             console.log(e);
+            let This = this
+            This.type = e.index[0]
+            This.type1 = e.label
         },
         onTypeChange(e) {
             console.log(e);
@@ -287,6 +322,10 @@ export default {
         },
         onTimeConfirm(e) {
             console.log(e);
+            let This = this
+            This.time = e.label
+            This.time1 = e.value.join("-")
+            console.log(This.time1)
         },
         onTimeChange(e) {
             console.log(e);
@@ -294,8 +333,11 @@ export default {
         onTimeCancel(e) {
             console.log(e);
         },
-        onStatusConfir(e) {
+        onStatusConfirm(e) {
             console.log(e);
+            let This = this
+            This.status = e.index[0]
+            This.status1 = e.label
         },
         onStatusChange(e) {
             console.log(e);

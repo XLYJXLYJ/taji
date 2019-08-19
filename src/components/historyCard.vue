@@ -4,7 +4,6 @@
             <div class="img-contain" v-if="!list">
                 <img src="/static/images/none.png">
             </div>
-
             <div v-if="list">
                 <li v-for="(item,index) in list" :key="index">
                     <div class="one">
@@ -18,7 +17,7 @@
                     </div>
                     <div class="three">
                         <span>{{item.updateTime}}</span>
-                        <span>深圳市</span>
+                        <span>深圳市2222</span>
                     </div>
                 </li>
             </div>
@@ -36,10 +35,16 @@ export default {
     },
     data(){
         return {
+            id:'',
             list:'',
             page:1,
             isNull:''
         }
+    },
+    onLoad: function (options) {
+        console.log(options)
+        let This = this
+        This.id = options.id
     },
     onReachBottom () {
         let This = this
@@ -61,20 +66,23 @@ export default {
                 })
             }
             let data = {
-                pageNo:This.page,
+                id:This.id || 5,
+                pageNo:This.page || 1,
                 pageSize:5
             }
-            fly.post('/maintain/getUserMaintainList',data).then(function (res) {
+            fly.post('/maintain/getHistoryMaintain',data).then(function (res) {
                 console.log(res)
-                This.list = res
-                This.isNull = res.list
+                wx.hideLoading();
+                This.isNull = res.response
                 if(This.page == 1){
-                   This.list = res.list
+                   This.list = res.response
                 }else{
                     //    This.list.push(JSON.parse(JSON.stringify([res.list])))
                     //    This.list = This.list.concat(res.list)
-                    This.list.push(...res.list)
+                    This.list.push(...res.response)
                 } 
+                console.log('list值')
+                console.log(This.list)
             })
         }
     },

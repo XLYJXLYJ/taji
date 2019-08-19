@@ -24,10 +24,10 @@
             <p class="record">维保记录</p>
             <card></card>
         </section>
-        <!-- <section class="maintenance">
+        <section class="maintenance">
             <p class="record">请先授权获取您的微信昵称、头像等公开信息，以便开始使用维保助手</p>
             <button open-type="getUserInfo" @getuserinfo="getUserInfo">授权微信公开信息</button>
-        </section> -->
+        </section>
         <section class="add">
             <bottomNavigationBar :selectNavIndex="selectNavIndex"></bottomNavigationBar>
         </section>

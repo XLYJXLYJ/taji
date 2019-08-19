@@ -174,6 +174,7 @@ export default {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                font-weight: 600;
             }
         }
     }

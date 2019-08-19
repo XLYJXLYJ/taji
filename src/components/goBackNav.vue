@@ -173,6 +173,7 @@ export default {
                 justify-content: center;
                 align-items: center;
                 padding: 10rpx 0 10rpx 0;
+                font-weight: 600;
             }
         }
     }

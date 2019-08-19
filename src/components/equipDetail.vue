@@ -1,5 +1,5 @@
 <template>
-    <div class="card-contain">
+    <div class="card-contain" v-if="getData.terminal">
         <p class="title">塔机监控设备信息</p>
         <ul>
             <!-- <div class="img-contain" v-if="!list">
@@ -7,14 +7,14 @@
             </div> -->
             <li>
                 <div class="one">
-                    <span class="identifier">编号 0000000001TC2017010085</span>
+                    <span class="identifier">编号 {{getData.terminal.terminalNumber}}</span>
                 </div>
                 <div class="two">
-                    <span class="repair">2 号塔机监控设备</span>
+                    <span class="repair">{{getData.terminal.terminalRemarkName}}</span>
                 </div>
                 <div class="three">
-                    <span>平臂塔式起重机</span>
-                    <span>TXL-6</span>
+                    <span>{{getData.terminal.terminalModelNumber}}</span>
+                    <span>{{getData.terminal.terminalNumber}}</span>
                 </div>
             </li>
         </ul>
@@ -23,14 +23,18 @@
 
 <script>
 export default {
-    props: ["text"]
+    props: ["getData"],
+    mounted() {
+        console.log(getData.terminal)
+
+    },
 };
 </script>
 
 <style lang="scss" scoped>
 .card-contain {
     width: 100%;
-    height: 100%;
+    height: auto;
     .title{
         font-size: 34rpx;
         color: black;
@@ -41,7 +45,7 @@ export default {
     ul{
         .img-contain{
             width: 100%;
-            height: 660rpx;
+            height:auto;
             display: flex;
             align-items: center;
             justify-content: center;

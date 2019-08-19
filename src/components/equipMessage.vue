@@ -1,20 +1,20 @@
 <template>
     <div class="card-contain">
-        <p class="title">塔机监控设备信息</p>
+        <p class="title">塔机信息</p>
         <ul>
             <!-- <div class="img-contain" v-if="!list">
                 <img src="/static/images/none.png">
             </div> -->
             <li>
                 <div class="one">
-                    <span class="identifier">编号 0000000001TC2017010085</span>
+                    <span class="identifier">编号 {{getData.tower.terminalNumber}}</span>
                 </div>
                 <div class="two">
-                    <span class="repair">2 号塔机监控设备</span>
+                     <span class="repair">塔身高{{getData.tower.height}} | 臂长{{getData.tower.armLength}} | 尾臂长{{getData.tower.armTailLength}}</span>
                 </div>
                 <div class="three">
-                    <span>平臂塔式起重机</span>
-                    <span>TXL-6</span>
+                    <span>{{getData.tower.towerModel}}</span>
+                    <span>{{getData.tower.towerNumber}}</span>
                 </div>
             </li>
         </ul>
@@ -23,7 +23,7 @@
 
 <script>
 export default {
-    props: ["text"]
+    props: ["getData"]
 };
 </script>
 

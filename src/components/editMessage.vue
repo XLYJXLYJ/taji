@@ -98,15 +98,15 @@ export default {
         mpPicker,
         mpDatepicker
     },
-
+    props:["getData"],
     data() {
         return {
-            equip_type: "",
-            equip_code: "",
-            time: "",
-            notes: "",
-            status: "",
-            time: '',
+            equip_type: '',
+            equip_code: '',
+            time:'',
+            notes: '',
+            status: '',
+            company:'',
             TypeMode: "selector",
             typePickerValueArray:[
                 {
@@ -149,13 +149,15 @@ export default {
     },
     mounted() {
         let This = this
-        fly.post('/contractor/getMySharingPlan').then(function (res) {
-            let data = res.response
-            This.equip_type=data.mobile,
-            This.name=data.username,
-            This.company=data.companyName,
-            This.status=data.statusName
-        })
+        console.log('加载data数据')
+        console.log(This.getData)
+
+        This.equip_type =This.getData.maintainRecord.type,
+        This.equip_code = This.getData.maintainRecord.terminalNumber,
+        This.time = This.getData.maintainRecord.maintainTime,
+        This.notes = This.getData.maintainRecord.remark,
+        This.status = This.getData.maintainRecord.status,
+        This.company = This.getData.maintainRecord.explain
     },
     methods: {
         showType(){

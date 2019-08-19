@@ -10,7 +10,7 @@
                 <p class="two" @click="goLogin" open-type="getUserInfo" @getuserinfo="getUserInfo">点击登陆</p>
             </div>
 
-            <div class="right">
+            <div class="right" @click="edit" v-if='myself'>
                 <p>未完善</p>
                 <img src="/static/images/right.png" alt="">
             </div>
@@ -59,13 +59,25 @@ export default {
                     url: "/pages/aboutUs/main"
                 }
             ],
-            selectNavIndex:1
+            selectNavIndex:1,
+            myself:false
         };
     },
     mounted() {
         let This = this
         This.mobile = wx.getStorageSync('mobile') 
         This.name = wx.getStorageSync('username')
+        fly.post('/user/getUserDetail').then(function (res) {
+            let resData = res.response
+            let userNumber = resData.userNumber
+            let fullName = resData.fullName
+            let phoneNum = resData.phoneNum
+            if(!phoneNum || !fullName || userNumber){
+                This.myself = true
+            }else{
+                This.myself = false
+            }
+        })
     },
     methods:{
         goUrl(url){
@@ -97,6 +109,11 @@ export default {
             wx.navigateTo({
                 url:"/pages/aboutUs/main"
             }); 
+        },
+        edit(){
+            wx.navigateTo({
+                url:"/pages/editMy/main"
+            });
         },
         getUserInfo (e) {
             console.log(e)
