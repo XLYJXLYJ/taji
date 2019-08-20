@@ -6,7 +6,7 @@
             <div class="modalMask" v-show="isModel" @click="hidePanel"></div>
             <div class="modalDialog" v-show="changeModel">
                 <div class="modalContent">
-                    <p class="contentTip">确认接触绑定？</p>
+                    <p class="contentTip">确认解除绑定？</p>
                     <div class="modalBottom">
                         <button @click="tapCancel">取消</button>
                         <button @click="confirmSend">确认</button>
@@ -21,12 +21,13 @@
                     <p class="title">企业编码</p>
                     <div class="get-code">
                         <input
+                            @input="search"
                             type="text"
                             v-model="companyNumber"
                             placeholder="请输入编号"
                             autocomplete="off"
                         />
-                        <p @click="cancel">解除绑定</p>
+                        <p @click="cancel" v-if="companyNumber">解除绑定</p>
                     </div>
                 </div>
                 <p class="title-explain">
@@ -68,6 +69,7 @@ export default {
             isModel:'',
             companyName: "",
             companyNumber: "",
+            timer:null
         };
     },
     mounted() {
@@ -85,6 +87,22 @@ export default {
             this.isAlert = this.isAlert
             this.changeModel = !this.changeModel;
             this.isModel = !this.isModel;
+        },
+
+        search () {
+            let This = this
+            if(This.timer){
+                clearTimeout(This.timer)
+            }
+            let data = {
+                terminalNumber:This.companyNumber
+            }
+            This.timer = setTimeout(function () {
+                fly.post('/maintain/getTerminalByNumber',data).then(function (res) {
+                    This.companyName = res.response.createCompany
+                }) 
+                This.timer = undefined;
+            },2000)
         },
         //  确认
         confirmSend() {
@@ -114,6 +132,7 @@ export default {
             this.isModel = true;
         },
         save(){
+            let This = this
             if (!This.companyNumber) {
                 wx.showToast({
                     title: "企业编号不能为空",
@@ -122,7 +141,14 @@ export default {
                 })
                 return;
             }
-            let This = this
+            if (!This.companyName) {
+                wx.showToast({
+                    title: "企业名称不能为空",
+                    icon: "none",
+                    duration: 2000
+                })
+                return;
+            }
             let data = {
                 companyNumber:This.companyNumber
             }
@@ -157,7 +183,6 @@ export default {
     z-index: 9999;
     background: #fff;
     margin: -180rpx 95rpx;
-    border-radius: 8rpx;
     border-radius: 30rpx;
 }
 .modalContent {

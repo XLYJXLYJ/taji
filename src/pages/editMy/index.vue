@@ -183,6 +183,7 @@ export default {
                     This.isModel = true
                 }else{
                     This.phone = res.response.purePhoneNumber
+                    wx.getStorageSync('mobile', This.phone) 
                 }
             })
         }

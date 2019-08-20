@@ -2,22 +2,17 @@
     <section class="tabBar-wrap">
         <article class="tabBar-box">
             <ul class="tabBar-nav" v-if="navList.length > 0">
-                <li class="item"
-                    v-for="(item, index) in navList"
-                    @click="selectNavItem(index,item.pagePath)"
-                    :key="index">
-                    <button open-type="getUserInfo" @getuserinfo="getUserInfo" style="border:none;">
-                        <p class="item-images">
-                            <img :src="selectNavIndex === index ? item.selectedIconPath : item.iconPath" alt="iconPath"/>
-                        </p>
-                        <p :class="selectNavIndex === index ? 'item-text item-text-active' : 'item-text' ">
-                            {{item.text}}
-                        </p>
-                    </button>
+                <li class="item" v-for="(item, index) in navList" @click="selectNavItem(index,item.pagePath)" :key="index">
+                    <p class="item-images">
+                        <img :src="selectNavIndex === index ? item.selectedIconPath : item.iconPath" alt="iconPath"/>
+                    </p>
+                    <p :class="selectNavIndex === index ? 'item-text item-text-active' : 'item-text' ">
+                        {{item.text}}
+                    </p>
                 </li>
             </ul>
         </article>
-        <button open-type="getUserInfo" @getuserinfo="getUserInfo"> <img class="buttom-img" src="/static/images/button.png"></button>
+        <button @click="add"><img class="buttom-img" src="/static/images/button.png"></button>
     </section>
 </template>
 <script>
@@ -44,14 +39,15 @@ export default {
     },
     methods: {
         selectNavItem(index, pagePath) {
+            let This = this
             if (index === this.selectNavIndex) {
                 return false;
             }
             // if (index == 0 && this.selectNavIndex == -1) {
-            // this.$emit("fetchIndex",index);
+            //     this.$emit("fetchIndex",index);
             // }
-            this.bindViewTap(pagePath);
-
+            This.$emit('indexId',index)
+            // this.bindViewTap(pagePath);
         },
         bindNavigateTo(url) {
             wx.navigateTo({
@@ -64,25 +60,39 @@ export default {
                 url
             });
         },
-        getUserInfo (e) {
-            console.log(e)
-            let userInfo = JSON.parse(e.mp.detail.rawData)
-            console.log(userInfo)
-            let data = {
-                nickName:userInfo.nickName,
-                headImg:userInfo.avatarUrl,
-                gender:userInfo.gender,
-                areaName:[userInfo.country,userInfo.province,userInfo.city]
+        add(){
+            let appid = wx.getStorageSync('appid')
+            if(!appid){
+                wx.showToast({
+                    title: '请先发起授权',
+                    icon: "none",
+                    duration: 2000
+                })
+            }else{
+                wx.navigateTo({
+                    url:'/pages/MaintenanceInformation/main'
+                });
             }
-            fly.post('/contractor/weChatAuth',data).then(function (res) {
-                console.log(res)
-                wx.setStorageSync('token', res.response.authorization) 
-                wx.setStorageSync('gender', res.response.gender) 
-                wx.setStorageSync('mobile', res.response.mobile) 
-                wx.setStorageSync('nickName', res.response.nickName) 
-                wx.setStorageSync('username', res.response.username) 
-            })
         }
+        // getUserInfo (e) {
+        //     console.log(e)
+        //     let userInfo = JSON.parse(e.mp.detail.rawData)
+        //     console.log(userInfo)
+        //     let data = {
+        //         nickName:userInfo.nickName,
+        //         headImg:userInfo.avatarUrl,
+        //         gender:userInfo.gender,
+        //         areaName:[userInfo.country,userInfo.province,userInfo.city]
+        //     }
+        //     fly.post('/contractor/weChatAuth',data).then(function (res) {
+        //         console.log(res)
+        //         wx.setStorageSync('token', res.response.authorization) 
+        //         wx.setStorageSync('gender', res.response.gender) 
+        //         wx.setStorageSync('mobile', res.response.mobile) 
+        //         wx.setStorageSync('nickName', res.response.nickName) 
+        //         wx.setStorageSync('username', res.response.username) 
+        //     })
+        // }
     }
 };
 </script>
@@ -111,7 +121,7 @@ export default {
         margin-top: -8rpx;
     }
     .item-text-active {
-        color: rgb(252, 184, 19);
+        color: #1e84d3;
         margin-top: -8rpx;
     }
     .item-images {

@@ -5,22 +5,20 @@
         </section>
         <section class="maintenance">
             <div class="left">
-                <img  @click="goMy" src="/static/images/user.png">
-                <p class="one">赵小龙</p>
-                <p class="two" @click="goLogin" open-type="getUserInfo" @getuserinfo="getUserInfo">点击登陆</p>
+                <img @click="goMy" v-if="!appid" src="/static/images/user.png">
+                <img v-if="appid" :src="img">
+                <p class="one" v-if="appid">{{name}}</p>
+                <p class="two" v-if="appid">{{mobile}}</p>
             </div>
-
-            <div class="right" @click="edit" v-if='myself'>
+            <div class="right" @click="edit" v-if='myself && appid'>
                 <p>未完善</p>
                 <img src="/static/images/right.png" alt="">
             </div>
-
         </section>
         <section>
             <ul>
-                <li @click="goC" v-if="mobile"><span style="padding-left:32rpx;">我推荐的班组</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
-                <li @click="goS"><span style="padding-left:32rpx;">共建共享计划</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
-                <li @click="goW"><span style="padding-left:32rpx;">关于我们</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goS"><span style="padding-left:32rpx;">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goW"><span style="padding-left:32rpx;">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
                 <!-- <li v-for="(item,index) in list" :key="index" @click="goUrl(item.url)"><span>{{item.name}}</span><span><img src="/static/images/right.png"></span></li> -->
             </ul>
         </section>
@@ -33,6 +31,7 @@
 <script>
 import navigationBar from "@/components/navigationBar.vue";
 import bottomNavigationBar from "@/components/bottomNavigationBar.vue";
+import fly from "@/services/WxApi";
 export default {
     components: {
         bottomNavigationBar,
@@ -60,19 +59,24 @@ export default {
                 }
             ],
             selectNavIndex:1,
-            myself:false
+            myself:false,
+            appid:'',
+            img:''
         };
     },
     mounted() {
         let This = this
+        This.img = wx.getStorageSync('avatarUrl')
         This.mobile = wx.getStorageSync('mobile') 
         This.name = wx.getStorageSync('username')
+        This.appid = wx.getStorageSync('appid')
         fly.post('/user/getUserDetail').then(function (res) {
             let resData = res.response
             let userNumber = resData.userNumber
             let fullName = resData.fullName
             let phoneNum = resData.phoneNum
-            if(!phoneNum || !fullName || userNumber){
+            wx.setStorageSync('mobile', phoneNum) 
+            if(!phoneNum || !fullName || !userNumber){
                 This.myself = true
             }else{
                 This.myself = false
@@ -102,7 +106,7 @@ export default {
         },
         goS(){
             wx.navigateTo({
-                url:"/pages/sharing/main"
+                url:"/pages/EnterpriseAttribution/main"
             }); 
         },
         goW(){
@@ -235,7 +239,7 @@ export default {
             display:flex;
             justify-content:space-between;
             align-items: center;
-            border-bottom: 1rpx solid rgb(204, 204, 204);
+            border-bottom: 1rpx solid #e5e5e5;
             font-family: 'PingFangSC-Regular';
             background: #fff;
             img{

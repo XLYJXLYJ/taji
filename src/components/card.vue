@@ -1,24 +1,23 @@
 <template>
     <div class="card-contain">
         <ul>
-            <div class="img-contain" v-if="!list">
+            <div class="img-contain" v-if="isNull==0">
                 <img src="/static/images/none.png">
             </div>
-
-            <div v-if="list">
-                <li v-for="(item,index) in list" :key="index">
+            <div v-if="isNull!=0">
+                <li v-for="(item,index) in list" :key="index" @click="goIntro(item.id)">
                     <div class="one">
                         <span class="identifier">编号 {{item.maintainNumber}}</span>
                         <span style="color:rgba(0,0,0,0.45)"> / </span>
                         <span class="name">{{item.terminalNumber}}</span>
                     </div>
                     <div class="two">
-                        <span class="repair">{{item.type}} | 维保记录 {{item.maintainTime}}</span>
+                        <span class="repair">{{item.type}} | 维保记录 {{item.title}}</span>
                         <img class="go-icon" src="/static/images/right.png" alt="">
                     </div>
                     <div class="three">
-                        <span>{{item.updateTime}}</span>
-                        <span>深圳市</span>
+                        <span>{{item.maintainTime}}</span>
+                        <span>{{item.type}}</span>
                     </div>
                 </li>
             </div>
@@ -47,6 +46,11 @@ export default {
         This.getData()
     },
     methods: {
+        goIntro(id){
+            wx.navigateTo({
+                url:'/pages/indexDetail/main?id=' + id
+            });
+        },
         getData(){
             let This = this
             if(This.isNull == null || This.isNull.length == 0){
@@ -66,14 +70,26 @@ export default {
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {
                 console.log(res)
-                This.list = res
-                This.isNull = res.list
+                This.list = res.response.list
+                This.list.map(
+                    function(item,index){
+                        let da = new Date(item.maintainTime);
+                        let year = da.getFullYear()+'';
+                        let month = da.getMonth()+1+'';
+                        let date = da.getDate()+' ';
+                    //     let h = da.getHours()+'';
+                    //     let m = da.getMinutes()+'';
+                    //     let s = da.getSeconds()+'';
+                        item.maintainTime = [year,month,date].join('-');
+                    }
+                )
                 if(This.page == 1){
-                   This.list = res.list
+                   This.list = res.response.list
+                   This.isNull = res.response.list.length
                 }else{
                     //    This.list.push(JSON.parse(JSON.stringify([res.list])))
                     //    This.list = This.list.concat(res.list)
-                    This.list.push(...res.list)
+                    This.list.push(...res.response.list)
                 } 
             })
         }

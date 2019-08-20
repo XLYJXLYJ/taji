@@ -10,7 +10,7 @@
         </div>
         <div class="titleNav">
             <p class="one">维保信息</p>
-            <p class="two">管理</p>
+            <p class="two" @click="edit">管理</p>
         </div>
         <div class="contain">
             <form>
@@ -27,25 +27,19 @@
                     </div>
                 </div>
 
-
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <input type="text" v-model="equip_type" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
-                    <mp-picker ref="typePicker" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
+                    <input type="text" v-model="typeName" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
                 </div>
-
-
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
                     <input type="text" v-model="time" placeholder="请选择日期" autocomplete="off" @focus="showTime"/>
-                     <mp-datepicker ref="mpDatePicker" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <input type="text" v-model="status" placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
-                     <mp-picker ref="statusPicker" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
+                    <input type="text" v-model="statusName" placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
                 </div>
 
                 <div class="get-block">
@@ -55,25 +49,19 @@
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="company" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
-
-
 
                 <div class="img-block">
                     <p
                         class="title"
                         style="margin-bottom:20rpx;"
                     >现场照片</p>
-                    <mp-uploader
-                        @upLoadSuccess="upLoadSuccess"
-                        @upLoadFail="upLoadFail"
-                        @uploadDelete="uploadDelete"
-                        ref="uploader"
-                        :showTip=false
-                        :maxLength=1
-                        :isMaxHiddenChoose=true
-                    ></mp-uploader>
+                    <ul class="two-ul">
+                        <li class="two-li" v-for="(item,index) in imgs" :key="index">
+                            <img :src="item" />
+                        </li>
+                    </ul>
                 </div>
                 <!-- <div>
                     <button class="confirm" @click="submitEquip">添加维保记录</button>
@@ -106,203 +94,42 @@ export default {
             time:'',
             notes: '',
             status: '',
-            company:'',
+            explain:'',
             TypeMode: "selector",
-            typePickerValueArray:[
-                {
-                    label: '类型一',
-                    value: 1
-                },
-                {
-                    label: '类型二',
-                    value: 2
-                },
-                {
-                    label: '类型三',
-                    value: 3
-                },
-                {
-                    label: '类型四',
-                    value: 4
-                }
-            ],
-            statusMode: "selector",
-            statusPickerValueArray:[
-                {
-                    label: '状态一',
-                    value: 1
-                },
-                {
-                    label: '状态二',
-                    value: 2
-                },
-                {
-                    label: '状态三',
-                    value: 3
-                },
-                {
-                    label: '状态四',
-                    value: 4
-                }
-            ]
+            imgs:[]
         };
     },
-    mounted() {
+    onLoad() {
         let This = this
         console.log('加载data数据')
         console.log(This.getData)
+        This.equip_type =This.getData.maintainRecord.type
+        This.typeName = This.getData.maintainRecord.typeName
+        This.id = This.getData.maintainRecord.id
+        This.imgs = This.getData.maintainRecord.images
 
-        This.equip_type =This.getData.maintainRecord.type,
         This.equip_code = This.getData.maintainRecord.terminalNumber,
-        This.time = This.getData.maintainRecord.maintainTime,
+        This.time = This.getData.maintainRecord.maintainTime
+        let da = new Date(This.time);
+        let year = da.getFullYear()+'';
+        let month = da.getMonth()+1+'';
+        let date = da.getDate()+' ';
+        //let h = da.getHours()+'';
+        //let m = da.getMinutes()+'';
+        //let s = da.getSeconds()+'';
+        This.time = [year,month,date].join('-');
+
         This.notes = This.getData.maintainRecord.remark,
-        This.status = This.getData.maintainRecord.status,
-        This.company = This.getData.maintainRecord.explain
+        This.statusName = This.getData.maintainRecord.statusName
+        This.status = This.getData.maintainRecord.status
+        This.explain = This.getData.maintainRecord.explain
     },
     methods: {
-        showType(){
-            this.$refs.typePicker.show();
-        },
-        showStatus(){
-            this.$refs.statusPicker.show();
-        },
-        showTime(){
-            this.$refs.mpDatePicker.show();
-        },
-        GetQbCode() {
-            wx.scanCode({
-            success(res) {
-               console.log(res) 
-            }
-            })
-        },
-        upLoadSuccess(successRes){
+        edit(){
             let This = this
-            console.log(successRes)
-            wx.getFileSystemManager().readFile({
-                filePath: successRes.tempFilePaths[0], //选择图片返回的相对路径
-                encoding: 'base64', //编码格式
-                success:(res) =>{
-                    // let img = 'data:image/png;base64,' + res.data
-                    let img = res.data
-                    let data = {
-                        imgs:img
-                    }
-                    fly.post('/uploadImg',data).then(function (res) {
-                        console.log(res)
-                        This.imgMessage.push(res.response)
-                        console.log(This.imgMessage)    
-                    })
-                }
-            })
-        },
-        upLoadFail(errMsg){
-            console.log(errMsg)
-        },
-        uploadDelete(DeleteRes){
-            console.log(DeleteRes)
-            let This = this
-            let index = DeleteRes.index
-            This.imgMessage.splice(index,1)
-            console.log(This.imgMessage)          
-
-        },
-        submitEquip(){
-            let This = this
-            if(!This.equip_type){
-                wx.showToast({
-                    title: "手机号不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
-            if(!This.equip_code){
-                wx.showToast({
-                    title: "验证码不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
-            if(!This.time){
-                wx.showToast({
-                    title: "姓名不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
-            if(!This.company){
-                wx.showToast({
-                    title: "公司名不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
-            if(!This.status){
-                wx.showToast({
-                    title: "职位不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
-            if(!This.imgMessage){
-                wx.showToast({
-                    title: "请上传在职证明",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
-            let data = {
-                mobile:This.equip_type,
-                vaCode:This.equip_code,
-                time:This.time,
-                companyName:This.company,
-                statusName:This.status,
-                imgs:This.imgMessage.join(",")
-            }
-            fly.post('/contractor/applyJoinSharingPlan',data).then(function (res) {
-                console.log(res)
-                wx.showToast({
-                    title: "申请加入成功",
-                    icon: "none",
-                    duration: 2000
-                });
-                wx.navigateTo({
-                    url:'/pages/index/main'
-                });
-            })
-        },
-        onTypeConfirm(e) {
-            console.log(e);
-        },
-        onTypeChange(e) {
-            console.log(e);
-        },
-        onTypeCancel(e) {
-            console.log(e);
-        },
-        onTimeConfirm(e) {
-            console.log(e);
-        },
-        onTimeChange(e) {
-            console.log(e);
-        },
-        onTimeCancel(e) {
-            console.log(e);
-        },
-        onStatusConfir(e) {
-            console.log(e);
-        },
-        onStatusChange(e) {
-            console.log(e);
-        },
-        onStatusCancel(e) {
-            console.log(e);
+            wx.navigateTo({
+                url:'/pages/MaintenanceInformationEdit/main?id='+This.id
+            });
         }
     }
 };
@@ -349,6 +176,17 @@ export default {
         .img-block {
             width: 100%;
             height: 330rpx;
+            .two-ul {
+                .two-li {
+                    float: left;
+                    margin-right: 32rpx;
+                    img {
+                        width: 144rpx;
+                        height: 144rpx;
+                        margin-top: 16rpx;
+                    }
+                }
+            }
         }
         .title {
             font-size: 28rpx;

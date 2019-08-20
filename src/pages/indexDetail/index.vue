@@ -42,20 +42,17 @@ export default {
         console.log(options)
         let This = this
         This.id = options.id
+        let data1 = {
+            id:This.id
+        }
+        fly.post('/maintain/getMaintainDetail',data1).then(function (res) {
+            This.getData = res.response
+            console.log(res)
+        })
     },
     created() {
         let This = this
-        let data1 = {
-            id:5
-        }
-        fly.post('/maintain/getMaintainDetail',data1).then(function (res) {
-            This.$nextTick(
-                function(){
-                    This.getData = res.response
-                }
-            )
-            console.log(res)
-        })
+
     },
     data() {
         return {

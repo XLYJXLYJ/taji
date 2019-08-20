@@ -1,35 +1,42 @@
 <template>
     <div class="container">
-        <section class="sec-nav">
-            <navigation-bar :title="videoTitle" :navBackgroundColor="'white'" :back-visible="true"></navigation-bar>
-        </section>
-        <section class="img-contain">
-            <swiper
-                :indicator-dots="true"
-                autoplay
-                :interval="3000"
-                :duration="1000"
-                circular
-                indicator-color="rgba(255,255,255,.5)"
-                indicator-active-color="#ffffff"
-            >
-                <block v-for="item in imgUrls" :key="item.id">
-                    <swiper-item>
-                        <image :src="item.url" class="slide-image" />
-                    </swiper-item>
-                </block>
-            </swiper>
-        </section>
-        <section class="maintenance">
-            <p class="record">维保记录</p>
-            <card></card>
-        </section>
-        <section class="maintenance">
-            <p class="record">请先授权获取您的微信昵称、头像等公开信息，以便开始使用维保助手</p>
-            <button open-type="getUserInfo" @getuserinfo="getUserInfo">授权微信公开信息</button>
-        </section>
+        <div v-if="bottomId">
+            <section class="sec-nav">
+                <navigation-bar :title="videoTitle" :navBackgroundColor="'white'" :back-visible="true"></navigation-bar>
+            </section>
+            <section class="img-contain">
+                <swiper
+                    :indicator-dots="true"
+                    autoplay
+                    :interval="3000"
+                    :duration="1000"
+                    circular
+                    indicator-color="rgba(255,255,255,.5)"
+                    indicator-active-color="#ffffff"
+                >
+                    <block v-for="item in imgUrls" :key="item.id">
+                        <swiper-item>
+                            <image :src="item.url" class="slide-image" />
+                        </swiper-item>
+                    </block>
+                </swiper>
+            </section>
+            <section class="maintenance" v-if="appid">
+                <p class="record">维保记录</p>
+                <card></card>
+            </section>
+            <section class="maintenance" v-if="!appid">
+                <p class="record">请先授权获取您的微信昵称、头像等公开信息，以便开始使用维保助手</p>
+                <button open-type="getUserInfo" @getuserinfo="getUserInfo">授权微信公开信息</button>
+            </section>
+        </div>
+
+        <div class="my" v-if="!bottomId">
+            <my></my>
+        </div>
+
         <section class="add">
-            <bottomNavigationBar :selectNavIndex="selectNavIndex"></bottomNavigationBar>
+            <bottomNavigationBar :selectNavIndex="selectNavIndex" @indexId='indexFuc'></bottomNavigationBar>
         </section>
     </div>
 </template>
@@ -40,12 +47,14 @@ import navigationBar from "@/components/navigationBar.vue";
 import bottomNavigationBar from "@/components/bottomNavigationBar.vue";
 import card from "@/components/card.vue";
 import add from "@/components/add.vue";
+import my from "@/pages/my";
 export default {
     components: {
         bottomNavigationBar,
         navigationBar,
         card,
-        add
+        add,
+        my
     },
     onShareAppMessage: (res) => {
         console.log(res)
@@ -65,15 +74,22 @@ export default {
                     id: 2,
                     url: "https://images.unsplash.com/photo-1551446591-142875a901a1?w=640"
                 }
-            ]
+            ],
+            appid:'',
+            bottomId:true,
+            selectNavIndex:0
         };
     },
     mounted() {
         let This = this
         This.login()
-        if(wx.getStorageSync('token')){
+        This.appid = wx.getStorageSync('appid')
+        if(wx.getStorageSync('appid')){
             This.getData()
         }
+    },
+    onShareAppMessage: (res) => {
+        console.log(res)
     },
     methods: {
         login(){
@@ -96,6 +112,15 @@ export default {
                 }
             })
         },
+        indexFuc(data){
+            let This = this
+            This.selectNavIndex = data
+            if(data==0){
+                This.bottomId = true
+            }else{
+                This.bottomId = false
+            }
+        },
         getUserInfo (e) {
             let This = this
             let userInfo = e.mp.detail
@@ -107,6 +132,12 @@ export default {
             }
             fly.post('/user/getWxUserInfo',data).then(function (res) {
                 console.log(res)
+                wx.setStorageSync('appid', res.response.watermark.appid)
+                wx.setStorageSync('avatarUrl', res.response.avatarUrl)
+                wx.setStorageSync('username', res.response.nickName)
+                wx.navigateTo({
+                    url:'/pages/index/main'
+                });
                 // This.getData()
             })
         },
@@ -138,11 +169,13 @@ export default {
     }
     .img-contain {
         display: block;
-        width: 670rpx;
+        width: 100%;
         height: 290rpx;
         margin: 0 auto;
         border-radius: 8rpx;
         margin-top: 40rpx;
+        background: #fcfcfc;
+        text-align: center;
         image {
             width: 670rpx;
             height: 290rpx;
