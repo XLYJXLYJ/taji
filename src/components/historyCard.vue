@@ -1,10 +1,11 @@
 <template>
     <div class="card-contain">
         <ul>
-            <div class="img-contain" v-if="!list">
+            <p class="atitle">历史维保信息</p>
+            <div class="img-contain" v-if="!list.length">
                 <img src="/static/images/none.png">
             </div>
-            <div v-if="list">
+            <div v-if="list.legnth">
                 <li v-for="(item,index) in list" :key="index">
                     <div class="one">
                         <span class="identifier">编号 {{item.maintainNumber}}</span>
@@ -153,6 +154,12 @@ export default {
                 display: flex;
                 justify-content: space-between;
             }
+        }
+        .atitle{
+            font-size: 34rpx;
+            color: black;
+            font-family: 'PingFangSC-Medium';
+            font-weight: 550;
         }
     }
 }

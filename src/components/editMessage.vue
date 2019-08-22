@@ -96,7 +96,10 @@ export default {
             status: '',
             explain:'',
             TypeMode: "selector",
-            imgs:[]
+            imgs:[],
+            typeName:'',
+            statusName:'',
+            notes:''
         };
     },
     onLoad() {
@@ -119,7 +122,7 @@ export default {
         //let s = da.getSeconds()+'';
         This.time = [year,month,date].join('-');
 
-        This.notes = This.getData.maintainRecord.remark,
+        This.notes = This.getData.maintainRecord.title,
         This.statusName = This.getData.maintainRecord.statusName
         This.status = This.getData.maintainRecord.status
         This.explain = This.getData.maintainRecord.explain

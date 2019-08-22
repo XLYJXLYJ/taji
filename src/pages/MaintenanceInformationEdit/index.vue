@@ -91,7 +91,7 @@
                         class="title"
                         style="margin-bottom:20rpx;"
                     >现场照片</p>
-                    <upload width="120rpx" height="120rpx" max="6" @choosed="chooseImg" @delete="deleteImg" :srcs="['/static/images/user.png']"></upload>
+                    <upload width="120rpx" height="120rpx" max="3" @choosed="chooseImg" @delete="deleteImg" :srcs="imgData"></upload>
                 </div>
                 <div class="button">
                     <button class="confirm01" @click="dele">删除</button>
@@ -208,7 +208,7 @@ export default {
             //let s = da.getSeconds()+'';
             This.time = [year,month,date].join('-');
             This.time1 =  [year,month,date].join('-');
-            This.notes = This.getData.maintainRecord.remark,
+            This.notes = This.getData.maintainRecord.title,
             This.statusName = This.getData.maintainRecord.statusName
             This.status = This.getData.maintainRecord.status
             This.explain= This.getData.maintainRecord.explain
@@ -246,12 +246,26 @@ export default {
         chooseImg(res){
             console.log(res)
             let This = this
-            This.imgData = res.all
+            res.all.map(
+                function(item,index){
+                    console.log(item)
+                    item = JSON.stringify(item)
+                    console.log(item)
+                    This.imgData.push(item)
+                }
+            )
+            console.log(res.all)
+            // This.imgData = res.all
         },
         deleteImg(res){
             console.log(res)
             let This = this
-            This.imgData = res
+            res.map(
+                function(item,index){
+                    item = JSON.stringify(item)
+                    This.imgData.push(item)
+                }
+            )
         },
         dele(){
             let This = this
@@ -297,7 +311,7 @@ export default {
                     const data = JSON.parse(res.data)
                     console.log(data)
                     let jdata = JSON.stringify({"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null})
-                    This.imgData.push(...jdata)
+                    This.imgData.push(jdata)
                     //do something
                 }
             })

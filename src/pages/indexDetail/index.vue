@@ -13,7 +13,6 @@
             <editMessage :getData='getData'></editMessage>
         </section>
         <section>
-            <p class="atitle">历史维保信息</p>
             <historyCard></historyCard>
         </section>
     </div>
@@ -106,13 +105,6 @@ export default {
             height: 290rpx;
             border-radius: 8rpx;
         }
-    }
-    .atitle{
-        font-size: 34rpx;
-        color: black;
-        font-family: 'PingFangSC-Medium';
-        font-weight: 550;
-        margin-left: 42rpx;
     }
 }
 </style>

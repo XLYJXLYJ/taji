@@ -80,9 +80,12 @@ export default {
             selectNavIndex:0
         };
     },
-    mounted() {
+    onShow(){
         let This = this
         This.login()
+    },
+    mounted() {
+        let This = this
         This.appid = wx.getStorageSync('appid')
         if(wx.getStorageSync('appid')){
             This.getData()

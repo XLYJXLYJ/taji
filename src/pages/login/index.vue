@@ -1,6 +1,6 @@
 <template>
     <div class="login">
-        <goBackNav title="登陆/注册建造工"></goBackNav>
+        <goBackNav title="绑定手机号"></goBackNav>
         <div v-if="isAlert">
             <selfAlert
                 v-bind:changeModel="ischangeModel"
