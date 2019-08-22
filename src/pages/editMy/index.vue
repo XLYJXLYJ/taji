@@ -34,6 +34,7 @@
                             v-model="phone_code"
                             placeholder="请输入您的手机号码"
                             autocomplete="off"
+                            disabled
                         />
                         <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" class="getCode">获取微信手机号码</button>
                     </div>
@@ -157,13 +158,41 @@ export default {
             }else{
                 who = 0
             }
+            if (!this.phone) {
+                wx.showToast({
+                    title: "请输入手机号",
+                    icon: "none",
+                    duration: 2000
+                })
+                return;
+            } else if (this.phone.length !== 11) {
+                wx.showToast({
+                    title: "请输入正确手机号格式",
+                    icon: "none",
+                    duration: 2000
+                })
+                return;
+            }
             let data = {
                 fullName:This.name,
                 phoneNum:This.phone_code,
                 gender:who
             }
             fly.post('/user/updateUserDetail',data).then(function (res) {
-                console.log(res)
+                if(res.status!=200){
+                    wx.showToast({
+                        title: res.message,
+                        icon: "none",
+                        duration: 2000
+                    });
+                    return;
+                }else{
+                    wx.showToast({
+                        title: "修改信息成功",
+                        icon: "none",
+                        duration: 2000
+                    });
+                }
             })
         },
         getPhoneNumber(e){

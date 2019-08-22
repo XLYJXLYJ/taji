@@ -25,7 +25,6 @@
 export default {
     props: ["getData"],
     mounted() {
-        console.log(getData.terminal)
 
     },
 };

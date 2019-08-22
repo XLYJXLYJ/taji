@@ -1,15 +1,21 @@
 {
-  "pages": [
+  "pages": [    
     "pages/index/main",
     "pages/MaintenanceInformationEdit/main",
+
+    "pages/login/main",
+    "pages/editMy/main",
+
+
+
 
     "pages/indexDetail/main",
     "pages/MaintenanceInformation/main",
     "pages/my/main",
     "pages/userAgreement/main",
-    "pages/EnterpriseAttribution/main",
-    "pages/login/main",
-    "pages/editMy/main"
+    "pages/EnterpriseAttribution/main"
+
+
   ],
   "window": {
     "backgroundTextStyle": "light",

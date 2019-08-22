@@ -46,7 +46,7 @@
                     success (res){
                         const data = JSON.parse(res.data)
                         console.log(data)
-                        let jdata = JSON.stringify({"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null})
+                        let jdata = JSON.stringify({createTime:null,fileSize:size,id:null,imagePath:data.response,mainId:null,module:null,type:1,user:null})
                         This.urls.push(jdata)
                         //do something
                         This.$emit("choosed",{all:This.urls,currentUpload:res.tempFilePaths});

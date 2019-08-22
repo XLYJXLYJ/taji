@@ -25,25 +25,22 @@
                     </div>
                 </div>
 
-
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <input type="text" v-model="type1" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
-                    <mp-picker ref="typePicker" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
+                    <p @click="showType" style="color:#5f5f5f;height:70rpx">{{type1}}</p>
+                    <mp-picker ref="typePicker" themeColor="rgb(24,144,255)" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
                 </div>
-
-
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                    <input type="text" v-model="time" placeholder="请选择日期" autocomplete="off" @focus="showTime"/>
-                     <mp-datepicker ref="mpDatePicker" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
+                    <p @click="showTime" style="color:#5f5f5f;height:70rpx">{{time}}</p> 
+                    <mp-datepicker ref="mpDatePicker" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <input type="text" v-model="status1" placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
-                     <mp-picker ref="statusPicker" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
+                    <p @click="showStatus" style="color:#5f5f5f;height:70rpx">{{status1}}</p>
+                    <mp-picker ref="statusPicker" themeColor="rgb(24,144,255)" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
                 </div>
 
                 <div class="get-block">
@@ -55,8 +52,6 @@
                     <p class="title">说明</p>
                     <input type="text" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
-
-
 
                 <div class="img-block">
                     <p
@@ -74,7 +69,7 @@
                     ></mp-uploader>
                 </div>
                 <div>
-                    <button class="confirm" @click="submitEquip">添加维保记录</button>
+                    <button class="confirm" @click="submitEquip">添加维保记录111</button>
                 </div>
                 <!-- <p class="title">
                     建筑业优秀班组数据库是建造工平台提供的服务，点击提交即表示同意
@@ -298,14 +293,27 @@ export default {
             }
             fly.post('/maintain/saveMaintain',data).then(function (res) {
                 console.log(res)
-                wx.showToast({
-                    title: "申请加入成功",
-                    icon: "none",
-                    duration: 2000
-                });
-                wx.navigateTo({
-                    url:'/pages/index/main'
-                });
+                console.log('到底是成功还是失败呢')
+                if(res.status!=200){
+                    console.log('添加成功')
+                    wx.showToast({
+                        title: res.message,
+                        icon: "none",
+                        duration: 2000
+                    });
+                    return;
+                }else{
+                    console.log('添加失败')
+                    wx.showToast({
+                        title: "申请加入成功",
+                        icon: "none",
+                        duration: 2000
+                    });
+                    wx.navigateTo({
+                        url:'/pages/index/main'
+                    });
+                }
+
             })
         },
         onTypeConfirm(e) {

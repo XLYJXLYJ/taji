@@ -154,6 +154,20 @@ export default {
             }
             fly.post('/user/bindCompany',data).then(function (res) {
                 let resData = res.response
+                if(res.status!=200){
+                    wx.showToast({
+                        title: res.message,
+                        icon: "none",
+                        duration: 2000
+                    });
+                    return;
+                }else{
+                    wx.showToast({
+                        title: "绑定成功",
+                        icon: "none",
+                        duration: 2000
+                    });
+                }
             }) 
         }
     }

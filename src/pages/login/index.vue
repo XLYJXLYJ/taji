@@ -96,7 +96,20 @@ export default {
                 type:1
             }
             fly.post('/common/getVerificationCode',data).then(function (res) {
-                console.log(res)
+                if(res.status!=200){
+                    wx.showToast({
+                        title: res.message,
+                        icon: "none",
+                        duration: 2000
+                    });
+                    return;
+                }else{
+                    wx.showToast({
+                        title: "发送验证码成功",
+                        icon: "none",
+                        duration: 2000
+                    });
+                }
             })
         },
         login(){
@@ -107,19 +120,28 @@ export default {
             }
             fly.post('/user/sendSmsBindUser',data).then(function (res) {
                 console.log(res)
-                // wx.showToast({
-                //     title: "申请加入成功",
-                //     icon: "none",
-                //     duration: 2000
-                // });
-                wx.setStorageSync('token', res.response.authorization) 
-                wx.setStorageSync('gender', res.response.gender) 
-                wx.setStorageSync('mobile', res.response.mobile) 
-                wx.setStorageSync('nickName', res.response.nickName) 
-                wx.setStorageSync('username', res.response.username) 
-                wx.navigateTo({
-                    url:'/pages/index/main'
-                });
+               if(res.status!=200){
+                    wx.showToast({
+                        title: res.message,
+                        icon: "none",
+                        duration: 2000
+                    });
+                    return;
+                }else{
+                    wx.showToast({
+                        title: "登陆成功",
+                        icon: "none",
+                        duration: 2000
+                    });
+                    wx.setStorageSync('token', res.response.authorization) 
+                    wx.setStorageSync('gender', res.response.gender) 
+                    wx.setStorageSync('mobile', res.response.mobile) 
+                    wx.setStorageSync('nickName', res.response.nickName) 
+                    wx.setStorageSync('username', res.response.username) 
+                    wx.navigateTo({
+                        url:'/pages/index/main'
+                    });
+                }
             })
         },
         Timer() {

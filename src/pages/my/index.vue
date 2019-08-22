@@ -6,9 +6,9 @@
         <section class="maintenance">
             <div class="left">
                 <img @click="goMy" v-if="!appid" src="/static/images/user.png">
-                <img v-if="appid" :src="img">
-                <p class="one" v-if="appid">{{name}}</p>
-                <p class="two" v-if="appid">{{mobile}}</p>
+                <img @click="edit" v-if="appid" :src="img">
+                <p @click="edit" class="one" v-if="appid">{{name}}</p>
+                <p @click="edit" class="two" v-if="appid">{{mobile || ''}}</p>
             </div>
             <div class="right" @click="edit" v-if='myself && appid'>
                 <p>未完善</p>

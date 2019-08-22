@@ -111,7 +111,6 @@ export default {
         top: 0;
         width: 100%;
         z-index: 999;
-
         .nav-titlebar {
             // border: 1px solid green;
             width: 100%;
@@ -137,9 +136,8 @@ export default {
             background: #fff;
             border-radius: 27px;
             padding-right: 5rpx;
-
             .opt {
-                width: 50rpx;
+                width: 100rpx;
                 height: 50rpx;
                 display: flex;
                 justify-content: center;
@@ -152,9 +150,9 @@ export default {
                 }
             }
             .line {
-                display: block;
+                display: black;
                 height: 30rpx;
-                width: 1px;
+                width: 1rpx;
                 background-color: gray;
             }
             .opt-home {
@@ -165,7 +163,7 @@ export default {
             }
             }
             .bar-title {
-                width: 420rpx;
+                width: auto;
                 height: 52rpx;
                 font-size: 37rpx;
                 font-family: 'PingFangSC-Medium';
@@ -173,6 +171,7 @@ export default {
                 justify-content: center;
                 align-items: center;
                 padding: 10rpx 0 10rpx 0;
+                margin-top: 18rpx;
                 font-weight: 600;
             }
         }

@@ -55,21 +55,21 @@
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <input type="text" v-model="typeName" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
-                    <mp-picker ref="typePicker" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
+                    <p @click="showType" style="color:#5f5f5f;height:70rpx">{{typeName}}</p>
+                    <mp-picker ref="typePicker" themeColor="rgb(24,144,255)" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
                 </div>
 
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                    <input type="text" v-model="time" placeholder="请选择日期" autocomplete="off" @focus="showTime"/>
-                     <mp-datepicker ref="mpDatePicker" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
+                   <p @click="showTime" style="color:#5f5f5f;height:70rpx">{{time}}</p> 
+                    <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <input type="text" v-model="statusName" placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
-                     <mp-picker ref="statusPicker" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
+                    <p @click="showStatus" style="color:#5f5f5f;height:70rpx">{{statusName}}</p>
+                     <mp-picker ref="statusPicker" themeColor="rgb(24,144,255)" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
                 </div>
 
                 <div class="get-block">
@@ -95,7 +95,7 @@
                 </div>
                 <div class="button">
                     <button class="confirm01" @click="dele">删除</button>
-                    <button class="confirm02" @click="save">保存</button>
+                    <button class="confirm02" @click="submitEquip">保存</button>
                 </div>
                 <!-- <p class="title">
                     建筑业优秀班组数据库是建造工平台提供的服务，点击提交即表示同意
@@ -131,14 +131,13 @@ export default {
             terminalRemarkName:'',
             maintainNumber:'',
             type: "",
-            typeName:'',
+            typeName:'请选择类型',
             equip_code: "",
-            time: "",
+            time: "请选择时间",
             time1:'',
             notes: "",
             status: "",
-            statusName:'',
-            time: '',
+            statusName:'请选择状态',
             TypeMode: "selector",
             arrayBuffer :'',
             imgData:[],
@@ -194,9 +193,10 @@ export default {
             This.maintainNumber = This.getData.maintainRecord.maintainNumber
             This.terminalRemarkName = This.getData.maintainRecord.terminalRemarkName
             This.id = This.getData.maintainRecord.id
-            This.imgs = This.getData.maintainRecord.images
+            This.imgData = This.getData.maintainRecord.images
             This.equip_type =This.getData.maintainRecord.type
             This.typeName = This.getData.maintainRecord.typeName
+            This.type = This.getData.maintainRecord.type
             This.equip_code = This.getData.maintainRecord.terminalNumber,
             This.time = This.getData.maintainRecord.maintainTime
             let da = new Date(This.time);
@@ -207,6 +207,7 @@ export default {
             //let m = da.getMinutes()+'';
             //let s = da.getSeconds()+'';
             This.time = [year,month,date].join('-');
+            This.time1 =  [year,month,date].join('-');
             This.notes = This.getData.maintainRecord.remark,
             This.statusName = This.getData.maintainRecord.statusName
             This.status = This.getData.maintainRecord.status
@@ -296,7 +297,7 @@ export default {
                     const data = JSON.parse(res.data)
                     console.log(data)
                     let jdata = JSON.stringify({"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null})
-                    This.imgData.push(jdata)
+                    This.imgData.push(...jdata)
                     //do something
                 }
             })
@@ -314,7 +315,7 @@ export default {
         },
         submitEquip(){
             let This = this
-            if(!This.type){
+            if(!This.typeName){
                 wx.showToast({
                     title: "维保类型不能为空",
                     icon: "none",
@@ -332,7 +333,7 @@ export default {
             }
             if(!This.time){
                 wx.showToast({
-                    title: "姓名不能为空",
+                    title: "维保时间不能为空",
                     icon: "none",
                     duration: 2000
                 });
@@ -346,9 +347,17 @@ export default {
                 });
                 return;
             }
-            if(!This.status){
+            if(!This.statusName){
                 wx.showToast({
                     title: "状态不能为空",
+                    icon: "none",
+                    duration: 2000
+                });
+                return;
+            }
+            if(!This.notes){
+                wx.showToast({
+                    title: "维保记录标题不能为空",
                     icon: "none",
                     duration: 2000
                 });
@@ -373,14 +382,23 @@ export default {
             }
             fly.post('/maintain/saveMaintain',data).then(function (res) {
                 console.log(res)
-                wx.showToast({
-                    title: "申请加入成功",
-                    icon: "none",
-                    duration: 2000
-                });
-                wx.navigateTo({
-                    url:'/pages/index/main'
-                });
+                if(res.status!=200){
+                    wx.showToast({
+                        title: res.message,
+                        icon: "none",
+                        duration: 2000
+                    });
+                    return;
+                }else{
+                    wx.showToast({
+                        title: "申请加入成功",
+                        icon: "none",
+                        duration: 2000
+                    });
+                    wx.navigateTo({
+                        url:'/pages/index/main'
+                    });
+                }
             })
         },
         onTypeConfirm(e) {
@@ -427,14 +445,23 @@ export default {
             }
             fly.post('/maintain/deleteMaintain',data).then(function (res) {
                 console.log(res)
-                wx.showToast({
-                    title: "删除成功",
-                    icon: "none",
-                    duration: 2000
-                });
-                wx.navigateTo({
-                    url:'/pages/index/main'
-                });
+                if(res.status!=200){
+                    wx.showToast({
+                        title: res.message,
+                        icon: "none",
+                        duration: 2000
+                    });
+                    return;
+                }else{
+                    wx.showToast({
+                        title: "删除成功",
+                        icon: "none",
+                        duration: 2000
+                    });
+                    wx.reLaunch({
+                        url:'/pages/index/main'
+                    });
+                }
             })
         },
         tapCancel(){

@@ -30,7 +30,9 @@ import fly from "@/services/WxApi";
 export default {
     props: ["text"],
     mounted() {
+        
         let This = this
+        This.list = ''
         This.getData()
     },
     data(){
@@ -70,26 +72,57 @@ export default {
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {
                 console.log(res)
-                This.list = res.response.list
-                This.list.map(
-                    function(item,index){
-                        let da = new Date(item.maintainTime);
-                        let year = da.getFullYear()+'';
-                        let month = da.getMonth()+1+'';
-                        let date = da.getDate()+' ';
-                    //     let h = da.getHours()+'';
-                    //     let m = da.getMinutes()+'';
-                    //     let s = da.getSeconds()+'';
-                        item.maintainTime = [year,month,date].join('-');
-                    }
-                )
+                wx.hideLoading();
+
                 if(This.page == 1){
-                   This.list = res.response.list
-                   This.isNull = res.response.list.length
+                    This.list = res.response.list
+                    This.list.map(
+                        function(item,index){
+                            let da = new Date(item.maintainTime);
+                            let year = da.getFullYear()+'';
+                            let month = da.getMonth()+1+'';
+                            let date = da.getDate()+' ';
+                        //     let h = da.getHours()+'';
+                        //     let m = da.getMinutes()+'';
+                        //     let s = da.getSeconds()+'';
+                            item.maintainTime = [year,month,date].join('-');
+                        }
+                    )
+                    This.$nextTick(
+                        function(){
+                            This.list = res.response.list
+                            This.isNull = res.response.list.length
+                        }
+                    )
                 }else{
                     //    This.list.push(JSON.parse(JSON.stringify([res.list])))
                     //    This.list = This.list.concat(res.list)
-                    This.list.push(...res.response.list)
+                    if(res.response.list){
+                        wx.showToast({
+                            title: '数据已加载完',
+                            icon: "none",
+                            duration: 2000
+                        })
+                    }else{
+                        let listArr = res.response.list
+                        listArr.map(
+                            function(item,index){
+                                let da = new Date(item.maintainTime);
+                                let year = da.getFullYear()+'';
+                                let month = da.getMonth()+1+'';
+                                let date = da.getDate()+' ';
+                            //     let h = da.getHours()+'';
+                            //     let m = da.getMinutes()+'';
+                            //     let s = da.getSeconds()+'';
+                                item.maintainTime = [year,month,date].join('-');
+                            }
+                        )
+                        console.log(This.list)
+                        console.log(res.response.list)
+                        This.list.push(...listArr)
+                        console.log('list等于多少呢')
+                        console.log(This.list)
+                    }
                 } 
             })
         }
