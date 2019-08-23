@@ -6,15 +6,15 @@
                 <img src="/static/images/none.png">
             </div> -->
             <li>
-                <div class="one">
-                    <span class="identifier">编号 {{getData.tower.terminalNumber}}</span>
+                <div class="one"> 
+                    <span class="identifier">编号 {{getData.tower.towerNumber}}</span>
                 </div>
                 <div class="two">
                      <span class="repair">塔身高{{getData.tower.height}} | 臂长{{getData.tower.armLength}} | 尾臂长{{getData.tower.armTailLength}}</span>
                 </div>
                 <div class="three">
+                    <span>{{getData.tower.towerTypeName}}</span>
                     <span>{{getData.tower.towerModel}}</span>
-                    <span>{{getData.tower.towerNumber}}</span>
                 </div>
             </li>
         </ul>

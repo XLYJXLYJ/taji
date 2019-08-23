@@ -69,7 +69,7 @@
                 <div class="get-block">
                     <p class="title">状态</p>
                     <p @click="showStatus" style="color:#5f5f5f;height:70rpx">{{statusName}}</p>
-                     <mp-picker ref="statusPicker" themeColor="rgb(24,144,255)" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
+                    <mp-picker ref="statusPicker" themeColor="rgb(24,144,255)" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
                 </div>
 
                 <div class="get-block">
@@ -216,7 +216,7 @@ export default {
 
         let data1 = {
             code:'maintain_type',
-            isShowAll:1
+            isShowAll:2
         }
         fly.post('/common/getSelectDiction',data1).then(function (res) {
             let data = res.response
@@ -229,7 +229,7 @@ export default {
         })
         let data2 = {
             code:'maintain_status',
-            isShowAll:1
+            isShowAll:2
         }
         fly.post('/common/getSelectDiction',data2).then(function (res) {
             let data = res.response
@@ -310,7 +310,7 @@ export default {
                 success (res){
                     const data = JSON.parse(res.data)
                     console.log(data)
-                    let jdata = JSON.stringify({"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null})
+                    let jdata = {"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null}
                     This.imgData.push(jdata)
                     //do something
                 }
@@ -392,7 +392,7 @@ export default {
                 status:This.status,
                 title:This.notes,
                 explain:This.explain,
-                images:This.imgData
+                images:JSON.stringify(This.imgData)
             }
             fly.post('/maintain/saveMaintain',data).then(function (res) {
                 console.log(res)
@@ -409,7 +409,7 @@ export default {
                         icon: "none",
                         duration: 2000
                     });
-                    wx.navigateTo({
+                    wx.reLaunch({
                         url:'/pages/index/main'
                     });
                 }

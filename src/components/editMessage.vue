@@ -23,33 +23,34 @@
                             v-model="equip_code"
                             placeholder="请输入编号"
                             autocomplete="off"
+                            disabled
                         />
                     </div>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <input type="text" v-model="typeName" placeholder="请选择类型" autocomplete="off" @focus="showType"/>
+                    <input type="text" v-model="typeName" disabled placeholder="请选择类型" autocomplete="off" @focus="showType"/>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                    <input type="text" v-model="time" placeholder="请选择日期" autocomplete="off" @focus="showTime"/>
+                    <input type="text" v-model="time" disabled placeholder="请选择日期" autocomplete="off" @focus="showTime"/>
                 </div>
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <input type="text" v-model="statusName" placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
+                    <input type="text" v-model="statusName" disabled placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保记录标题</p>
-                    <input type="text" v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
+                    <input type="text" v-model="notes" disabled placeholder="请输入维保记录标题" autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" v-model="explain" disabled placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
 
                 <div class="img-block">
@@ -59,7 +60,7 @@
                     >现场照片</p>
                     <ul class="two-ul">
                         <li class="two-li" v-for="(item,index) in imgs" :key="index">
-                            <img :src="item" />
+                            <img :src="item.imagePath" />
                         </li>
                     </ul>
                 </div>
@@ -102,7 +103,7 @@ export default {
             notes:''
         };
     },
-    onLoad() {
+    created() {
         let This = this
         console.log('加载data数据')
         console.log(This.getData)
@@ -125,7 +126,7 @@ export default {
         This.notes = This.getData.maintainRecord.title,
         This.statusName = This.getData.maintainRecord.statusName
         This.status = This.getData.maintainRecord.status
-        This.explain = This.getData.maintainRecord.explain
+        This.explain = This.getData.maintainRecord.explain || '-'
     },
     methods: {
         edit(){
@@ -170,6 +171,9 @@ export default {
             .get-code {
                 display: flex;
                 justify-content: space-between;
+                input{
+                    width:100%;
+                }
                 button{
                     height: 39rpx;
                     width: 45rpx;

@@ -7,17 +7,17 @@
             <div v-if="isNull!=0">
                 <li v-for="(item,index) in list" :key="index" @click="goIntro(item.id)">
                     <div class="one">
-                        <span class="identifier">编号 {{item.maintainNumber}}</span>
+                        <span class="identifier">编号 {{item.maintainNumber || ''}}</span>
                         <span style="color:rgba(0,0,0,0.45)"> / </span>
-                        <span class="name">{{item.terminalNumber}}</span>
+                        <span class="name">{{item.terminalRemarkName || ''}}</span>
                     </div>
                     <div class="two">
-                        <span class="repair">{{item.type}} | 维保记录 {{item.title}}</span>
+                        <span class="repair">{{item.typeName || ''}} | {{item.title}}</span>
                         <img class="go-icon" src="/static/images/right.png" alt="">
                     </div>
                     <div class="three">
                         <span>{{item.maintainTime}}</span>
-                        <span>{{item.type}}</span>
+                        <span>{{item.fullAreaName || ''}}</span>
                     </div>
                 </li>
             </div>
@@ -68,7 +68,7 @@ export default {
             }
             let data = {
                 pageNo:This.page,
-                pageSize:5
+                pageSize:20
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {
                 console.log(res)

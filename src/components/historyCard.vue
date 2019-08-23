@@ -1,5 +1,5 @@
 <template>
-    <div class="card-contain">
+    <div class="card-contain" v-if='isShow'>
         <ul>
             <p class="atitle">历史维保信息</p>
             <div class="img-contain" v-if="!list.length">
@@ -39,7 +39,8 @@ export default {
             id:'',
             list:'',
             page:1,
-            isNull:''
+            isNull:'',
+            isShow:''
         }
     },
     onLoad: function (options) {
@@ -76,6 +77,7 @@ export default {
                 wx.hideLoading();
                 This.isNull = res.response
                 if(This.page == 1){
+                    This.isShow = res.response
                    This.list = res.response
                 }else{
                     //    This.list.push(JSON.parse(JSON.stringify([res.list])))

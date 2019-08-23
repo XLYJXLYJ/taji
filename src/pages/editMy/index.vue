@@ -158,14 +158,14 @@ export default {
             }else{
                 who = 0
             }
-            if (!this.phone) {
+            if (!This.phone_code) {
                 wx.showToast({
                     title: "请输入手机号",
                     icon: "none",
                     duration: 2000
                 })
                 return;
-            } else if (this.phone.length !== 11) {
+            } else if (this.phone_code.length !== 11) {
                 wx.showToast({
                     title: "请输入正确手机号格式",
                     icon: "none",
@@ -192,29 +192,37 @@ export default {
                         icon: "none",
                         duration: 2000
                     });
+                    wx.reLaunch({
+                        url:'/pages/index/main'
+                    });
                 }
             })
         },
         getPhoneNumber(e){
             console.log(e)
-            let This = this
-            let data = {
-                sessionKey:wx.getStorageSync('sessionKey') ,
-                openId:wx.getStorageSync('openid'),
-                encryptedData:e.mp.detail.encryptedData,
-                iv:e.mp.detail.iv
-            }
-            fly.post('/user/getWxUserPhone',data).then(function (res) {
-                console.log(res)
-                if(res.status!=200){
-                    This.isAlert = true
-                    This.changeModel = true;
-                    This.isModel = true
-                }else{
-                    This.phone = res.response.purePhoneNumber
-                    wx.getStorageSync('mobile', This.phone) 
+            console.log(e.mp.detail.errMsg)
+            if(e.mp.detail.errMsg == 'getPhoneNumber:fail user deny'){
+                console.log('拒绝')
+            }else{
+                let This = this
+                let data = {
+                    sessionKey:wx.getStorageSync('sessionKey') ,
+                    openId:wx.getStorageSync('openid'),
+                    encryptedData:e.mp.detail.encryptedData,
+                    iv:e.mp.detail.iv
                 }
-            })
+                fly.post('/user/getWxUserPhone',data).then(function (res) {
+                    console.log(res)
+                    if(res.status!=200){
+                        This.isAlert = true
+                        This.changeModel = true;
+                        This.isModel = true
+                    }else{
+                        This.phone_code = res.response.purePhoneNumber
+                        wx.getStorageSync('mobile', This.phone_code) 
+                    }
+                })
+            }
         }
     }
 }

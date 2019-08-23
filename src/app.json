@@ -1,6 +1,8 @@
 {
-  "pages": [    
-    "pages/index/main",
+  "pages": [   
+    "pages/index/main", 
+    "pages/EnterpriseAttribution/main",
+
     "pages/MaintenanceInformationEdit/main",
 
     "pages/login/main",
@@ -12,8 +14,8 @@
     "pages/indexDetail/main",
     "pages/MaintenanceInformation/main",
     "pages/my/main",
-    "pages/userAgreement/main",
-    "pages/EnterpriseAttribution/main"
+    "pages/userAgreement/main"
+
 
 
   ],

@@ -3,15 +3,15 @@
         <section class="sec-nav">
             <navigation-bar :title="videoTitle" :navBackgroundColor="'white'" :back-visible="true"></navigation-bar>
         </section>
-        <section class="maintenance">
+        <section class="maintenance" @click="edit">
             <div class="left">
                 <img @click="goMy" v-if="!appid" src="/static/images/user.png">
-                <img @click="edit" v-if="appid" :src="img">
-                <p @click="edit" class="one" v-if="appid">{{name}}</p>
-                <p @click="edit" class="two" v-if="appid">{{mobile || ''}}</p>
+                <img v-if="appid" :src="img || user.avatarUrl">
+                <p class="one" v-if="appid">{{name || user.username || ''}}</p>
+                <p class="two" v-if="appid">{{mobile || ''}}</p>
             </div>
-            <div class="right" @click="edit" v-if='myself && appid'>
-                <p>未完善</p>
+            <div class="right" @click="edit">
+                <p v-if='myself && appid'>未完善</p>
                 <img src="/static/images/right.png" alt="">
             </div>
         </section>
@@ -37,6 +37,7 @@ export default {
         bottomNavigationBar,
         navigationBar,
     },
+    prop:['user'],
     data() {
         return {
             mobile:'',
@@ -66,8 +67,8 @@ export default {
     },
     mounted() {
         let This = this
-        This.img = wx.getStorageSync('avatarUrl')
-        This.mobile = wx.getStorageSync('mobile') 
+        This.img = wx.getStorageSync('avatarUrl') 
+        This.mobile = wx.getStorageSync('mobile')
         This.name = wx.getStorageSync('username')
         This.appid = wx.getStorageSync('appid')
         fly.post('/user/getUserDetail').then(function (res) {

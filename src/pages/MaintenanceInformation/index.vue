@@ -33,7 +33,7 @@
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                    <p @click="showTime" style="color:#5f5f5f;height:70rpx">{{time}}</p> 
+                    <p @click="showTime" style="color:#5f5f5f;height:70rpx">{{time1}}</p> 
                     <mp-datepicker ref="mpDatePicker" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div>
 
@@ -45,12 +45,12 @@
 
                 <div class="get-block">
                     <p class="title">维保记录标题</p>
-                    <input type="text" v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
+                    <input type="text" style="color:#5f5f5f" v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" v-model="explain" style="color:#5f5f5f" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
 
                 <div class="img-block">
@@ -64,12 +64,13 @@
                         @uploadDelete="uploadDelete"
                         ref="uploader"
                         :showTip=false
-                        :maxLength=1
-                        :isMaxHiddenChoose=true
+                        :maxLength=3
+                        :count=1
+                        :isMaxHiddenChoose=false
                     ></mp-uploader>
                 </div>
                 <div>
-                    <button class="confirm" @click="submitEquip">添加维保记录111</button>
+                    <button class="confirm" @click="submitEquip">添加维保记录</button>
                 </div>
                 <!-- <p class="title">
                     建筑业优秀班组数据库是建造工平台提供的服务，点击提交即表示同意
@@ -96,15 +97,14 @@ export default {
 
     data() {
         return {
-            type: "",
-            type1:'',
+            type: 1,
+            type1:'请选择类型',
             equip_code: "",
-            time: "",
-            time1:'',
+            time: "请选择时间",
+            time1:'请选择时间',
             notes: "",
-            status: "",
-            status1:'',
-            time: '',
+            status: 1,
+            status1:'请选择状态',
             TypeMode: "selector",
             arrayBuffer :'',
             imgData:[],
@@ -148,10 +148,26 @@ export default {
         };
     },
     mounted() {
+        
         let This = this
+        This.equip_code = ''
+        This.type1 = ''
+        This.status1 = ''
+        This.notes = ''
+        This.explain = ''
+        this.$refs.uploader.clearFiles()
+
+        let now = new Date();
+        let year = now.getFullYear()
+        let mon = now.getMonth() + 1
+        let day = now.getDate()
+        let year1 = year + '-' + mon + '-'  + day
+        console.log(year1)
+        This.notes = '维保记录 ' + year1 
+        This.time1 = year1 
         let data1 = {
             code:'maintain_type',
-            isShowAll:1
+            isShowAll:2
         }
         fly.post('/common/getSelectDiction',data1).then(function (res) {
             let data = res.response
@@ -164,7 +180,7 @@ export default {
         })
         let data2 = {
             code:'maintain_status',
-            isShowAll:1
+            isShowAll:2
         }
         fly.post('/common/getSelectDiction',data2).then(function (res) {
             let data = res.response
@@ -187,9 +203,11 @@ export default {
             this.$refs.mpDatePicker.show();
         },
         GetQbCode() {
+            let This = this
             wx.scanCode({
                 success(res) {
                     console.log(res)
+                    This.equip_code = res.result
                 }
             })
         },
@@ -214,7 +232,7 @@ export default {
                 success (res){
                     const data = JSON.parse(res.data)
                     console.log(data)
-                    let jdata = JSON.stringify({"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null})
+                    let jdata = {"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null} 
                     This.imgData.push(jdata)
                     //do something
                 }
@@ -233,14 +251,6 @@ export default {
         },
         submitEquip(){
             let This = this
-            if(!This.type){
-                wx.showToast({
-                    title: "维保类型不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
             if(!This.equip_code){
                 wx.showToast({
                     title: "设备编号不能为空",
@@ -252,22 +262,6 @@ export default {
             if(!This.time){
                 wx.showToast({
                     title: "姓名不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
-            if(!This.explain){
-                wx.showToast({
-                    title: "说明不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
-            if(!This.status){
-                wx.showToast({
-                    title: "状态不能为空",
                     icon: "none",
                     duration: 2000
                 });
@@ -289,7 +283,7 @@ export default {
                 status:This.status,
                 title:This.notes,
                 explain:This.explain,
-                images:This.imgData
+                images:JSON.stringify(This.imgData)
             }
             fly.post('/maintain/saveMaintain',data).then(function (res) {
                 console.log(res)
@@ -319,7 +313,7 @@ export default {
         onTypeConfirm(e) {
             console.log(e);
             let This = this
-            This.type = e.index[0]
+            This.type = e.value[0]
             This.type1 = e.label
         },
         onTypeChange(e) {
@@ -344,7 +338,7 @@ export default {
         onStatusConfirm(e) {
             console.log(e);
             let This = this
-            This.status = e.index[0]
+            This.status = e.value[0]
             This.status1 = e.label
         },
         onStatusChange(e) {
@@ -370,6 +364,9 @@ export default {
             .get-code {
                 display: flex;
                 justify-content: space-between;
+                input{
+                    width:100%;
+                }
                 img{
                     height: 39rpx;
                     width: 45rpx;

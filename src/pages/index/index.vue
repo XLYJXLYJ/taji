@@ -32,11 +32,11 @@
         </div>
 
         <div class="my" v-if="!bottomId">
-            <my></my>
+            <my :user='user'></my>
         </div>
 
         <section class="add">
-            <bottomNavigationBar :selectNavIndex="selectNavIndex" @indexId='indexFuc'></bottomNavigationBar>
+            <bottomNavigationBar :selectNavIndex="selectNavIndex" @indexId='indexFuc' @userMessage='userMessage'></bottomNavigationBar>
         </section>
     </div>
 </template>
@@ -77,7 +77,8 @@ export default {
             ],
             appid:'',
             bottomId:true,
-            selectNavIndex:0
+            selectNavIndex:0,
+            user:''
         };
     },
     onShow(){
@@ -124,25 +125,40 @@ export default {
                 This.bottomId = false
             }
         },
+        userMessage(data){
+            let This = this
+            console.log('6666666666666666666666666')
+            console.log(data)
+            This.user = data
+            This.appid = wx.getStorageSync('appid')
+            // wx.navigateTo({
+            //     url:'/pages/index/main'
+            // });
+        },
         getUserInfo (e) {
             let This = this
-            let userInfo = e.mp.detail
-            console.log(e)
-            let data = {
-                sessionKey:wx.getStorageSync('sessionKey'),
-                encryptedData:userInfo.encryptedData,
-                iv:userInfo.iv
+            
+            if(e.mp.detail.errMsg == 'getUserInfo:fail auth deny'){
+                console.log('拒绝')
+            }else{
+                let userInfo = e.mp.detail
+                console.log(e)
+                let data = {
+                    sessionKey:wx.getStorageSync('sessionKey'),
+                    encryptedData:userInfo.encryptedData,
+                    iv:userInfo.iv
+                }
+                fly.post('/user/getWxUserInfo',data).then(function (res) {
+                    console.log(res)
+                    wx.setStorageSync('appid', res.response.watermark.appid)
+                    wx.setStorageSync('avatarUrl', res.response.avatarUrl)
+                    wx.setStorageSync('username', res.response.nickName)
+
+                    // This.getData()
+                })
             }
-            fly.post('/user/getWxUserInfo',data).then(function (res) {
-                console.log(res)
-                wx.setStorageSync('appid', res.response.watermark.appid)
-                wx.setStorageSync('avatarUrl', res.response.avatarUrl)
-                wx.setStorageSync('username', res.response.nickName)
-                wx.navigateTo({
-                    url:'/pages/index/main'
-                });
-                // This.getData()
-            })
+
+
         },
         getData(){
             let data ={

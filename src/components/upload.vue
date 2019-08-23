@@ -6,7 +6,7 @@
     </div>
   </div>
 </template>
- imagePath
+
 <script>
     export default {
       props:["width","height","max","srcs"],

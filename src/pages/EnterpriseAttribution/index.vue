@@ -26,8 +26,10 @@
                             v-model="companyNumber"
                             placeholder="请输入编号"
                             autocomplete="off"
+                            placeholder-style="color:#dadada;"
+                            style="color:black"
                         />
-                        <p @click="cancel" v-if="companyNumber">解除绑定</p>
+                        <p @click="cancel" v-if="iscompanyNumber">解除绑定</p>
                     </div>
                 </div>
                 <p class="title-explain">
@@ -69,6 +71,7 @@ export default {
             isModel:'',
             companyName: "",
             companyNumber: "",
+            iscompanyNumber: "",
             timer:null
         };
     },
@@ -76,7 +79,8 @@ export default {
         let This = this
         fly.post('/user/getBelongCompany').then(function (res) {
             let resData = res.response
-            This.companyNumber = resData.companyNumber
+            This.companyNumber = resData.companyNumber || ''
+            This.iscompanyNumber = resData.companyNumber
             This.companyName = resData.companyName || '-'
         })
     },
@@ -95,11 +99,11 @@ export default {
                 clearTimeout(This.timer)
             }
             let data = {
-                terminalNumber:This.companyNumber
+                companyNumber:This.companyNumber
             }
             This.timer = setTimeout(function () {
-                fly.post('/maintain/getTerminalByNumber',data).then(function (res) {
-                    This.companyName = res.response.createCompany
+                fly.post('/user/searchCompByCode',data).then(function (res) {
+                    This.companyName = res.response[0].companyName
                 }) 
                 This.timer = undefined;
             },2000)
@@ -122,8 +126,24 @@ export default {
             let data = {
                 companyNumber:This.companyNumber
             }
-            fly.post('/user/searchCompByCode',data).then(function (res) {
-                let resData = res.response
+            fly.post('/user/unBindCompany',data).then(function (res) {
+                if(res.status!=200){
+                    wx.showToast({
+                        title: res.message,
+                        icon: "none",
+                        duration: 2000
+                    });
+                    return;
+                }else{
+                    wx.showToast({
+                        title: "解绑成功",
+                        icon: "none",
+                        duration: 2000
+                    });
+                    wx.reLaunch({
+                        url:'/pages/index/main'
+                    });
+                }
             }) 
         },
         cancel(){
@@ -248,12 +268,12 @@ export default {
         margin-top: 40rpx;
         .title-explain{
             font-size: 28rpx;
-            color: rgb(204, 204, 204);
+            color: #969696;
             font-family: "PingFangSC-Regular";
             margin-bottom: 48rpx;
         }
         .get-block {
-            border-bottom: 1px solid rgb(204, 204, 204);
+            border-bottom: 1px solid #e5e5e5;
             margin-bottom: 16rpx;
             .get-code {
                 display: flex;
@@ -264,7 +284,7 @@ export default {
                 }
             }
             p{
-                color: rgb(24,144,255);
+                color: black;
                 font-size: 28rpx;
                 font-family: "PingFangSC-Regular";
             }
@@ -275,7 +295,7 @@ export default {
         }
         .title {
             font-size: 28rpx;
-            color: block;
+            color: black;
             font-family: "PingFangSC-Regular";
             margin-bottom: 16rpx;
         }
