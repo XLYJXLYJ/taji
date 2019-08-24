@@ -2,23 +2,23 @@
     <div class="card-contain" v-if='isShow'>
         <ul>
             <p class="atitle">历史维保信息</p>
-            <div class="img-contain" v-if="!list.length">
+            <!-- <div class="img-contain" v-if="!list">
                 <img src="/static/images/none.png">
-            </div>
-            <div v-if="list.legnth">
-                <li v-for="(item,index) in list" :key="index">
+            </div> -->
+            <div>
+                <li v-for="(item,index) in list" :key="index" @click="goIntro(item.id)">
                     <div class="one">
                         <span class="identifier">编号 {{item.maintainNumber}}</span>
                         <span style="color:rgba(0,0,0,0.45)"> / </span>
-                        <span class="name">{{item.terminalNumber}}</span>
+                        <span class="name">{{item.terminalRemarkName || ''}}</span>
                     </div>
                     <div class="two">
-                        <span class="repair">{{item.type}} | 维保记录 {{item.maintainTime}}</span>
+                        <span class="repair">{{item.typeName || ''}} | {{item.title}}</span>
                         <img class="go-icon" src="/static/images/right.png" alt="">
                     </div>
                     <div class="three">
-                        <span>{{item.updateTime}}</span>
-                        <span>深圳市2222</span>
+                        <span>{{item.maintainTime}}</span>
+                        <span>{{item.fullAreaName || ''}}</span>
                     </div>
                 </li>
             </div>
@@ -30,10 +30,6 @@
 import fly from "@/services/WxApi";
 export default {
     props: ["text"],
-    mounted() {
-        let This = this
-        This.getData()
-    },
     data(){
         return {
             id:'',
@@ -44,16 +40,24 @@ export default {
         }
     },
     onLoad: function (options) {
-        console.log(options)
         let This = this
+        This.page = 1
+        This.list = ''
+        This.getData()
         This.id = options.id
     },
     onReachBottom () {
         let This = this
         This.page = This.page + 1
+        console.log(This.page)
         This.getData()
     },
     methods: {
+        goIntro(id){
+            wx.navigateTo({
+                url:'/pages/indexDetail/main?id=' + id
+            });
+        },
         getData(){
             let This = this
             if(This.isNull == null || This.isNull.length == 0){
@@ -69,23 +73,32 @@ export default {
             }
             let data = {
                 id:This.id || 5,
-                pageNo:This.page || 1,
-                pageSize:5
+                pageNo: This.page,
+                pageSize:20
             }
             fly.post('/maintain/getHistoryMaintain',data).then(function (res) {
-                console.log(res)
                 wx.hideLoading();
                 This.isNull = res.response
                 if(This.page == 1){
-                    This.isShow = res.response
+                   This.isShow = res.response.length==0?false:true
                    This.list = res.response
+                    This.list.map(
+                        function(item,index){
+                            let da = new Date(item.maintainTime);
+                            let year = da.getFullYear()+'';
+                            let month = da.getMonth()+1+'';
+                            let date = da.getDate()+' ';
+                        //     let h = da.getHours()+'';
+                        //     let m = da.getMinutes()+'';
+                        //     let s = da.getSeconds()+'';
+                            item.maintainTime = [year,month,date].join('-');
+                        }
+                    )
                 }else{
                     //    This.list.push(JSON.parse(JSON.stringify([res.list])))
                     //    This.list = This.list.concat(res.list)
                     This.list.push(...res.response)
                 } 
-                console.log('list值')
-                console.log(This.list)
             })
         }
     },

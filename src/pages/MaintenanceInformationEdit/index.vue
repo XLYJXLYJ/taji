@@ -24,7 +24,7 @@
                             type="text"
                             v-model="maintainNumber"
                             autocomplete="off"
-                            disable
+                            disabled
                         />
                     </div>
                 </div>
@@ -36,7 +36,8 @@
                             type="text"
                             v-model="equip_code"
                             autocomplete="off"
-                            disable
+                            disabled
+                            style="width:100%"
                         />
                     </div>
                 </div>
@@ -48,7 +49,7 @@
                             type="text"
                             v-model="terminalRemarkName"
                             autocomplete="off"
-                            disable
+                            disabled
                         />
                     </div>
                 </div>
@@ -86,7 +87,7 @@
               
                 
                 
-                <div class="img-block">
+                <div class="img-block" v-if='isImg'>
                     <p
                         class="title"
                         style="margin-bottom:20rpx;"
@@ -141,6 +142,7 @@ export default {
             TypeMode: "selector",
             arrayBuffer :'',
             imgData:[],
+            isImg:false,
             typePickerValueArray:[
                 {
                     label: '类型一',
@@ -181,7 +183,6 @@ export default {
         };
     },
     onLoad: function (options) {
-        console.log(options)
         let This = this
         This.id = options.id
         let data0 = {
@@ -189,11 +190,11 @@ export default {
         }
         fly.post('/maintain/getMaintainDetail',data0).then(function (res) {
             This.getData = res.response
-            console.log(res)
             This.maintainNumber = This.getData.maintainRecord.maintainNumber
             This.terminalRemarkName = This.getData.maintainRecord.terminalRemarkName
             This.id = This.getData.maintainRecord.id
             This.imgData = This.getData.maintainRecord.images
+            This.isImg = true
             This.equip_type =This.getData.maintainRecord.type
             This.typeName = This.getData.maintainRecord.typeName
             This.type = This.getData.maintainRecord.type
@@ -220,7 +221,6 @@ export default {
         }
         fly.post('/common/getSelectDiction',data1).then(function (res) {
             let data = res.response
-            console.log(res)
             let arr = []
             res.response.map((value,index,arry)=>{
                 arr.push({ 'label': value.name, 'value': value.code})
@@ -233,7 +233,6 @@ export default {
         }
         fly.post('/common/getSelectDiction',data2).then(function (res) {
             let data = res.response
-            console.log(res)
             let arr = []
             res.response.map((value,index,arry)=>{
                 arr.push({ 'label': value.name, 'value': value.code})
@@ -244,28 +243,24 @@ export default {
     },
     methods: {
         chooseImg(res){
-            console.log(res)
             let This = this
-            res.all.map(
-                function(item,index){
-                    console.log(item)
-                    item = JSON.stringify(item)
-                    console.log(item)
-                    This.imgData.push(item)
-                }
-            )
-            console.log(res.all)
-            // This.imgData = res.all
+            console.log(res)
+            // res.all.map(
+            //     function(item,index){
+            //         This.imgData.push(item)
+            //     }
+            // )
+            This.imgData.push(res.all)
         },
         deleteImg(res){
-            console.log(res)
             let This = this
-            res.map(
-                function(item,index){
-                    item = JSON.stringify(item)
-                    This.imgData.push(item)
-                }
-            )
+            console.log(res)
+            This.imgData = res
+            // res.map(
+            //     function(item,index){
+            //         This.imgData.push(item)
+            //     }
+            // )
         },
         dele(){
             let This = this
@@ -285,15 +280,13 @@ export default {
         GetQbCode() {
             wx.scanCode({
                 success(res) {
-                    console.log(res)
+ 
                 }
             })
         },
         upLoadSuccess(successRes){
             let This = this
             let size = successRes.tempFiles[0].size
-            console.log(successRes)
-            console.log(size)
             const tempFilePaths = successRes.tempFilePaths
             let token = wx.getStorageSync('token') || '';
             wx.uploadFile({
@@ -309,7 +302,6 @@ export default {
                 },
                 success (res){
                     const data = JSON.parse(res.data)
-                    console.log(data)
                     let jdata = {"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null}
                     This.imgData.push(jdata)
                     //do something
@@ -317,15 +309,11 @@ export default {
             })
         },
         upLoadFail(errMsg){
-            console.log(errMsg)
         },
         uploadDelete(DeleteRes){
-            console.log(DeleteRes)
             let This = this
             let index = DeleteRes.index
-            This.imgMessage.splice(index,1)
-            console.log(This.imgMessage)          
-
+            This.imgMessage.splice(index,1)       
         },
         submitEquip(){
             let This = this
@@ -353,14 +341,6 @@ export default {
                 });
                 return;
             }
-            if(!This.explain){
-                wx.showToast({
-                    title: "说明不能为空",
-                    icon: "none",
-                    duration: 2000
-                });
-                return;
-            }
             if(!This.statusName){
                 wx.showToast({
                     title: "状态不能为空",
@@ -377,9 +357,10 @@ export default {
                 });
                 return;
             }
+            console.log(This.imgData)
             if(!This.imgData){
                 wx.showToast({
-                    title: "请上传在职证明",
+                    title: "请上传现场照片",
                     icon: "none",
                     duration: 2000
                 });
@@ -395,7 +376,7 @@ export default {
                 images:JSON.stringify(This.imgData)
             }
             fly.post('/maintain/saveMaintain',data).then(function (res) {
-                console.log(res)
+
                 if(res.status!=200){
                     wx.showToast({
                         title: res.message,
@@ -416,41 +397,36 @@ export default {
             })
         },
         onTypeConfirm(e) {
-            console.log(e);
             let This = this
-            This.type = e.index[0]
+            This.type = e.value[0]
             This.typeName = e.label
         },
         onTypeChange(e) {
-            console.log(e);
+
         },
         onTypeCancel(e) {
-            console.log(e);
+
         },
         onTimeConfirm(e) {
-            console.log(e);
             let This = this
             This.time = e.label
             This.time1 = e.value.join("-")
-            console.log(This.time1)
         },
         onTimeChange(e) {
-            console.log(e);
+  
         },
         onTimeCancel(e) {
-            console.log(e);
+  
         },
         onStatusConfirm(e) {
-            console.log(e);
             let This = this
-            This.status = e.index[0]
+            This.status = e.value[0]
             This.statusName = e.label
         },
         onStatusChange(e) {
-            console.log(e);
         },
         onStatusCancel(e) {
-            console.log(e);
+
         },
         confirmSend(){
             let This = this
@@ -458,7 +434,6 @@ export default {
                 id:This.id
             }
             fly.post('/maintain/deleteMaintain',data).then(function (res) {
-                console.log(res)
                 if(res.status!=200){
                     wx.showToast({
                         title: res.message,
@@ -542,7 +517,7 @@ export default {
         button {
             width: 295rpx;
             height: 96rpx;
-            margin-top: 40rpx;
+            margin-top: 80rpx;
             font-size: 34rpx;
             color: black;
             font-family: "PingFangSC-Medium";

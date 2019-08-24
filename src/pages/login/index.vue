@@ -82,7 +82,6 @@ export default {
                 if (this.time == 0) {
                     this.time = 60;
                     this.Timer();
-                    console.log("发送请求");
                     this.send()
                 } else {
                     console.log("不能重复发送验证码");
@@ -119,7 +118,6 @@ export default {
                 code:This.phone_code
             }
             fly.post('/user/sendSmsBindUser',data).then(function (res) {
-                console.log(res)
                if(res.status!=200){
                     wx.showToast({
                         title: res.message,

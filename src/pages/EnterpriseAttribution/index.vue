@@ -71,6 +71,7 @@ export default {
             isModel:'',
             companyName: "",
             companyNumber: "",
+            unCompanyNumber:'',
             iscompanyNumber: "",
             timer:null
         };
@@ -80,6 +81,7 @@ export default {
         fly.post('/user/getBelongCompany').then(function (res) {
             let resData = res.response
             This.companyNumber = resData.companyNumber || ''
+            This.unCompanyNumber = resData.companyNumber
             This.iscompanyNumber = resData.companyNumber
             This.companyName = resData.companyName || '-'
         })
@@ -87,7 +89,6 @@ export default {
     methods: {
          //  弹框取消
         tapCancel() {
-            console.log("取消");
             this.isAlert = this.isAlert
             this.changeModel = !this.changeModel;
             this.isModel = !this.isModel;
@@ -110,7 +111,6 @@ export default {
         },
         //  确认
         confirmSend() {
-            console.log("确认");
             let This = this
             this.isAlert = !this.isAlert
             this.changeModel = !this.changeModel;
@@ -124,7 +124,7 @@ export default {
                 return;
             }
             let data = {
-                companyNumber:This.companyNumber
+                companyNumber:This.unCompanyNumber
             }
             fly.post('/user/unBindCompany',data).then(function (res) {
                 if(res.status!=200){
@@ -186,6 +186,9 @@ export default {
                         title: "绑定成功",
                         icon: "none",
                         duration: 2000
+                    });
+                    wx.reLaunch({
+                        url:'/pages/index/main'
                     });
                 }
             }) 

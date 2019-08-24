@@ -22,13 +22,12 @@ export default {
     methods: {
         //  弹框取消
         tapCancel() {
-            console.log("取消");
             this.changeModel = !this.changeModel;
             this.isModel = !this.isModel;
         },
         //  确认
         confirmSend() {
-            console.log("确认");
+
             this.changeModel = !this.changeModel;
             this.isModel = !this.isModel;
         },

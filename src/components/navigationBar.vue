@@ -63,7 +63,6 @@ export default {
         const self = this;
         wx.getSystemInfo({
             success(system) {
-                console.log(`system:`, system);
                 self.statusBarHeight = system.statusBarHeight;
                 self.platform = system.platform;
                 self.model = system.model;
@@ -82,7 +81,7 @@ export default {
         });
     },
     mounted() {
-        console.log(`this.backVisible:`, this.backVisible);
+
     },
     methods: {
         backClick() {

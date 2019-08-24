@@ -21,7 +21,7 @@
                     </block>
                 </swiper>
             </section>
-            <section class="maintenance" v-if="appid">
+            <section class="maintenance" v-if="appid" style="margin-bottom:130rpx;">
                 <p class="record">维保记录</p>
                 <card></card>
             </section>
@@ -35,7 +35,7 @@
             <my :user='user'></my>
         </div>
 
-        <section class="add">
+        <section class="add" v-if="appid">
             <bottomNavigationBar :selectNavIndex="selectNavIndex" @indexId='indexFuc' @userMessage='userMessage'></bottomNavigationBar>
         </section>
     </div>
@@ -57,7 +57,7 @@ export default {
         my
     },
     onShareAppMessage: (res) => {
-        console.log(res)
+
     },
     data() {
         return {
@@ -93,7 +93,7 @@ export default {
         }
     },
     onShareAppMessage: (res) => {
-        console.log(res)
+
     },
     methods: {
         login(){
@@ -111,7 +111,7 @@ export default {
                                 wx.setStorageSync('token', res.response.token)
                             })
                     } else {
-                        console.log('登录失败！' + res.errMsg)
+
                     }
                 }
             })
@@ -127,8 +127,6 @@ export default {
         },
         userMessage(data){
             let This = this
-            console.log('6666666666666666666666666')
-            console.log(data)
             This.user = data
             This.appid = wx.getStorageSync('appid')
             // wx.navigateTo({
@@ -139,21 +137,21 @@ export default {
             let This = this
             
             if(e.mp.detail.errMsg == 'getUserInfo:fail auth deny'){
-                console.log('拒绝')
+
             }else{
                 let userInfo = e.mp.detail
-                console.log(e)
                 let data = {
                     sessionKey:wx.getStorageSync('sessionKey'),
                     encryptedData:userInfo.encryptedData,
                     iv:userInfo.iv
                 }
                 fly.post('/user/getWxUserInfo',data).then(function (res) {
-                    console.log(res)
                     wx.setStorageSync('appid', res.response.watermark.appid)
                     wx.setStorageSync('avatarUrl', res.response.avatarUrl)
                     wx.setStorageSync('username', res.response.nickName)
-
+                    wx.navigateTo({
+                        url:'/pages/index/main'
+                    });
                     // This.getData()
                 })
             }
@@ -166,7 +164,6 @@ export default {
                 pageSize:20
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {
-                console.log(res)
                 // This.getData()
             })
         }

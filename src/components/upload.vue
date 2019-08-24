@@ -18,6 +18,7 @@
       },
       mounted(){
         this.urls = this.srcs || [];
+        console.log(this.urls)
       },
       methods:{
         uploadImg(){
@@ -31,27 +32,28 @@
             //   res.tempFilePaths.forEach(v=>{
             //     This.urls.push(v);
             //   });
-                let size = res.tempFiles[0].size
-                wx.uploadFile({
-                    url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                    filePath: res.tempFilePaths[0],
-                    name: 'file',
-                    header: {
-                        'content-type': 'multipart/form-data',
-                        'Authorization':token
-                    },
-                    formData:{
-                        'isNeedHttp':1
-                    },
-                    success (res){
-                        const data = JSON.parse(res.data)
-                        console.log(data)
-                        let jdata = {createTime:null,fileSize:size,id:null,imagePath:data.response,mainId:null,module:null,type:1,user:null}
-                        This.urls.push(jdata)
-                        //do something
-                        This.$emit("choosed",{all:This.urls,currentUpload:res.tempFilePaths});
-                    }
-                })
+                for(let i=0;i<=res.tempFilePaths.length;i++){
+                  // let size = res.tempFiles[i].size
+                  wx.uploadFile({
+                      url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                      filePath: res.tempFilePaths[i],
+                      name: 'file',
+                      header: {
+                          'content-type': 'multipart/form-data',
+                          'Authorization':token
+                      },
+                      formData:{
+                          'isNeedHttp':1
+                      },
+                      success (resdata){
+                          const data = JSON.parse(resdata.data)
+                          let jdata = {createTime:null,fileSize:res.tempFiles[i].size,id:null,imagePath:data.response,mainId:null,module:null,type:1,user:null}
+                          // This.urls.push(jdata)
+                          This.$emit("choosed",{all:jdata,currentUpload:res.tempFilePaths[i]});
+                          //do something
+                      }
+                  })
+                }
 
             //   This.$emit("choosed",{all:This.urls,currentUpload:res.tempFilePaths});
             }

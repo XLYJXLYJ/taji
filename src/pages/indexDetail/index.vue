@@ -3,18 +3,21 @@
         <section class="sec-nav">
             <goBackNav title="维保详情"></goBackNav>
         </section>
-        <section class="img-contain" v-if="getData.terminal">
-            <equipDetail :getData='getData'></equipDetail>
-        </section>
-        <section class="img-contain" v-if="getData.tower">
-             <equipMessage :getData='getData'></equipMessage>
-        </section>
-        <section>
-            <editMessage :getData='getData'></editMessage>
-        </section>
-        <section>
-            <historyCard></historyCard>
-        </section>
+        <div v-if="isShow">
+            <section class="img-contain" v-if="getData.terminal">
+                <equipDetail :getData='getData'></equipDetail>
+            </section>
+            <section class="img-contain" v-if="getData.tower">
+                <equipMessage :getData='getData'></equipMessage>
+            </section>
+            <section v-if="getData.maintainRecord">
+                <editMessage :getData='getData'></editMessage>
+            </section>
+            <section>
+                <historyCard></historyCard>
+            </section>
+        </div>
+
     </div>
 </template>
 
@@ -38,7 +41,6 @@ export default {
         editMessage
     },
     onLoad: function (options) {
-        console.log(options)
         let This = this
         This.id = options.id
         let data1 = {
@@ -46,12 +48,17 @@ export default {
         }
         fly.post('/maintain/getMaintainDetail',data1).then(function (res) {
             This.getData = res.response
-            console.log(res)
+            
+            let da = new Date(This.getData.maintainRecord.maintainTime);
+            let year = da.getFullYear()+'';
+            let month = da.getMonth()+1+'';
+            let date = da.getDate()+' ';
+        //     let h = da.getHours()+'';
+        //     let m = da.getMinutes()+'';
+        //     let s = da.getSeconds()+'';
+            This.getData.maintainRecord.maintainTime = [year,month,date].join('-');
+            This.isShow = true
         })
-    },
-    created() {
-        let This = this
-
     },
     data() {
         return {
@@ -70,7 +77,8 @@ export default {
                 }
             ],
             id:'',
-            getData:''
+            getData:'',
+            isShow:false
         };
     }
 };

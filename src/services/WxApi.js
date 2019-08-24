@@ -9,14 +9,12 @@ fly.interceptors.request.use((request) => {
   let token = wx.getStorageSync('token') || '';
 	if (token) {
     request.headers['Authorization'] = token;
-    console.log(token)
 	}
   return request;
 })
 
 fly.interceptors.response.use(res => {
   if (res.status == 200) {
-    console.log(res)
     if(res.data.status!=200){
         wx.showToast({
           title: res.data.message,

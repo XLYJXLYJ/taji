@@ -34,7 +34,7 @@
                 <div class="get-block">
                     <p class="title">维保日期</p>
                     <p @click="showTime" style="color:#5f5f5f;height:70rpx">{{time1}}</p> 
-                    <mp-datepicker ref="mpDatePicker" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
+                    <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div>
 
                 <div class="get-block">
@@ -53,31 +53,32 @@
                     <input type="text" v-model="explain" style="color:#5f5f5f" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
 
-                <div class="img-block">
-                    <p
-                        class="title"
-                        style="margin-bottom:20rpx;"
-                    >现场照片</p>
-                    <mp-uploader
-                        @upLoadSuccess="upLoadSuccess"
-                        @upLoadFail="upLoadFail"
-                        @uploadDelete="uploadDelete"
-                        ref="uploader"
-                        :showTip=false
-                        :maxLength=3
-                        :count=1
-                        :isMaxHiddenChoose=false
-                    ></mp-uploader>
+                <div class="img-control">
+                    <div class="img-block">
+                        <p
+                            class="title"
+                            style="margin-bottom:20rpx;"
+                        >现场照片</p>
+                        <mp-uploader
+                            @upLoadSuccess="upLoadSuccess"
+                            @upLoadFail="upLoadFail"
+                            @uploadDelete="uploadDelete"
+                            ref="uploader"
+                            :showTip=false
+                            :maxLength=9
+                            :count=9
+                            :isMaxHiddenChoose=true
+                        ></mp-uploader>
+                    </div>
                 </div>
-                <div>
-                    <button class="confirm" @click="submitEquip">添加维保记录</button>
-                </div>
+
                 <!-- <p class="title">
                     建筑业优秀班组数据库是建造工平台提供的服务，点击提交即表示同意
                     <span style="color:rgb(252 184 19)">《建造工用户协议》</span>
                 </p> -->
             </form>
         </div>
+        <button class="confirm" @click="submitEquip">添加维保记录</button>
     </div>
 </template>
 
@@ -151,8 +152,8 @@ export default {
         
         let This = this
         This.equip_code = ''
-        This.type1 = ''
-        This.status1 = ''
+        This.type1 = '请选择类型'
+        This.status1 = '请选择状态'
         This.notes = ''
         This.explain = ''
         this.$refs.uploader.clearFiles()
@@ -162,7 +163,6 @@ export default {
         let mon = now.getMonth() + 1
         let day = now.getDate()
         let year1 = year + '-' + mon + '-'  + day
-        console.log(year1)
         This.notes = '维保记录 ' + year1 
         This.time1 = year1 
         let data1 = {
@@ -171,7 +171,6 @@ export default {
         }
         fly.post('/common/getSelectDiction',data1).then(function (res) {
             let data = res.response
-            console.log(res)
             let arr = []
             res.response.map((value,index,arry)=>{
                 arr.push({ 'label': value.name, 'value': value.code})
@@ -184,7 +183,6 @@ export default {
         }
         fly.post('/common/getSelectDiction',data2).then(function (res) {
             let data = res.response
-            console.log(res)
             let arr = []
             res.response.map((value,index,arry)=>{
                 arr.push({ 'label': value.name, 'value': value.code})
@@ -206,7 +204,6 @@ export default {
             let This = this
             wx.scanCode({
                 success(res) {
-                    console.log(res)
                     This.equip_code = res.result
                 }
             })
@@ -214,40 +211,36 @@ export default {
         upLoadSuccess(successRes){
             let This = this
             let size = successRes.tempFiles[0].size
-            console.log(successRes)
-            console.log(size)
             const tempFilePaths = successRes.tempFilePaths
             let token = wx.getStorageSync('token') || '';
-            wx.uploadFile({
-                url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                filePath: tempFilePaths[0],
-                name: 'file',
-                header: {
-                    'content-type': 'multipart/form-data',
-                    'Authorization':token
-                },
-                formData:{
-                    'isNeedHttp':1
-                },
-                success (res){
-                    const data = JSON.parse(res.data)
-                    console.log(data)
-                    let jdata = {"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null} 
-                    This.imgData.push(jdata)
-                    //do something
-                }
-            })
+            for(let i=0;i<=tempFilePaths.length;i++){
+                wx.uploadFile({
+                    url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                    filePath: tempFilePaths[i],
+                    name: 'file',
+                    header: {
+                        'content-type': 'multipart/form-data',
+                        'Authorization':token
+                    },
+                    formData:{
+                        'isNeedHttp':1
+                    },
+                    success (res){
+                        const data = JSON.parse(res.data)
+                        let jdata = {"createTime":null,"fileSize":size,"id":null,"imagePath":data.response,"mainId":null,"module":null,"type":1,"user":null} 
+                        This.imgData.push(jdata)
+                        //do something
+                    }
+                })
+            }
         },
         upLoadFail(errMsg){
-            console.log(errMsg)
+
         },
         uploadDelete(DeleteRes){
-            console.log(DeleteRes)
             let This = this
             let index = DeleteRes.index
-            This.imgMessage.splice(index,1)
-            console.log(This.imgMessage)          
-
+            This.imgMessage.splice(index,1)       
         },
         submitEquip(){
             let This = this
@@ -286,10 +279,7 @@ export default {
                 images:JSON.stringify(This.imgData)
             }
             fly.post('/maintain/saveMaintain',data).then(function (res) {
-                console.log(res)
-                console.log('到底是成功还是失败呢')
                 if(res.status!=200){
-                    console.log('添加成功')
                     wx.showToast({
                         title: res.message,
                         icon: "none",
@@ -297,7 +287,6 @@ export default {
                     });
                     return;
                 }else{
-                    console.log('添加失败')
                     wx.showToast({
                         title: "申请加入成功",
                         icon: "none",
@@ -311,41 +300,34 @@ export default {
             })
         },
         onTypeConfirm(e) {
-            console.log(e);
             let This = this
             This.type = e.value[0]
             This.type1 = e.label
         },
         onTypeChange(e) {
-            console.log(e);
+
         },
         onTypeCancel(e) {
-            console.log(e);
+
         },
         onTimeConfirm(e) {
-            console.log(e);
             let This = this
             This.time = e.label
             This.time1 = e.value.join("-")
-            console.log(This.time1)
         },
         onTimeChange(e) {
-            console.log(e);
+
         },
         onTimeCancel(e) {
-            console.log(e);
         },
         onStatusConfirm(e) {
-            console.log(e);
             let This = this
             This.status = e.value[0]
             This.status1 = e.label
         },
         onStatusChange(e) {
-            console.log(e);
         },
         onStatusCancel(e) {
-            console.log(e);
         }
     }
 };
@@ -356,6 +338,7 @@ export default {
     height: 100%;
     .contain {
         width: 670rpx;
+        height: auto;
         margin: 0 auto;
         margin-top: 40rpx;
         .get-block {
@@ -373,27 +356,38 @@ export default {
                 }
             }
         }
-        .img-block {
-            width: 100%;
-            height: 330rpx;
-        }
-        .title {
-            font-size: 28rpx;
-            color: block;
-            font-family: "PingFangSC-Regular";
-            margin-bottom: 16rpx;
-        }
-        input {
-            padding-bottom: 16rpx;
-        }
-        .confirm {
-            background: #1890FF;
-            color: #fff;
-            margin-bottom: 24rpx;
-            font-size: 34rpx;
-            font-family: "PingFangSC-Medium";
+        .img-control{
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            min-height: 300rpx;
+            .img-block {
+                width: 100%;
+                height: 330rpx;
+                display: block;
+            }
+            .title {
+                font-size: 28rpx;
+                color: block;
+                font-family: "PingFangSC-Regular";
+                margin-bottom: 16rpx;
+            }
+            input {
+                padding-bottom: 16rpx;
+            }
         }
     }
+
+}
+.confirm {
+    background: #1890FF;
+    color: #fff;
+    margin-bottom: 24rpx;
+    font-size: 34rpx;
+    font-family: "PingFangSC-Medium";
+    position: relative;
+    top: 240rpx;
+    width: 670rpx;
 }
 .getCode {
     color: black;

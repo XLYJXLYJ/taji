@@ -111,7 +111,7 @@ export default {
             let This = this
 
             if(e.mp.detail.errMsg == 'getUserInfo:fail auth deny'){
-                console.log('拒绝')
+
             }else{
                 let userInfo = e.mp.detail
                 let data = {
@@ -120,12 +120,18 @@ export default {
                     iv:userInfo.iv
                 }
                 fly.post('/user/getWxUserInfo',data).then(function (res) {
-                    console.log(res)
                     wx.setStorageSync('appid', res.response.watermark.appid)
                     wx.setStorageSync('avatarUrl', res.response.avatarUrl)
                     wx.setStorageSync('username', res.response.nickName)
                     // This.getData()
                     This.$emit('userMessage',res.response)
+                    if(!wx.getStorageSync('tiao')){
+                        wx.setStorageSync('tiao',1)
+                        wx.navigateTo({
+                            url:'/pages/index/main'
+                        });
+                    }
+          
                     // This.onLoad()
                 })
             }

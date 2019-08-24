@@ -20,7 +20,7 @@
                     <div class="get-code">
                         <input
                             type="text"
-                            v-model="equip_code"
+                            v-model="getData.maintainRecord.terminalNumber"
                             placeholder="请输入编号"
                             autocomplete="off"
                             disabled
@@ -30,27 +30,27 @@
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <input type="text" v-model="typeName" disabled placeholder="请选择类型" autocomplete="off" @focus="showType"/>
+                    <input type="text" v-model="getData.maintainRecord.typeName" disabled placeholder="请选择类型" autocomplete="off" @focus="showType"/>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                    <input type="text" v-model="time" disabled placeholder="请选择日期" autocomplete="off" @focus="showTime"/>
+                    <input type="text" v-model="getData.maintainRecord.maintainTime" disabled placeholder="请选择日期" autocomplete="off" @focus="showTime"/>
                 </div>
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <input type="text" v-model="statusName" disabled placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
+                    <input type="text" v-model="getData.maintainRecord.statusName" disabled placeholder="请选择状态" autocomplete="off" @focus="showStatus"/>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保记录标题</p>
-                    <input type="text" v-model="notes" disabled placeholder="请输入维保记录标题" autocomplete="off" />
+                    <input type="text" v-model="getData.maintainRecord.title" disabled placeholder="请输入维保记录标题" autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="explain" disabled placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" v-model="getData.maintainRecord.explain" disabled placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
 
                 <div class="img-block">
@@ -59,7 +59,7 @@
                         style="margin-bottom:20rpx;"
                     >现场照片</p>
                     <ul class="two-ul">
-                        <li class="two-li" v-for="(item,index) in imgs" :key="index">
+                        <li class="two-li" v-for="(item,index) in getData.maintainRecord.images" :key="index">
                             <img :src="item.imagePath" />
                         </li>
                     </ul>
@@ -88,6 +88,7 @@ export default {
         mpDatepicker
     },
     props:["getData"],
+
     data() {
         return {
             equip_type: '',
@@ -100,33 +101,37 @@ export default {
             imgs:[],
             typeName:'',
             statusName:'',
-            notes:''
+            notes:'',
+            isShow:false
         };
     },
-    created() {
+    mounted() {
         let This = this
-        console.log('加载data数据')
-        console.log(This.getData)
-        This.equip_type =This.getData.maintainRecord.type
-        This.typeName = This.getData.maintainRecord.typeName
-        This.id = This.getData.maintainRecord.id
-        This.imgs = This.getData.maintainRecord.images
+        This.$nextTick(
+            function(){
+                This.equip_type =This.getData.maintainRecord.type
+                This.typeName = This.getData.maintainRecord.typeName
+                This.id = This.getData.maintainRecord.id
+                This.imgs = This.getData.maintainRecord.images
 
-        This.equip_code = This.getData.maintainRecord.terminalNumber,
-        This.time = This.getData.maintainRecord.maintainTime
-        let da = new Date(This.time);
-        let year = da.getFullYear()+'';
-        let month = da.getMonth()+1+'';
-        let date = da.getDate()+' ';
-        //let h = da.getHours()+'';
-        //let m = da.getMinutes()+'';
-        //let s = da.getSeconds()+'';
-        This.time = [year,month,date].join('-');
+                This.equip_code = This.getData.maintainRecord.terminalNumber,
+                This.time = This.getData.maintainRecord.maintainTime
+                let da = new Date(This.time);
+                let year = da.getFullYear()+'';
+                let month = da.getMonth()+1+'';
+                let date = da.getDate()+' ';
+                //let h = da.getHours()+'';
+                //let m = da.getMinutes()+'';
+                //let s = da.getSeconds()+'';
+                This.time = [year,month,date].join('-');
+                This.notes = This.getData.maintainRecord.title,
+                This.statusName = This.getData.maintainRecord.statusName
+                This.status = This.getData.maintainRecord.status
+                This.explain = This.getData.maintainRecord.explain || '-'
+                This.isShow = true
+            }
+        )
 
-        This.notes = This.getData.maintainRecord.title,
-        This.statusName = This.getData.maintainRecord.statusName
-        This.status = This.getData.maintainRecord.status
-        This.explain = This.getData.maintainRecord.explain || '-'
     },
     methods: {
         edit(){

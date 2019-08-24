@@ -108,7 +108,6 @@ export default {
         let This = this   
         
         fly.post('/user/getUserDetail').then(function (res) {
-            console.log(res)
             let resData = res.response
             This.userNumber = resData.userNumber
             This.name = resData.fullName
@@ -120,13 +119,11 @@ export default {
     methods: {
         //  弹框取消
         tapCancel() {
-            console.log("取消");
             this.changeModel = !this.changeModel;
             this.isModel = !this.isModel;
         },
         //  确认
         confirmSend() {
-            console.log("确认");
             this.changeModel = !this.changeModel;
             this.isModel = !this.isModel;
             wx.navigateTo({
@@ -135,20 +132,18 @@ export default {
         },
 
         showg(){
-            console.log('你还不弹？？？？')
             let This = this
             This.$refs.mpPicker.show();
         },
         onConfirm(e) {
-            console.log(e)
             let This = this
             This.gender = e.label
         },
         onChange(e) {
-            console.log(e);
+
         },
         onCancel(e) {
-            console.log(e);
+
         },
         selfSave(){
             let This = this
@@ -199,10 +194,8 @@ export default {
             })
         },
         getPhoneNumber(e){
-            console.log(e)
-            console.log(e.mp.detail.errMsg)
-            if(e.mp.detail.errMsg == 'getPhoneNumber:fail user deny'){
-                console.log('拒绝')
+            if(e.mp.detail.errMsg == 'getPhoneNumber:fail:user deny'){
+
             }else{
                 let This = this
                 let data = {
@@ -212,7 +205,6 @@ export default {
                     iv:e.mp.detail.iv
                 }
                 fly.post('/user/getWxUserPhone',data).then(function (res) {
-                    console.log(res)
                     if(res.status!=200){
                         This.isAlert = true
                         This.changeModel = true;

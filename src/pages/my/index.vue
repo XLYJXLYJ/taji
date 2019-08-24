@@ -65,6 +65,25 @@ export default {
             img:''
         };
     },
+    onShow() {
+        let This = this
+        This.img = wx.getStorageSync('avatarUrl') 
+        This.mobile = wx.getStorageSync('mobile')
+        This.name = wx.getStorageSync('username')
+        This.appid = wx.getStorageSync('appid')
+        fly.post('/user/getUserDetail').then(function (res) {
+            let resData = res.response
+            let userNumber = resData.userNumber
+            let fullName = resData.fullName
+            let phoneNum = resData.phoneNum
+            wx.setStorageSync('mobile', phoneNum) 
+            if(!phoneNum || !fullName || !userNumber){
+                This.myself = true
+            }else{
+                This.myself = false
+            }
+        })
+    },
     mounted() {
         let This = this
         This.img = wx.getStorageSync('avatarUrl') 
@@ -121,9 +140,7 @@ export default {
             });
         },
         getUserInfo (e) {
-            console.log(e)
             let userInfo = JSON.parse(e.mp.detail.rawData)
-            console.log(userInfo)
             let data = {
                 nickName:userInfo.nickName,
                 headImg:userInfo.avatarUrl,
@@ -131,8 +148,6 @@ export default {
                 areaName:[userInfo.country,userInfo.province,userInfo.city]
             }
             fly.post('/contractor/weChatAuth',data).then(function (res) {
-                console.log(res)
-
                 if(res.response.mobile){
                     wx.setStorageSync('token', res.response.authorization) 
                     wx.setStorageSync('gender', res.response.gender) 

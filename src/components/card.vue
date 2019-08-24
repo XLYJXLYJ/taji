@@ -29,7 +29,7 @@
 import fly from "@/services/WxApi";
 export default {
     props: ["text"],
-    mounted() {
+    onLoad() {
         
         let This = this
         This.list = ''
@@ -71,9 +71,7 @@ export default {
                 pageSize:20
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {
-                console.log(res)
                 wx.hideLoading();
-
                 if(This.page == 1){
                     This.list = res.response.list
                     This.list.map(
@@ -117,11 +115,7 @@ export default {
                                 item.maintainTime = [year,month,date].join('-');
                             }
                         )
-                        console.log(This.list)
-                        console.log(res.response.list)
                         This.list.push(...listArr)
-                        console.log('list等于多少呢')
-                        console.log(This.list)
                     }
                 } 
             })
