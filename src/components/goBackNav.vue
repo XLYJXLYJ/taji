@@ -145,8 +145,8 @@ export default {
             }
             .opt-back {
                 .back-image {
-                width: 48rpx;
-                height: 48rpx;
+                width: 20rpx;
+                height: 24rpx;
                 }
             }
             .line {

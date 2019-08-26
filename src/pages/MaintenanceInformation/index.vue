@@ -70,6 +70,9 @@
                             :isMaxHiddenChoose=true
                         ></mp-uploader>
                     </div>
+                    <div>
+                        <button class="confirm" @click="submitEquip">添加维保记录</button>
+                    </div>
                 </div>
 
                 <!-- <p class="title">
@@ -78,7 +81,7 @@
                 </p> -->
             </form>
         </div>
-        <button class="confirm" @click="submitEquip">添加维保记录</button>
+
     </div>
 </template>
 
@@ -156,6 +159,7 @@ export default {
         This.status1 = '请选择状态'
         This.notes = ''
         This.explain = ''
+        This.imgData = []
         this.$refs.uploader.clearFiles()
 
         let now = new Date();
@@ -213,9 +217,15 @@ export default {
             let size = successRes.tempFiles[0].size
             const tempFilePaths = successRes.tempFilePaths
             let token = wx.getStorageSync('token') || '';
+            wx.showToast({
+                title: '上传图片中',
+                icon: "none",
+                duration: 3000
+            })
             for(let i=0;i<=tempFilePaths.length;i++){
                 wx.uploadFile({
-                    url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                    // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                    url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                     filePath: tempFilePaths[i],
                     name: 'file',
                     header: {
@@ -233,6 +243,7 @@ export default {
                     }
                 })
             }
+            wx.hideLoading();
         },
         upLoadFail(errMsg){
 
@@ -341,6 +352,7 @@ export default {
         height: auto;
         margin: 0 auto;
         margin-top: 40rpx;
+        flex: 1;
         .get-block {
             border-bottom: 1px solid rgb(204, 204, 204);
             margin-bottom: 48rpx;
@@ -358,12 +370,11 @@ export default {
         }
         .img-control{
             display: flex;
-            justify-content: space-between;
             flex-direction: column;
-            min-height: 300rpx;
+            min-height: 20vh;
             .img-block {
                 width: 100%;
-                height: 330rpx;
+                flex: 1;
                 display: block;
             }
             .title {
@@ -375,20 +386,20 @@ export default {
             input {
                 padding-bottom: 16rpx;
             }
+            .confirm {
+                background: #1890FF;
+                color: #fff;
+                margin-bottom: 24rpx;
+                font-size: 34rpx;
+                font-family: "PingFangSC-Medium";
+                flex: 0;
+                width: 670rpx;
+            }
         }
     }
 
 }
-.confirm {
-    background: #1890FF;
-    color: #fff;
-    margin-bottom: 24rpx;
-    font-size: 34rpx;
-    font-family: "PingFangSC-Medium";
-    position: relative;
-    top: 240rpx;
-    width: 670rpx;
-}
+
 .getCode {
     color: black;
 }

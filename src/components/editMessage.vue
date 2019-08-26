@@ -1,5 +1,5 @@
 <template>
-    <div class="card-contain">
+    <div class="card-contain-01">
         <div v-if="isAlert">
             <selfAlert
                 v-bind:changeModel="ischangeModel"
@@ -101,41 +101,35 @@ export default {
             imgs:[],
             typeName:'',
             statusName:'',
-            notes:'',
-            isShow:false
+            notes:''
         };
     },
-    mounted() {
+    onLoad() {
         let This = this
-        This.$nextTick(
-            function(){
-                This.equip_type =This.getData.maintainRecord.type
-                This.typeName = This.getData.maintainRecord.typeName
-                This.id = This.getData.maintainRecord.id
-                This.imgs = This.getData.maintainRecord.images
-
-                This.equip_code = This.getData.maintainRecord.terminalNumber,
-                This.time = This.getData.maintainRecord.maintainTime
-                let da = new Date(This.time);
-                let year = da.getFullYear()+'';
-                let month = da.getMonth()+1+'';
-                let date = da.getDate()+' ';
-                //let h = da.getHours()+'';
-                //let m = da.getMinutes()+'';
-                //let s = da.getSeconds()+'';
-                This.time = [year,month,date].join('-');
-                This.notes = This.getData.maintainRecord.title,
-                This.statusName = This.getData.maintainRecord.statusName
-                This.status = This.getData.maintainRecord.status
-                This.explain = This.getData.maintainRecord.explain || '-'
-                This.isShow = true
-            }
-        )
-
+        This.equip_type =This.getData.maintainRecord.type
+        This.typeName = This.getData.maintainRecord.typeName
+        This.id = This.getData.maintainRecord.id
+        This.imgs = This.getData.maintainRecord.images
+        This.equip_code = This.getData.maintainRecord.terminalNumber,
+        This.time = This.getData.maintainRecord.maintainTime
+        let da = new Date(This.time);
+        let year = da.getFullYear()+'';
+        let month = da.getMonth()+1+'';
+        let date = da.getDate()+' ';
+        //let h = da.getHours()+'';
+        //let m = da.getMinutes()+'';
+        //let s = da.getSeconds()+'';
+        This.time = [year,month,date].join('-');
+        This.notes = This.getData.maintainRecord.title,
+        This.statusName = This.getData.maintainRecord.statusName
+        This.status = This.getData.maintainRecord.status
+        This.explain = This.getData.maintainRecord.explain || '-'
+        console.log('id = ' + This.id)
     },
     methods: {
         edit(){
             let This = this
+            console.log('id = ' + This.id)
             wx.navigateTo({
                 url:'/pages/MaintenanceInformationEdit/main?id='+This.id
             });
@@ -144,7 +138,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.card-contain {
+.card-contain-01 {
     width: 100%;
     height: 100%;
     display: block;

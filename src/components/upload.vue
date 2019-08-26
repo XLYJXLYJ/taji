@@ -13,7 +13,6 @@
       data(){
         return {
           urls:[],
-          imgData:[]
         }
       },
       mounted(){
@@ -35,7 +34,8 @@
                 for(let i=0;i<=res.tempFilePaths.length;i++){
                   // let size = res.tempFiles[i].size
                   wx.uploadFile({
-                      url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                      // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                      url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                       filePath: res.tempFilePaths[i],
                       name: 'file',
                       header: {

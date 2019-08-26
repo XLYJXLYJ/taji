@@ -1,12 +1,12 @@
 <template>
-    <div class="card-contain" v-if='isShow'>
+    <div class="card-contain" v-if='isHistoryShow'>
         <ul>
             <p class="atitle">历史维保信息</p>
-            <!-- <div class="img-contain" v-if="!list">
+            <!-- <div class="img-contain" v-if="!historyList">
                 <img src="/static/images/none.png">
             </div> -->
             <div>
-                <li v-for="(item,index) in list" :key="index" @click="goIntro(item.id)">
+                <li v-for="(item,index) in historyList" :key="index" @click="goIntro(item.id)">
                     <div class="one">
                         <span class="identifier">编号 {{item.maintainNumber}}</span>
                         <span style="color:rgba(0,0,0,0.45)"> / </span>
@@ -29,27 +29,26 @@
 <script>
 import fly from "@/services/WxApi";
 export default {
-    props: ["text"],
     data(){
         return {
-            id:'',
-            list:'',
-            page:1,
-            isNull:'',
-            isShow:''
+            // id:'',
+            historyList:'',
+            historyPage:1,
+            ishistoryNull:'',
+            isHistoryShow:''
         }
     },
     onLoad: function (options) {
         let This = this
-        This.page = 1
-        This.list = ''
+        This.historyPage = 1
+        This.historyList = ''
         This.getData()
-        This.id = options.id
+        // This.id = options.id
     },
     onReachBottom () {
         let This = this
-        This.page = This.page + 1
-        console.log(This.page)
+        This.historyPage = This.historyPage + 1
+        console.log(This.historyPage)
         This.getData()
     },
     methods: {
@@ -60,7 +59,7 @@ export default {
         },
         getData(){
             let This = this
-            if(This.isNull == null || This.isNull.length == 0){
+            if(This.ishistoryNull == null || This.ishistoryNull.length == 0){
                 wx.showToast({
                     title: '数据已加载完',
                     icon: "none",
@@ -73,16 +72,16 @@ export default {
             }
             let data = {
                 id:This.id || 5,
-                pageNo: This.page,
+                pageNo: This.historyPage,
                 pageSize:20
             }
             fly.post('/maintain/getHistoryMaintain',data).then(function (res) {
                 wx.hideLoading();
-                This.isNull = res.response
-                if(This.page == 1){
-                   This.isShow = res.response.length==0?false:true
-                   This.list = res.response
-                    This.list.map(
+                This.ishistoryNull = res.response
+                if(This.historyPage == 1){
+                   This.isHistoryShow = res.response.length==0?false:true
+                   This.historyList = res.response
+                    This.historyList.map(
                         function(item,index){
                             let da = new Date(item.maintainTime);
                             let year = da.getFullYear()+'';
@@ -95,9 +94,9 @@ export default {
                         }
                     )
                 }else{
-                    //    This.list.push(JSON.parse(JSON.stringify([res.list])))
-                    //    This.list = This.list.concat(res.list)
-                    This.list.push(...res.response)
+                    //    This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
+                    //    This.historyList = This.historyList.concat(res.historyList)
+                    This.historyList.push(...res.response)
                 } 
             })
         }

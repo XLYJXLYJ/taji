@@ -33,6 +33,7 @@ export default {
         
         let This = this
         This.list = ''
+        This.page = 1
         This.getData()
     },
     data(){

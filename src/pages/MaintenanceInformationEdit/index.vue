@@ -82,28 +82,38 @@
                     <p class="title">说明</p>
                     <input type="text" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
-
-
-              
                 
                 
                 <div class="img-block" v-if='isImg'>
-                    <p
-                        class="title"
-                        style="margin-bottom:20rpx;"
-                    >现场照片</p>
-                    <upload width="120rpx" height="120rpx" max="3" @choosed="chooseImg" @delete="deleteImg" :srcs="imgData"></upload>
+                    <div class="i-block">
+                        <p
+                            class="title"
+                            style="margin-bottom:20rpx;"
+                        >现场照片</p>
+
+                        <div class="j-pic-upload">
+                            <img @click="previewImg(index)" v-for="(src,index) in imgData" :key="src" :src="src.imagePath" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
+                            <div class="j-upload-btn" @click="uploadImg()" :style="{'width':width || '120rpx','height':height || '120rpx'}">
+                            <span class="j-upload-add">+</span>
+                            </div>
+                        </div>
+
+                        <!-- <upload @choosed="chooseImg" @delete="deleteImg" :srcs="imgData"></upload> -->
+                        <!-- <upload width="120rpx" height="120rpx" max="3" @choosed="chooseImg" @delete="deleteImg" :srcs="imgData"></upload> -->
+                    </div>
+                    <div class="button">
+                        <button class="confirm01" @click="dele">删除</button>
+                        <button class="confirm02" @click="submitEquip">保存</button>
+                    </div>
                 </div>
-                <div class="button">
-                    <button class="confirm01" @click="dele">删除</button>
-                    <button class="confirm02" @click="submitEquip">保存</button>
-                </div>
+
                 <!-- <p class="title">
                     建筑业优秀班组数据库是建造工平台提供的服务，点击提交即表示同意
                     <span style="color:rgb(252 184 19)">《建造工用户协议》</span>
                 </p> -->
             </form>
         </div>
+
     </div>
 </template>
 
@@ -242,6 +252,67 @@ export default {
 
     },
     methods: {
+
+        uploadImg(){
+          let This = this;
+          let token = wx.getStorageSync('token') || '';
+          wx.chooseImage({
+            count: This.max || 3,
+            sizeType: ['original', 'compressed'],
+            sourceType: ['album', 'camera'],
+            success: function (res) {
+            //   res.tempFilePaths.forEach(v=>{
+            //     This.imgData.push(v);
+            //   });
+                for(let i=0;i<=res.tempFilePaths.length;i++){
+                  // let size = res.tempFiles[i].size
+                  wx.uploadFile({
+                      // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                      url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
+                      filePath: res.tempFilePaths[i],
+                      name: 'file',
+                      header: {
+                          'content-type': 'multipart/form-data',
+                          'Authorization':token
+                      },
+                      formData:{
+                          'isNeedHttp':1
+                      },
+                      success (resdata){
+                          const data = JSON.parse(resdata.data)
+                          let jdata = {createTime:null,fileSize:res.tempFiles[i].size,id:null,imagePath:data.response,mainId:null,module:null,type:1,user:null}
+                          // This.imgData.push(jdata)
+                          This.chooseImg({all:jdata,currentUpload:res.tempFilePaths[i]})
+                        //   This.$emit("choosed",{all:jdata,currentUpload:res.tempFilePaths[i]});
+                          //do something
+                      }
+                  })
+                }
+
+            //   This.$emit("choosed",{all:This.imgData,currentUpload:res.tempFilePaths});
+            }
+          })
+        },
+        previewImg(index){
+          let This = this;
+          wx.showActionSheet({
+            itemList:["预览","删除"],
+            success: function(res) {
+              if(res.tapIndex === 0){
+                wx.previewImage({
+                  current:This.imgData[index],
+                  imgData:This.imgData
+                });
+              } else {
+                This.imgData.splice(index,1);
+                This.deleteImg(This.imgData)
+                // This.$emit("delete",This.imgData);
+              }
+            },
+          });
+        },
+
+
         chooseImg(res){
             let This = this
             console.log(res)
@@ -289,8 +360,14 @@ export default {
             let size = successRes.tempFiles[0].size
             const tempFilePaths = successRes.tempFilePaths
             let token = wx.getStorageSync('token') || '';
+            wx.showToast({
+                title: '上传图片中',
+                icon: "none",
+                duration: 3000
+            })
             wx.uploadFile({
-                url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                 filePath: tempFilePaths[0],
                 name: 'file',
                 header: {
@@ -307,6 +384,7 @@ export default {
                     //do something
                 }
             })
+            wx.hideLoading();
         },
         upLoadFail(errMsg){
         },
@@ -532,10 +610,14 @@ export default {
 .register {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     .contain {
         width: 670rpx;
         margin: 0 auto;
         margin-top: 40rpx;
+        flex: 1;
         .get-block {
             border-bottom: 1px solid rgb(204, 204, 204);
             margin-bottom: 48rpx;
@@ -549,8 +631,42 @@ export default {
             }
         }
         .img-block {
+            display:block;
             width: 100%;
-            height: 330rpx;
+            height: auto;
+            .i-block{
+                flex: 1;
+            }
+            .button{
+                display: flex;
+                justify-content: space-around;
+                flex: 0;
+                .confirm01 {
+                    background: #fff;
+                    color: #f6303b;
+                    border:1rpx solid #f5222d;
+                    margin-bottom: 24rpx;
+                    font-size: 34rpx;
+                    font-family: "PingFangSC-Medium";
+                    width: 322rpx;
+                    height: 80rpx;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .confirm02 {
+                    background: #1890FF;
+                    color: #fff;
+                    margin-bottom: 24rpx;
+                    font-size: 34rpx;
+                    font-family: "PingFangSC-Medium";
+                    width: 322rpx;
+                    height: 80rpx;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
         }
         .title {
             font-size: 28rpx;
@@ -562,35 +678,30 @@ export default {
             padding-bottom: 16rpx;
         }
 
-        .button{
-            display: flex;
-            justify-content: space-around;
-            .confirm01 {
-                background: #fff;
-                color: #f6303b;
-                border:1rpx solid #f5222d;
-                margin-bottom: 24rpx;
-                font-size: 34rpx;
-                font-family: "PingFangSC-Medium";
-                width: 322rpx;
-                height: 80rpx;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .confirm02 {
-                background: #1890FF;
-                color: #fff;
-                margin-bottom: 24rpx;
-                font-size: 34rpx;
-                font-family: "PingFangSC-Medium";
-                width: 322rpx;
-                height: 80rpx;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-        }
+
+    }
+    .j-pic-upload{
+        padding: 10rpx;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .j-upload-btn{
+        border: 1px dashed #ddd;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin-right: 20rpx;
+    }
+    .j-upload-add{
+        font-size: 80rpx;
+        font-weight: 500;
+        color:#C9C9C9;
+    }
+    .img{
+        margin:10rpx 20rpx 10rpx 0;
     }
 }
 .getCode {
