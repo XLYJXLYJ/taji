@@ -1,7 +1,8 @@
 const Fly = require("flyio/dist/npm/wx");
 const fly = new Fly()
 
-fly.config.baseURL = 'https://wxtjapi.test.jianzaogong.com';
+fly.config.baseURL = 'https://wbzsapi.jzanquan.com';
+// fly.config.baseURL = 'https://wxtjapi.test.jianzaogong.com';
 fly.config.timeout = 10000
 fly.interceptors.request.use((request) => {
   //给所有请求添加自定义header
