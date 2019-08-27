@@ -20,6 +20,7 @@
                             v-model="equip_code"
                             placeholder="请输入编号"
                             autocomplete="off"
+                            placeholder-style='color:#e5e5e5'
                         />
                         <p @click="GetQbCode"><img src="/static/images/qb.png" alt=""></p>
                     </div>
@@ -27,30 +28,50 @@
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <p @click="showType" style="color:#5f5f5f;height:70rpx">{{type1}}</p>
+                    <!-- <p @click="showType" style="color:#5f5f5f;height:60rpx">{{type1}}</p> -->
+                        <input
+                            type="text"
+                            v-model="type1"
+                            placeholder="请输入类型"
+                            autocomplete="off"
+                            style="color:#5f5f5f;height:60rpx"
+                            placeholder-style='color:#e5e5e5'
+                            disabled
+                            @click="showType"
+                        />
                     <mp-picker ref="typePicker" themeColor="rgb(24,144,255)" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                    <p @click="showTime" style="color:#5f5f5f;height:70rpx">{{time1}}</p> 
+                    <p @click="showTime" style="color:#5f5f5f;height:60rpx">{{time1}}</p> 
                     <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <p @click="showStatus" style="color:#5f5f5f;height:70rpx">{{status1}}</p>
+                    <!-- <p @click="showStatus" style="color:#5f5f5f;height:60rpx">{{status1}}</p> -->
+                    <input
+                        type="text"
+                        v-model="status1"
+                        placeholder="请输入状态"
+                        autocomplete="off"
+                        style="color:#5f5f5f;height:60rpx"
+                        placeholder-style='color:#e5e5e5'
+                        disabled
+                        @click="showStatus"
+                    />
                     <mp-picker ref="statusPicker" themeColor="rgb(24,144,255)" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保记录标题</p>
-                    <input type="text" style="color:#5f5f5f" v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
+                    <input type="text" style="color:#5f5f5f;height:60rpx"  placeholder-style='color:#e5e5e5' v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="explain" style="color:#5f5f5f" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" v-model="explain" style="color:#5f5f5f;height:60rpx"  placeholder-style='color:#e5e5e5' placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
 
                 <div class="img-control">
@@ -102,13 +123,13 @@ export default {
     data() {
         return {
             type: 1,
-            type1:'请选择类型',
+            type1:'',
             equip_code: "",
             time: "请选择时间",
             time1:'请选择时间',
             notes: "",
             status: 1,
-            status1:'请选择状态',
+            status1:'',
             TypeMode: "selector",
             arrayBuffer :'',
             imgData:[],
@@ -155,8 +176,8 @@ export default {
         
         let This = this
         This.equip_code = ''
-        This.type1 = '请选择类型'
-        This.status1 = '请选择状态'
+        This.type1 = ''
+        This.status1 = ''
         This.notes = ''
         This.explain = ''
         This.imgData = []
@@ -224,8 +245,8 @@ export default {
             })
             for(let i=0;i<=tempFilePaths.length;i++){
                 wx.uploadFile({
-                    // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                    url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
+                    url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                    // url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                     filePath: tempFilePaths[i],
                     name: 'file',
                     header: {
@@ -354,7 +375,7 @@ export default {
         margin-top: 40rpx;
         flex: 1;
         .get-block {
-            border-bottom: 1px solid rgb(204, 204, 204);
+            border-bottom: 1px solid #e5e5e5;
             margin-bottom: 48rpx;
             .get-code {
                 display: flex;
@@ -394,6 +415,7 @@ export default {
                 font-family: "PingFangSC-Medium";
                 flex: 0;
                 width: 670rpx;
+                margin-top: 80rpx;
             }
         }
     }

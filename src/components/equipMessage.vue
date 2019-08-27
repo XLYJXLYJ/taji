@@ -13,8 +13,8 @@
                      <span class="repair">塔身高{{getData.tower.height}} | 臂长{{getData.tower.armLength}} | 尾臂长{{getData.tower.armTailLength}}</span>
                 </div>
                 <div class="three">
-                    <span>{{getData.tower.towerTypeName}}</span>
-                    <span>{{getData.tower.towerModel}}</span>
+                    <span>{{getData.tower.towerTypeName || '-'}}</span>
+                    <span>{{getData.tower.towerModel || '-'}}</span>
                 </div>
             </li>
         </ul>

@@ -22,7 +22,7 @@
                     </div>
                     <div class="titleNav">
                         <p class="one">维保信息</p>
-                        <p class="two" @click="edit">管理</p>
+                        <p class="two" @click="edit" v-if="!getOpenid">管理</p>
                     </div>
                     <div class="contain">
                         <form>
@@ -86,33 +86,33 @@
                         </form>
                     </div>
                 </div>
-            </section>
-            <section>
+
                 <div class="card-contain" v-if='isHistoryShow'>
                     <ul>
                         <p class="atitle">历史维保信息</p>
                         <!-- <div class="img-contain" v-if="!historyList">
                             <img src="/static/images/none.png">
                         </div> -->
-                        <div>
-                            <li v-for="(item,index) in historyList" :key="index" @click="goIntro(item.id)">
-                                <div class="one">
-                                    <span class="identifier">编号 {{item.maintainNumber}}</span>
-                                    <span style="color:rgba(0,0,0,0.45)"> / </span>
-                                    <span class="name">{{item.terminalRemarkName || ''}}</span>
-                                </div>
-                                <div class="two">
-                                    <span class="repair">{{item.typeName || ''}} | {{item.title}}</span>
-                                    <img class="go-icon" src="/static/images/right.png" alt="">
-                                </div>
-                                <div class="three">
-                                    <span>{{item.maintainTime}}</span>
-                                    <span>{{item.fullAreaName || ''}}</span>
-                                </div>
-                            </li>
-                        </div>
+                        <li v-for="(item,index) in historyList" :key="index" @click="goIntro(item.id)">
+                            <div class="one">
+                                <span class="identifier">编号 {{item.maintainNumber}}</span>
+                                <span style="color:rgba(0,0,0,0.45)"> / </span>
+                                <span class="name">{{item.terminalRemarkName || ''}}</span>
+                            </div>
+                            <div class="two">
+                                <span class="repair">{{item.typeName || ''}} | {{item.title}}</span>
+                                <img class="go-icon" src="/static/images/right.png" alt="">
+                            </div>
+                            <div class="three">
+                                <span>{{item.maintainTime}}</span>
+                                <span>{{item.fullAreaName || ''}}</span>
+                            </div>
+                        </li>
                     </ul>
                 </div>
+            </section>
+            <section>
+
             </section>
         </div>
 
@@ -141,6 +141,7 @@ export default {
     onLoad: function (options) {
         let This = this
         This.id = options.id
+        This.getOpenid = options.getOpenid
         let data1 = {
             id:This.id
         }
@@ -158,7 +159,7 @@ export default {
             This.isShow = true
         })
         This.historyPage = 1
-        This.historyList = ''
+        // This.historyList = ''
         if(This.ishistoryNull == null || This.ishistoryNull.length == 0){
             wx.showToast({
                 title: '数据已加载完',
@@ -173,14 +174,17 @@ export default {
         let data = {
             id:This.id || 5,
             pageNo: This.historyPage,
-            pageSize:20
+            pageSize:20,
+            share:This.getOpenid
         }
         fly.post('/maintain/getHistoryMaintain',data).then(function (res) {
             wx.hideLoading();
             This.ishistoryNull = res.response
             if(This.historyPage == 1){
+                console.log(res.response.length)
                 This.isHistoryShow = res.response.length==0?false:true
                 This.historyList = res.response
+                console.log(This.historyList)
                 This.historyList.map(
                     function(item,index){
                         let da = new Date(item.maintainTime);
@@ -193,6 +197,7 @@ export default {
                         item.maintainTime = [year,month,date].join('-');
                     }
                 )
+                console.log(This.historyList)
             }else{
                 //    This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
                 //    This.historyList = This.historyList.concat(res.historyList)
@@ -224,7 +229,8 @@ export default {
             wx.hideLoading();
             This.ishistoryNull = res.response
             if(This.historyPage == 1){
-                This.isHistoryShow = res.response.length==0?false:true
+                console.log(This.historyList)
+                // This.isHistoryShow = res.response.length==0?false:true
                 This.historyList = res.response
                 This.historyList.map(
                     function(item,index){
@@ -238,6 +244,7 @@ export default {
                         item.maintainTime = [year,month,date].join('-');
                     }
                 )
+                console.log(This.historyList)
             }else{
                 //    This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
                 //    This.historyList = This.historyList.concat(res.historyList)
@@ -277,7 +284,10 @@ export default {
             imgs:[],
             typeName:'',
             statusName:'',
-            notes:''
+            notes:'',
+            historyList:'',
+            isHistoryShow:false,
+            getOpenid:''
         };
     },
     methods: {
@@ -306,6 +316,8 @@ export default {
     width: 100%;
     height: 100%;
     background: rgb(249,249,249);
+
+
     .img-contain {
         display: block;
         width: 100%;
@@ -314,9 +326,12 @@ export default {
         border-radius: 8rpx;
         margin-top: 40rpx;
         position: relative;
-        display: block;
         background: #fff;
         padding: 48rpx 0rpx;
+        display: flex;
+        flex-direction: column;
+        min-height: 10vh;
+
         image {
             width: 670rpx;
             height: 290rpx;
@@ -324,10 +339,11 @@ export default {
         }
         .card-contain-01 {
             width: 100%;
-            height: 100%;
+            height:auto;
             display: block;
             background: #fff;
             margin-bottom: 48rpx;
+            flex: 1;
             .titleNav{
                 padding: 0rpx 42rpx;
                 padding-top:48rpx;
@@ -399,78 +415,84 @@ export default {
         .getCode {
             color: black;
         }
-    }
-    .card-contain {
-        width: 100%;
-        height: 100%;
-        ul{
-            .img-contain{
-                width: 100%;
-                height: 244rpx;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(16,142,233,0.04);
-                img{
-                    width: 128rpx;
-                    height: 134rpx;
-                }
-            }
-            width: 670rpx;
+
+        .card-contain {
+            position: relative;
+            width: 100%;
             height: auto;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            li{
-                padding: 36rpx 32rpx;
-                margin-bottom: 32rpx;
-                background: rgba(16,142,233,0.04);
-                .one{
-                    margin-bottom: 32rpx;
-                    .identifier{
-                        font-size: 28rpx;
-                        color: black;
-                        font-family: 'PingFangSC-Regular';
-                    }
-                    .name{
-                        font-size: 28rpx;
-                        color:rgba(0,0,0,0.45);
-                        font-family: 'PingFangSC-Regular';
-                    }
-                }
-                .two{
-                    margin-bottom: 12rpx;
+            display: block;
+            ul{
+                .img-contain{
+                    width: 100%;
+                    height: 244rpx;
                     display: flex;
-                    justify-content: space-between;
                     align-items: center;
-                    .repair{
-                        font-size: 34rpx;
-                        color: black;
-                        font-family: 'PingFangSC-Medium';
-                        font-weight: 550;
-                    }
-                    .go-icon{
-                        // background: red;
-                        height: 26rpx;
-                        width: 16rpx;
+                    justify-content: center;
+                    background: rgba(16,142,233,0.04);
+                    img{
+                        width: 128rpx;
+                        height: 134rpx;
                     }
                 }
-                .three{
-                    font-size: 28rpx;
-                    color:rgba(0,0,0,0.65);
-                    font-family: 'PingFangSC-Regular';
-                    display: flex;
-                    justify-content: space-between;
+                width: 670rpx;
+                height: auto;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                li{
+                    padding: 36rpx 32rpx;
+                    margin-bottom: 32rpx;
+                    background: rgba(16,142,233,0.04);
+                    .one{
+                        margin-bottom: 32rpx;
+                        .identifier{
+                            font-size: 28rpx;
+                            color: black;
+                            font-family: 'PingFangSC-Regular';
+                        }
+                        .name{
+                            font-size: 28rpx;
+                            color:rgba(0,0,0,0.45);
+                            font-family: 'PingFangSC-Regular';
+                        }
+                    }
+                    .two{
+                        margin-bottom: 12rpx;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        .repair{
+                            font-size: 34rpx;
+                            color: black;
+                            font-family: 'PingFangSC-Medium';
+                            font-weight: 550;
+                        }
+                        .go-icon{
+                            // background: red;
+                            height: 26rpx;
+                            width: 16rpx;
+                        }
+                    }
+                    .three{
+                        font-size: 28rpx;
+                        color:rgba(0,0,0,0.65);
+                        font-family: 'PingFangSC-Regular';
+                        display: flex;
+                        justify-content: space-between;
+                    }
                 }
-            }
-            .atitle{
-                font-size: 34rpx;
-                color: black;
-                font-family: 'PingFangSC-Medium';
-                font-weight: 550;
+                .atitle{
+                    font-size: 34rpx;
+                    color: black;
+                    font-family: 'PingFangSC-Medium';
+                    font-weight: 550;
+                }
             }
         }
+
+
     }
+
 }
 </style>

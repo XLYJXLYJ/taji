@@ -187,6 +187,8 @@ export default {
                         icon: "none",
                         duration: 2000
                     });
+                    wx.setStorageSync('username',This.name)
+                    wx.setStorageSync('mobile',This.phone_code)
                     wx.reLaunch({
                         url:'/pages/index/main'
                     });

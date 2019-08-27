@@ -13,8 +13,8 @@
                     <span class="repair">{{getData.terminal.terminalRemarkName}}</span>
                 </div>
                 <div class="three">
-                    <span>{{getData.terminal.typeName}}</span>
-                    <span>{{getData.terminal.terminalModelNumber}}</span> 
+                    <span>{{getData.terminal.typeName || '-'}}</span>
+                    <span>{{getData.terminal.terminalModelNumber || '-'}}</span> 
                 </div>
             </li>
         </ul>

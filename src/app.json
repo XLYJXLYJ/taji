@@ -1,8 +1,11 @@
 {
-  "pages": [   
+  "pages": [  
     "pages/index/main", 
     "pages/MaintenanceInformationEdit/main",
-    "pages/MaintenanceInformation/main",
+    "pages/MaintenanceInformation/main", 
+
+ 
+
 
     "pages/EnterpriseAttribution/main",
 

@@ -6,7 +6,7 @@
             </section>
             <section class="img-contain">
                 <swiper
-                    :indicator-dots="true"
+                    :indicator-dots="false"
                     autoplay
                     :interval="3000"
                     :duration="1000"
@@ -14,14 +14,14 @@
                     indicator-color="rgba(255,255,255,.5)"
                     indicator-active-color="#ffffff"
                 >
-                    <block v-for="item in imgUrls" :key="item.id">
+                    <block v-for="(item,index) in imgUrls" :key="index">
                         <swiper-item>
-                            <image :src="item.url" class="slide-image" />
+                            <image :src="item.img" class="slide-image" />
                         </swiper-item>
                     </block>
                 </swiper>
             </section>
-            <section class="maintenance" v-if="appid" style="margin-bottom:130rpx;">
+            <section class="maintenance" v-if="appid || getOpenid" style="margin-bottom:130rpx;">
                 <p class="record">维保记录</p>
                 <div class="card-contain">
                     <ul>
@@ -48,7 +48,7 @@
                     </ul>
                 </div>
             </section>
-            <section class="maintenance" v-if="!appid">
+            <section class="maintenance" v-if="!appid && !getOpenid">
                 <p class="record">请先授权获取您的微信昵称、头像等公开信息，以便开始使用维保助手</p>
                 <button open-type="getUserInfo" @getuserinfo="getUserInfo">授权微信公开信息</button>
             </section>
@@ -58,7 +58,7 @@
             <my :user='user'></my>
         </div>
 
-        <section class="add" v-if="appid">
+        <section class="add" v-if="appid && !getOpenid">
             <bottomNavigationBar :selectNavIndex="selectNavIndex" @indexId='indexFuc' @userMessage='userMessage'></bottomNavigationBar>
         </section>
     </div>
@@ -84,48 +84,65 @@ export default {
     },
     data() {
         return {
-            imgUrls: [
-                {
-                    id: 0,
-                    url: "https://images.unsplash.com/photo-1551334787-21e6bd3ab135?w=640"
-                },
-                {
-                    id: 1,
-                    url: "https://images.unsplash.com/photo-1551214012-84f95e060dee?w=640"
-                },
-                {
-                    id: 2,
-                    url: "https://images.unsplash.com/photo-1551446591-142875a901a1?w=640"
-                }
-            ],
+            imgUrls:[],
             appid:'',
             bottomId:true,
             selectNavIndex:0,
             user:'',
             list:'',
             page:1,
-            isNull:''
+            isNull:'',
+            openid:'',
+            getOpenid:''
         };
     },
-    onShow(){
-        let This = this
-        This.login()
-    },
-    onLoad() {
+
+    onLoad(options) {
         let This = this
         This.list = ''
         This.page = 1
-        This.getData()
+        This.login(options)
+        if(!options.share_query){
+            console.log('没有数据哦')
+            This.getOpenid = false
+
+        }else{
+            console.log('链接有数据哦')
+            console.log(options)
+            This.getOpenid = options.openid
+            if(wx.getStorageSync('appid') || This.getOpenid){
+                This.getData()
+            }
+        }
+
+    },
+    onShow(){
+        let This = this
+    },
+    onReady(){
+        let This = this
+        if(wx.getStorageSync('appid') || This.getOpenid){
+            This.getData()
+        }
     },
     mounted() {
         let This = this
         This.appid = wx.getStorageSync('appid')
-        if(wx.getStorageSync('appid')){
-            This.getData()
+
+        let data1 = {
+            code:'WBZS_MAIN_BANNER'
         }
+        fly.post('/common/getBanner',data1).then(function (res) {
+            console.log(res.response)
+            This.imgUrls = res.response
+        })
     },
     onShareAppMessage: (res) => {
-
+        let This = this
+        return{
+            title:'建筑业优质班组数据库',
+            path:'/pages/index/main?openid=' + wx.getStorageSync('openid')
+        }
     },
     onReachBottom () {
         let This = this
@@ -133,21 +150,34 @@ export default {
         This.getData()
     },
     methods: {
-        login(){
+        login(options){
+            let This = this
             wx.login({
                 success (res) {
                     if (res.code) {
                     //发起网络请求
-                            let This = this
+
                             let data = {
                                 code:res.code,
                                 // authorization:wx.getStorageSync('token') || ''
                             }
                             fly.post('/user/wxLogin',data).then(function (res) {
                                 wx.setStorageSync('sessionKey', res.response.sessionKey) 
-                                wx.setStorageSync('openid', res.response.openid) 
+                                wx.setStorageSync('openid', res.response.openid)
                                 wx.setStorageSync('token', res.response.token)
+                                if(options == {}){
+                                    console.log('没有数据哦')
+                                    This.getOpenid = false
+                                }else{
+                                    console.log('链接有数据哦')
+                                    console.log(options)
+                                    This.getOpenid = options.openid
+                                }
+                                console.log(options.openid)
+                                This.getData()
                             })
+   
+        
                     } else {
 
                     }
@@ -195,8 +225,9 @@ export default {
             }
         },
         goIntro(id){
+            let This = this
             wx.navigateTo({
-                url:'/pages/indexDetail/main?id=' + id
+                url:'/pages/indexDetail/main?id=' + id + '&getOpen=' + This.getOpenid
             });
         },
         getData(){
@@ -214,10 +245,13 @@ export default {
             }
             let data = {
                 pageNo:This.page,
-                pageSize:20
+                pageSize:20,
+                share:This.getOpenid || ''
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {
                 wx.hideLoading();
+                console.log('数据是')
+                console.log(res)
                 if(This.page == 1){
                     This.list = res.response.list
                     This.list.map(
