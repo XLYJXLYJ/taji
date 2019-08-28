@@ -17,7 +17,6 @@
       },
       mounted(){
         this.urls = this.srcs || [];
-        console.log(this.urls)
       },
       methods:{
         uploadImg(){
@@ -64,6 +63,7 @@
           wx.showActionSheet({
             itemList:["预览","删除"],
             success: function(res) {
+             
               if(res.tapIndex === 0){
                 wx.previewImage({
                   current:This.urls[index],

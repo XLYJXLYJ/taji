@@ -17,8 +17,8 @@
         </section>
         <section>
             <ul>
-                <li @click="goS"><span style="padding-left:32rpx;">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
-                <li @click="goW"><span style="padding-left:32rpx;">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goS"><span style="padding-left:32rpx;"><img style="padding-right:32rpx;" src="/static/images/house.png">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goW"><span style="padding-left:32rpx;"><img style="padding-right:32rpx;" src="/static/images/what.png">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
                 <!-- <li v-for="(item,index) in list" :key="index" @click="goUrl(item.url)"><span>{{item.name}}</span><span><img src="/static/images/right.png"></span></li> -->
             </ul>
         </section>
@@ -200,6 +200,7 @@ export default {
                 position: absolute;
                 left: 32rpx;
                 top: 30rpx;
+                border-radius: 4rpx;
             }
             .one{
                 font-size: 34rpx;
@@ -231,6 +232,7 @@ export default {
                 width: 16rpx;
                 padding-left: 16rpx;
                 margin-top: 6rpx;
+                border-radius: 4rpx;
             }
         }
         // img{

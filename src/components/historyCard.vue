@@ -48,7 +48,6 @@ export default {
     onReachBottom () {
         let This = this
         This.historyPage = This.historyPage + 1
-        console.log(This.historyPage)
         This.getData()
     },
     methods: {

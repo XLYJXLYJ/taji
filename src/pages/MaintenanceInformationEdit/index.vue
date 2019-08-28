@@ -267,8 +267,8 @@ export default {
                 for(let i=0;i<=res.tempFilePaths.length;i++){
                   // let size = res.tempFiles[i].size
                   wx.uploadFile({
-                      url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                    //   url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
+                    //   url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                      url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                       filePath: res.tempFilePaths[i],
                       name: 'file',
                       header: {
@@ -298,10 +298,12 @@ export default {
           wx.showActionSheet({
             itemList:["预览","删除"],
             success: function(res) {
+                let arr = []
+                arr.push(This.imgData[index].imagePath)
               if(res.tapIndex === 0){
                 wx.previewImage({
-                  current:This.imgData[index],
-                  imgData:This.imgData
+                  current:This.imgData[index].imagePath,
+                  urls:arr
                 });
               } else {
                 This.imgData.splice(index,1);
@@ -315,7 +317,6 @@ export default {
 
         chooseImg(res){
             let This = this
-            console.log(res)
             // res.all.map(
             //     function(item,index){
             //         This.imgData.push(item)
@@ -325,7 +326,6 @@ export default {
         },
         deleteImg(res){
             let This = this
-            console.log(res)
             This.imgData = res
             // res.map(
             //     function(item,index){
@@ -366,8 +366,8 @@ export default {
                 duration: 3000
             })
             wx.uploadFile({
-                // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
+                url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                // url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                 filePath: tempFilePaths[0],
                 name: 'file',
                 header: {
@@ -435,7 +435,6 @@ export default {
                 });
                 return;
             }
-            console.log(This.imgData)
             if(!This.imgData){
                 wx.showToast({
                     title: "请上传现场照片",
@@ -667,6 +666,9 @@ export default {
                     align-items: center;
                     justify-content: center;
                 }
+            }
+            button::after{
+                border:none;
             }
         }
         .title {

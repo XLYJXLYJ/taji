@@ -3,6 +3,7 @@
         <goBackNav title></goBackNav>
         <div class="contain">
             <p class="title">如何使用维保助手</p>
+            <web-view :src="url"></web-view>
         </div>
     </div>
 </template>
@@ -12,6 +13,15 @@ import goBackNav from "@/components/goBackNav.vue";
 export default {
     components: {
         goBackNav
+    },
+    data() {
+        return {
+            url:''
+        }
+    },
+    onLoad(options){
+        let This = this
+        This.url = options.url
     }
 };
 </script>

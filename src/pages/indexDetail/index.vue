@@ -10,7 +10,7 @@
             <section v-if="getData.tower">
                 <equipMessage :getData='getData'></equipMessage>
             </section>
-            <section class="img-contain" v-if="getData.tower">
+            <section class="img-contain" v-if="getData.maintainRecord">
                 <div class="card-contain-01">
                     <div v-if="isAlert">
                         <selfAlert
@@ -71,7 +71,7 @@
                                     style="margin-bottom:20rpx;"
                                 >现场照片</p>
                                 <ul class="two-ul">
-                                    <li class="two-li" v-for="(item,index) in getData.maintainRecord.images" :key="index">
+                                    <li class="two-li" v-for="(item,index) in getData.maintainRecord.images" :key="index" @click="headPreviewImage(item.imagePath,getData.maintainRecord.images)">
                                         <img :src="item.imagePath" />
                                     </li>
                                 </ul>
@@ -141,7 +141,14 @@ export default {
     onLoad: function (options) {
         let This = this
         This.id = options.id
-        This.getOpenid = options.getOpenid
+        wx.setStorageSync('id',This.id)
+        if(options.share == 'undefined'){
+            This.getOpenid = false
+        }else{
+            This.getOpenid = options.share
+        }
+
+        
         let data1 = {
             id:This.id
         }
@@ -181,10 +188,8 @@ export default {
             wx.hideLoading();
             This.ishistoryNull = res.response
             if(This.historyPage == 1){
-                console.log(res.response.length)
                 This.isHistoryShow = res.response.length==0?false:true
                 This.historyList = res.response
-                console.log(This.historyList)
                 This.historyList.map(
                     function(item,index){
                         let da = new Date(item.maintainTime);
@@ -197,7 +202,6 @@ export default {
                         item.maintainTime = [year,month,date].join('-');
                     }
                 )
-                console.log(This.historyList)
             }else{
                 //    This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
                 //    This.historyList = This.historyList.concat(res.historyList)
@@ -208,7 +212,6 @@ export default {
     onReachBottom () {
         let This = this
         This.historyPage = This.historyPage + 1
-        console.log(This.historyPage)
         if(This.ishistoryNull == null || This.ishistoryNull.length == 0){
             wx.showToast({
                 title: '数据已加载完',
@@ -229,7 +232,6 @@ export default {
             wx.hideLoading();
             This.ishistoryNull = res.response
             if(This.historyPage == 1){
-                console.log(This.historyList)
                 // This.isHistoryShow = res.response.length==0?false:true
                 This.historyList = res.response
                 This.historyList.map(
@@ -244,7 +246,6 @@ export default {
                         item.maintainTime = [year,month,date].join('-');
                     }
                 )
-                console.log(This.historyList)
             }else{
                 //    This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
                 //    This.historyList = This.historyList.concat(res.historyList)
@@ -253,7 +254,12 @@ export default {
         })
     },
     onShareAppMessage: (res) => {
-
+        let This = this
+        let data = '/pages/indexDetail/main?share=' + wx.getStorageSync('openid') +'&id=' + wx.getStorageSync('id') +'&pageNo=1&pageSize=20'
+        return{
+            title:'建筑业优质班组数据库',
+            path:data
+        }
     },
     data() {
         return {
@@ -291,9 +297,25 @@ export default {
         };
     },
     methods: {
+        headPreviewImage(url,arr) {
+            let This = this
+            console.log(url)
+            console.log(arr)
+            let imgArr = []
+            arr.map(
+                function(item,index){
+                    imgArr.push(item.imagePath)
+                }
+            )
+            wx.previewImage({
+                current:url,
+                urls: imgArr
+            });
+        },
         goIntro(id){
+            let This = this
             wx.navigateTo({
-                url:'/pages/indexDetail/main?id=' + id
+                url:'/pages/indexDetail/main?id=' + id +'&share=' + This.getOpenid
             });
         },
         getData(){
@@ -302,9 +324,8 @@ export default {
         },
         edit(){
             let This = this
-            console.log('id = ' + This.id)
             wx.navigateTo({
-                url:'/pages/MaintenanceInformationEdit/main?id='+This.id
+                url:'/pages/MaintenanceInformationEdit/main?id='+This.id 
             });
         }
     },
@@ -376,6 +397,9 @@ export default {
                         button{
                             height: 39rpx;
                             width: 45rpx;
+                        }
+                        button::after{
+                            border:none;
                         }
                     }
                 }

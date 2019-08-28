@@ -124,12 +124,10 @@ export default {
         This.statusName = This.getData.maintainRecord.statusName
         This.status = This.getData.maintainRecord.status
         This.explain = This.getData.maintainRecord.explain || '-'
-        console.log('id = ' + This.id)
     },
     methods: {
         edit(){
             let This = this
-            console.log('id = ' + This.id)
             wx.navigateTo({
                 url:'/pages/MaintenanceInformationEdit/main?id='+This.id
             });
@@ -176,6 +174,9 @@ export default {
                 button{
                     height: 39rpx;
                     width: 45rpx;
+                }
+                button::after{
+                    border:none;
                 }
             }
         }

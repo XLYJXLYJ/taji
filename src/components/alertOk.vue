@@ -112,6 +112,9 @@ export default {
             background: #fff;
             border-bottom: none;
         }
+        button::after{
+            border:none;
+        }
     }
 }
 </style>

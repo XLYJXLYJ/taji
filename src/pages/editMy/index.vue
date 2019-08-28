@@ -94,14 +94,14 @@ export default {
             time: 0, // 验证码时间初始化
             btn: true,
             pickerValueArray:[{
-                label: '男',
+                label: '女',
                 value: 1
                 },
                 {
-                label: '女',
+                label: '男',
                 value: 2
             }],
-            pickerValueDefault: [0,0],
+            pickerValueDefault: [],
         };
     },
     mounted() {
@@ -112,7 +112,9 @@ export default {
             This.userNumber = resData.userNumber
             This.name = resData.fullName
             This.phone_code = resData.phoneNum
+            This.pickerValueDefault = [resData.gender]
             This.gender = resData.gender==1?'男':'女'
+            
             This.wx = resData.wxNickName
         })
     },
@@ -285,6 +287,9 @@ export default {
             align-items: center;
             background: #fff;
             border-bottom: none;
+        }
+        button::after{
+            border:none;
         }
     }
 }

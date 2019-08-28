@@ -260,6 +260,9 @@ export default {
             background: #fff;
             border-bottom: none;
         }
+        button::after{
+            border:none;
+        }
     }
 }
 .company {
@@ -284,6 +287,9 @@ export default {
                 button{
                     height: 39rpx;
                     width: 45rpx;
+                }
+                button::after{
+                    border:none;
                 }
             }
             p{

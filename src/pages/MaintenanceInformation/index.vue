@@ -417,6 +417,9 @@ export default {
                 width: 670rpx;
                 margin-top: 80rpx;
             }
+            .confirm::after{
+                border:none;
+            }
         }
     }
 

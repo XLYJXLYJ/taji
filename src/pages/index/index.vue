@@ -16,7 +16,7 @@
                 >
                     <block v-for="(item,index) in imgUrls" :key="index">
                         <swiper-item>
-                            <image :src="item.img" class="slide-image" />
+                            <image :src="item.img" class="slide-image" @click="go(item.jumpType,item.url)" />
                         </swiper-item>
                     </block>
                 </swiper>
@@ -50,7 +50,7 @@
             </section>
             <section class="maintenance" v-if="!appid && !getOpenid">
                 <p class="record">请先授权获取您的微信昵称、头像等公开信息，以便开始使用维保助手</p>
-                <button open-type="getUserInfo" @getuserinfo="getUserInfo">授权微信公开信息</button>
+                <button open-type="getUserInfo" lang="zh_CN" @getuserinfo="getUserInfo">授权微信公开信息</button>
             </section>
         </div>
 
@@ -102,13 +102,9 @@ export default {
         This.list = ''
         This.page = 1
         This.login(options)
-        if(!options.share_query){
-            console.log('没有数据哦')
+        if(JSON.stringify(options) === '{}'){
             This.getOpenid = false
-
         }else{
-            console.log('链接有数据哦')
-            console.log(options)
             This.getOpenid = options.openid
             if(wx.getStorageSync('appid') || This.getOpenid){
                 This.getData()
@@ -133,7 +129,6 @@ export default {
             code:'WBZS_MAIN_BANNER'
         }
         fly.post('/common/getBanner',data1).then(function (res) {
-            console.log(res.response)
             This.imgUrls = res.response
         })
     },
@@ -150,6 +145,19 @@ export default {
         This.getData()
     },
     methods: {
+        go(type,url){
+            if(type==1){
+                console.log('不跳转')
+            }else if(type==2){
+                wx.navigateTo({
+                    url:'/pages/userAgreement/main?url='+url
+                });
+            }else{
+                wx.navigateTo({
+                    url:url
+                });
+            }
+        },
         login(options){
             let This = this
             wx.login({
@@ -166,18 +174,12 @@ export default {
                                 wx.setStorageSync('openid', res.response.openid)
                                 wx.setStorageSync('token', res.response.token)
                                 if(options == {}){
-                                    console.log('没有数据哦')
                                     This.getOpenid = false
                                 }else{
-                                    console.log('链接有数据哦')
-                                    console.log(options)
                                     This.getOpenid = options.openid
                                 }
-                                console.log(options.openid)
                                 This.getData()
                             })
-   
-        
                     } else {
 
                     }
@@ -227,14 +229,14 @@ export default {
         goIntro(id){
             let This = this
             wx.navigateTo({
-                url:'/pages/indexDetail/main?id=' + id + '&getOpen=' + This.getOpenid
+                url:'/pages/indexDetail/main?id=' + id + '&share=' + This.getOpenid
             });
         },
         getData(){
             let This = this
             if(This.isNull == null || This.isNull.length == 0){
                 wx.showToast({
-                    title: '数据已加载完',
+                    title: '已加载全部数据',
                     icon: "none",
                     duration: 2000
                 })
@@ -250,8 +252,6 @@ export default {
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {
                 wx.hideLoading();
-                console.log('数据是')
-                console.log(res)
                 if(This.page == 1){
                     This.list = res.response.list
                     This.list.map(
@@ -277,7 +277,7 @@ export default {
                     //    This.list = This.list.concat(res.list)
                     if(res.response.list){
                         wx.showToast({
-                            title: '数据已加载完',
+                            title: '已加载全部数据',
                             icon: "none",
                             duration: 2000
                         })
@@ -348,6 +348,9 @@ export default {
             font-size: 34rpx;
             font-family: "PingFangSC-Medium";
             margin-top: 100rpx;
+        }
+        button::after{
+            border:none;
         }
         .card-contain {
             width: 100%;
