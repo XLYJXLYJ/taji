@@ -8,8 +8,8 @@
                 <div class="modalContent">
                     <p class="contentTip">微信手机号码获取失败</p>
                     <div class="modalBottom">
-                        <button @click="tapCancel">返回重试</button>
-                        <button @click="confirmSend">手动输入</button>
+                        <span class="button" style="border-right: 1px solid #cecece;" @click="tapCancel">返回重试</span>
+                        <span class="button" @click="confirmSend">手动输入</span>
                     </div>
                 </div>
             </div>
@@ -18,18 +18,19 @@
             <form>
                 <div class="get-block" style="border:none">
                     <p class="title">维保人员编号</p>
-                    <input type="text" v-model="userNumber" disabled autocomplete="off" />
+                    <input type="text" v-model="userNumber" style="color:#5f5f5f" disabled autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">姓名</p>
-                    <input type="text" v-model="name" placeholder="请输入您的姓名" autocomplete="off" />
+                    <input type="text" v-model="name" style="color:#5f5f5f" placeholder="请输入您的姓名" autocomplete="off" />
                 </div>
 
                  <div class="get-block">
                     <p class="title">手机号码</p>
                     <div class="get-code">
                         <input
+                            style="color:#5f5f5f"
                             type="text"
                             v-model="phone_code"
                             placeholder="请输入您的手机号码"
@@ -42,13 +43,21 @@
 
                 <div class="get-block">
                     <p class="title">性别</p>
-                    <p @click="showg" style="color:#5f5f5f">{{gender}}</p>
+                    <!-- <p @click="showg" style="color:#5f5f5f">{{gender}}</p> -->
+                    <input
+                        style="color:#5f5f5f"
+                        type="text"
+                        v-model="gender"
+                        autocomplete="off"
+                        disabled
+                        @click="showg"
+                    />
                     <mp-picker ref="mpPicker" :mode="mode" themeColor="rgb(24,144,255)" :deepLength=deepLength :pickerValueDefault="pickerValueDefault" @onChange="onChange" @onConfirm="onConfirm" @onCancel="onCancel" :pickerValueArray="pickerValueArray"></mp-picker>
                 </div>
 
                 <div class="get-block" style="border:none">
                     <p class="title">微信昵称</p>
-                    <input type="text" v-model="wx" disabled autocomplete="off" />
+                    <input type="text" v-model="wx" style="color:#5f5f5f" disabled autocomplete="off" />
                 </div>
 
 
@@ -247,7 +256,6 @@ export default {
     z-index: 9999;
     background: #fff;
     margin: -180rpx 95rpx;
-    border-radius: 8rpx;
     border-radius: 30rpx;
 }
 .modalContent {
@@ -275,8 +283,8 @@ export default {
     .modalBottom{
         display: flex;
         justify-content: space-around;
-        button {
-            width: 295rpx;
+        .button {
+            width: 310rpx;
             height: 96rpx;
             margin-top: 40rpx;
             font-size: 34rpx;
@@ -287,6 +295,8 @@ export default {
             align-items: center;
             background: #fff;
             border-bottom: none;
+            border-top: 1px solid #cecece;
+            border-radius: none;
         }
         button::after{
             border:none;
@@ -319,7 +329,7 @@ export default {
             margin-bottom: 16rpx;
         }
         input {
-            padding-bottom: 0rpx;
+            padding-bottom:16rpx;
         }
         .confirm {
             background: #1890FF;
@@ -344,7 +354,7 @@ export default {
     background: #fff;
     margin: 0;
     padding:0;
-    margin-top: -20rpx;
+    margin-top: -10rpx;
 }
 .getCode::after{
     border: none;

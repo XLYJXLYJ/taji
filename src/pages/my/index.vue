@@ -7,18 +7,19 @@
             <div class="left">
                 <img @click="goMy" v-if="!appid" src="/static/images/user.png">
                 <img v-if="appid" :src="img || user.avatarUrl">
-                <p class="one" v-if="appid">{{name || user.username || ''}}</p>
-                <p class="two" v-if="appid">{{mobile || ''}}</p>
+                <p class="one" v-if="appid" style="font-size:34rpx">{{name || user.username || ''}}</p>
+                <p class="two" v-if="appid" style="font-size:28rpx">{{mobile || ''}}</p>
             </div>
             <div class="right" @click="edit">
-                <p v-if='myself && appid'>未完善</p>
+                <p>未完善</p>
+                <p v-if='myself && appid' style="font-size:28rpx;position:relative;top:-3rpx">未完善</p>
                 <img src="/static/images/right.png" alt="">
             </div>
         </section>
         <section>
             <ul>
-                <li @click="goS"><span style="padding-left:32rpx;"><img style="padding-right:32rpx;" src="/static/images/house.png">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
-                <li @click="goW"><span style="padding-left:32rpx;"><img style="padding-right:32rpx;" src="/static/images/what.png">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goS"><span style="padding-left:32rpx;"><img style="padding-right:32rpx;width:38rpx;height:40rpx;position:relative;top:4rpx" src="/static/images/house.png">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goW"><span style="padding-left:32rpx;"><img style="padding-right:32rpx;width:38rpx;height:38rpx;position:relative;top:4rpx" src="/static/images/what.png">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
                 <!-- <li v-for="(item,index) in list" :key="index" @click="goUrl(item.url)"><span>{{item.name}}</span><span><img src="/static/images/right.png"></span></li> -->
             </ul>
         </section>
@@ -84,6 +85,12 @@ export default {
             }
         })
     },
+    onSaveExitState: function() {
+        console.log('隐藏')
+        wx.navigateTo({
+            url:"/pages/index/main"
+        });
+    },
     mounted() {
         let This = this
         This.img = wx.getStorageSync('avatarUrl') 
@@ -95,6 +102,7 @@ export default {
             let userNumber = resData.userNumber
             let fullName = resData.fullName
             let phoneNum = resData.phoneNum
+            This.mobile = resData.phoneNum
             wx.setStorageSync('mobile', phoneNum) 
             if(!phoneNum || !fullName || !userNumber){
                 This.myself = true
@@ -249,7 +257,7 @@ export default {
     ul{
         width: 100%;
         height: 100%;
-        margin-top: 96rpx;
+        margin-top: 48rpx;
         li{
             width:100%;
             height: 104rpx;

@@ -4,7 +4,7 @@
             <section class="sec-nav">
                 <navigation-bar :title="videoTitle" :navBackgroundColor="'white'" :back-visible="true"></navigation-bar>
             </section>
-            <section class="img-contain">
+            <section class="img-contain" style="background:#fcfcfc;padding-top:40rpx;padding-bottom:40rpx">
                 <swiper
                     :indicator-dots="false"
                     autoplay
@@ -93,10 +93,17 @@ export default {
             page:1,
             isNull:'',
             openid:'',
-            getOpenid:''
+            getOpenid:'',
+            over:''
         };
     },
-
+    //  onPullDownRefresh() {
+    //     wx.startPullDownRefresh
+    //     setTimeout(function(){
+    //         wx.stopPullDownRefresh()
+    //     },
+    //     2000);
+    // },
     onLoad(options) {
         let This = this
         This.list = ''
@@ -106,9 +113,10 @@ export default {
             This.getOpenid = false
         }else{
             This.getOpenid = options.openid
-            if(wx.getStorageSync('appid') || This.getOpenid){
-                This.getData()
-            }
+            // if(wx.getStorageSync('appid') || This.getOpenid){
+            //     This.getData()
+            // }
+            This.bottomId = true
         }
 
     },
@@ -140,6 +148,11 @@ export default {
         }
     },
     onReachBottom () {
+                // wx.startPullDownRefresh
+        // setTimeout(function(){
+        //     wx.stopPullDownRefresh()
+        // },
+        // 2000);
         let This = this
         This.page = This.page + 1
         This.getData()
@@ -234,26 +247,40 @@ export default {
         },
         getData(){
             let This = this
+            console.log(This.isNull)
             if(This.isNull == null || This.isNull.length == 0){
-                wx.showToast({
-                    title: '已加载全部数据',
-                    icon: "none",
-                    duration: 2000
-                })
+                // wx.showToast({
+                //     title: '已加载全部数据',
+                //     icon: "none",
+                //     duration: 2000
+                // })
+                console.log('1111')
             }else{
-                wx.showLoading({
-                    title:'加载中'
-                })
+                console.log(This.over)
+                if(This.over){
+                    wx.showLoading({
+                        title:'加载中'
+                    })
+                }else{
+                    wx.showToast({
+                        title: '已加载完全部数据',
+                        icon: "none",
+                        duration: 2000
+                    })
+                }
+
+                console.log('2222')
             }
             let data = {
                 pageNo:This.page,
-                pageSize:20,
+                pageSize:3,
                 share:This.getOpenid || ''
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {
                 wx.hideLoading();
                 if(This.page == 1){
                     This.list = res.response.list
+                    This.over = res.response.list.length
                     This.list.map(
                         function(item,index){
                             let da = new Date(item.maintainTime);
@@ -275,14 +302,16 @@ export default {
                 }else{
                     //    This.list.push(JSON.parse(JSON.stringify([res.list])))
                     //    This.list = This.list.concat(res.list)
-                    if(res.response.list){
-                        wx.showToast({
-                            title: '已加载全部数据',
-                            icon: "none",
-                            duration: 2000
-                        })
+                    if(!res.response.list){
+                        // wx.showToast({
+                        //     title: '已加载全部数据',
+                        //     icon: "none",
+                        //     duration: 2000
+                        // })
                     }else{
                         let listArr = res.response.list
+                        This.over = res.response.list.length
+                        console.log(This.over)
                         listArr.map(
                             function(item,index){
                                 let da = new Date(item.maintainTime);
@@ -338,7 +367,7 @@ export default {
             font-size: 34rpx;
             color: black;
             font-family: 'PingFangSC-Medium';
-            font-weight: 550;
+            font-weight: 650;
             padding: 64rpx 0 24rpx 40rpx;
         }
         button{

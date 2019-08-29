@@ -45,6 +45,7 @@ export default {
     },
     onReachBottom () {
         let This = this
+        wx.startPullDownRefresh()
         This.page = This.page + 1
         This.getData()
     },
@@ -97,11 +98,11 @@ export default {
                     //    This.list.push(JSON.parse(JSON.stringify([res.list])))
                     //    This.list = This.list.concat(res.list)
                     if(res.response.list){
-                        wx.showToast({
-                            title: '数据已加载完',
-                            icon: "none",
-                            duration: 2000
-                        })
+                        // wx.showToast({
+                        //     title: '数据已加载完',
+                        //     icon: "none",
+                        //     duration: 2000
+                        // })
                     }else{
                         let listArr = res.response.list
                         listArr.map(

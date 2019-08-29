@@ -3,27 +3,12 @@
     "pages/index/main", 
     "pages/MaintenanceInformationEdit/main",
     "pages/MaintenanceInformation/main", 
-
- 
-
-
     "pages/EnterpriseAttribution/main",
-
-
-
     "pages/login/main",
     "pages/editMy/main",
-
-
-
-
     "pages/indexDetail/main",
-
     "pages/my/main",
     "pages/userAgreement/main"
-
-
-
   ],
   "window": {
     "backgroundTextStyle": "light",

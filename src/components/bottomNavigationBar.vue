@@ -14,7 +14,7 @@
         <article class="tabBar-box">
             <ul class="tabBar-nav" v-if="navList.length > 0">
                 <li class="item" v-for="(item, index) in navList" @click="selectNavItem(index,item.pagePath)" :key="index">
-                    <button open-type="getUserInfo" @getuserinfo="getUserInfo">
+                    <button>
                         <p class="item-images">
                             <img :src="selectNavIndex === index ? item.selectedIconPath : item.iconPath" alt="iconPath"/>
                         </p>
@@ -225,7 +225,7 @@ export default {
     bottom: 0;
     width: 100%;
     height: 50px;
-    border-top: 1px solid #e5e5e5;
+    box-shadow:3rpx 3rpx 6rpx #999;
     background-color: #fff;
 }
 
@@ -273,6 +273,6 @@ button::after{
     justify-content: center;
     margin: 0 auto;
     text-align: center;
-    border-radius: 48rpx;
+    border-radius: 65rpx;
 }
 </style>

@@ -68,20 +68,17 @@ export default {
                 self.model = system.model;
                 self.brand = system.brand;
                 self.system = system.system;
-
                 let platformReg = /ios/i;
                 if (platformReg.test(system.platform)) {
                     self.titleBarHeight = 39;
                 } else {
                     self.titleBarHeight = 43;
                 }
-
                 self.navBarHeight = self.statusBarHeight + self.titleBarHeight;
             }
         });
     },
     mounted() {
-
     },
     methods: {
         backClick() {
@@ -153,9 +150,9 @@ export default {
                 }
             }
             .line {
-                display: block;
+                display: black;
                 height: 30rpx;
-                width: 1px;
+                width: 1rpx;
                 background-color: gray;
             }
             .opt-home {
@@ -166,13 +163,14 @@ export default {
             }
             }
             .bar-title {
-                width: 148rpx;
+                width: 160rpx;
                 height: 52rpx;
                 font-size: 37rpx;
                 font-family: 'PingFangSC-Medium';
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                margin-top: 18rpx;
                 font-weight: 600;
             }
         }

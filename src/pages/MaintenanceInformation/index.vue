@@ -243,6 +243,7 @@ export default {
                 icon: "none",
                 duration: 3000
             })
+            console.log(successRes)
             for(let i=0;i<=tempFilePaths.length;i++){
                 wx.uploadFile({
                     url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址

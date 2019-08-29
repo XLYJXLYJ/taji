@@ -93,6 +93,7 @@
 
                         <div class="j-pic-upload">
                             <img @click="previewImg(index)" v-for="(src,index) in imgData" :key="src" :src="src.imagePath" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
+                            <!-- <img class="delete-icon" src="/static/images/delete.png"> -->
                             <div class="j-upload-btn" @click="uploadImg()" :style="{'width':width || '120rpx','height':height || '120rpx'}">
                             <span class="j-upload-add">+</span>
                             </div>
@@ -264,11 +265,12 @@ export default {
             //   res.tempFilePaths.forEach(v=>{
             //     This.imgData.push(v);
             //   });
-                for(let i=0;i<=res.tempFilePaths.length;i++){
+            console.log(res)
+                for(let i=0;i<res.tempFilePaths.length;i++){
                   // let size = res.tempFiles[i].size
                   wx.uploadFile({
-                    //   url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                      url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
+                      url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                    //   url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                       filePath: res.tempFilePaths[i],
                       name: 'file',
                       header: {
@@ -317,6 +319,7 @@ export default {
 
         chooseImg(res){
             let This = this
+            console.log(res)
             // res.all.map(
             //     function(item,index){
             //         This.imgData.push(item)
@@ -689,7 +692,9 @@ export default {
         flex-direction: row;
         align-items: center;
         flex-wrap: wrap;
+        position: relative;
     }
+
     .j-upload-btn{
         border: 1px dashed #ddd;
         display: flex;
@@ -705,7 +710,9 @@ export default {
     }
     .img{
         margin:10rpx 20rpx 10rpx 0;
+        border-radius: 4rpx;
     }
+
 }
 .getCode {
     color: black;

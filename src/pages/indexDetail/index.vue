@@ -7,7 +7,7 @@
             <section class="img-contain" v-if="getData.terminal">
                 <equipDetail :getData='getData'></equipDetail>
             </section>
-            <section v-if="getData.tower">
+            <section class="img-contain" v-if="getData.tower">
                 <equipMessage :getData='getData'></equipMessage>
             </section>
             <section class="img-contain" v-if="getData.maintainRecord">
@@ -178,6 +178,9 @@ export default {
                 title:'加载中'
             })
         }
+        if(!This.getOpenid){
+            This.getOpenid = ''
+        }
         let data = {
             id:This.id || 5,
             pageNo: This.historyPage,
@@ -187,21 +190,25 @@ export default {
         fly.post('/maintain/getHistoryMaintain',data).then(function (res) {
             wx.hideLoading();
             This.ishistoryNull = res.response
-            if(This.historyPage == 1){
-                This.isHistoryShow = res.response.length==0?false:true
-                This.historyList = res.response
-                This.historyList.map(
-                    function(item,index){
-                        let da = new Date(item.maintainTime);
-                        let year = da.getFullYear()+'';
-                        let month = da.getMonth()+1+'';
-                        let date = da.getDate()+' ';
-                    //     let h = da.getHours()+'';
-                    //     let m = da.getMinutes()+'';
-                    //     let s = da.getSeconds()+'';
-                        item.maintainTime = [year,month,date].join('-');
-                    }
-                )
+            if(This.historyPage == 1){    
+                if(res.response==null){
+                    This.isHistoryShow = false
+                }else{
+                    This.isHistoryShow = true
+                    This.historyList = res.response
+                    This.historyList.map(
+                        function(item,index){
+                            let da = new Date(item.maintainTime);
+                            let year = da.getFullYear()+'';
+                            let month = da.getMonth()+1+'';
+                            let date = da.getDate()+' ';
+                        //     let h = da.getHours()+'';
+                        //     let m = da.getMinutes()+'';
+                        //     let s = da.getSeconds()+'';
+                            item.maintainTime = [year,month,date].join('-');
+                        }
+                    )
+                }
             }else{
                 //    This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
                 //    This.historyList = This.historyList.concat(res.historyList)
@@ -223,10 +230,14 @@ export default {
                 title:'加载中'
             })
         }
+        if(!This.getOpenid){
+            This.getOpenid = ''
+        }
         let data = {
             id:This.id || 5,
             pageNo: This.historyPage,
-            pageSize:20
+            pageSize:20,
+            share:This.getOpenid
         }
         fly.post('/maintain/getHistoryMaintain',data).then(function (res) {
             wx.hideLoading();
