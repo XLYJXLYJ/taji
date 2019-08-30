@@ -125,7 +125,7 @@ import navigationBar from "@/components/navigationBar.vue";
 import equipDetail from "@/components/equipDetail.vue";
 import equipMessage  from "@/components/equipMessage.vue";
 import historyCard from "@/components/historyCard.vue";
-import goBackNav from "@/components/goBackNav.vue";
+import goBackNav from "@/components/goIndex.vue";
 import add from "@/components/add.vue";
 import fly from "@/services/WxApi";
 export default {
@@ -418,9 +418,11 @@ export default {
                     width: 100%;
                     height: 330rpx;
                     .two-ul {
+                        width: 100%;
                         .two-li {
                             float: left;
-                            margin-right: 32rpx;
+                            display: flex;
+                            justify-content: space-around;
                             img {
                                 width: 144rpx;
                                 height: 144rpx;

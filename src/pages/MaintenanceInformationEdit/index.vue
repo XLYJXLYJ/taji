@@ -714,8 +714,8 @@ export default {
         color:#C9C9C9;
     }
     .img{
-        margin:10rpx 20rpx 10rpx 0;
-        border-radius: 4rpx;
+        margin:10rpx 10rpx 10rpx 0;
+        border-radius: 8rpx;
     }
 
 }

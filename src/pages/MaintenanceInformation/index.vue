@@ -273,6 +273,7 @@ export default {
         uploadDelete(DeleteRes){
             let This = this
             let index = DeleteRes.index
+            This.imgData.splice(index,1) 
             This.imgMessage.splice(index,1)       
         },
         submitEquip(){
@@ -321,7 +322,7 @@ export default {
                     return;
                 }else{
                     wx.showToast({
-                        title: "申请加入成功",
+                        title: "保存成功",
                         icon: "none",
                         duration: 2000
                     });
