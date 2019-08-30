@@ -8,8 +8,8 @@
                 <div class="modalContent">
                     <p class="contentTip">确认解除绑定？</p>
                     <div class="modalBottom">
-                        <button @click="tapCancel">取消</button>
-                        <button @click="confirmSend">确认</button>
+                        <span class="button" style="border-right: 1px solid #cecece;" @click="tapCancel">取消</span>
+                        <span class="button" @click="confirmSend">确认</span>
                     </div>
                 </div>
             </div>
@@ -247,8 +247,8 @@ export default {
     .modalBottom{
         display: flex;
         justify-content: space-around;
-        button {
-            width: 295rpx;
+        .button {
+            width: 310rpx;
             height: 96rpx;
             margin-top: 40rpx;
             font-size: 34rpx;
@@ -259,6 +259,8 @@ export default {
             align-items: center;
             background: #fff;
             border-bottom: none;
+            border-top: 1px solid #cecece;
+            border-radius: none;
         }
         button::after{
             border:none;

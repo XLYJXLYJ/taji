@@ -13,16 +13,17 @@
                     circular
                     indicator-color="rgba(255,255,255,.5)"
                     indicator-active-color="#ffffff"
+                    style="height:400rpx"
                 >
                     <block v-for="(item,index) in imgUrls" :key="index">
-                        <swiper-item>
+                        <swiper-item style="height:280rpx">
                             <image :src="item.img" class="slide-image" @click="go(item.jumpType,item.url)" />
                         </swiper-item>
                     </block>
                 </swiper>
             </section>
             <section class="maintenance" v-if="appid || getOpenid" style="margin-bottom:130rpx;">
-                <p class="record">维保记录</p>
+                <p class="record-01">维保记录</p>
                 <div class="card-contain">
                     <ul>
                         <div class="img-contain" v-if="isNull==0">
@@ -348,7 +349,7 @@ export default {
     .img-contain {
         display: block;
         width: 100%;
-        height: 290rpx;
+        height: 300rpx;
         margin: 0 auto;
         border-radius: 8rpx;
         margin-top: 40rpx;
@@ -358,25 +359,39 @@ export default {
             width: 670rpx;
             height: 290rpx;
             border-radius: 8rpx;
+            padding-top: 5rpx;
+            box-shadow:0px 0px 12px #B8DFFA;
         }
     }
     .maintenance{
+        .record-01{
+            width: 650rpx;
+            height: auto;
+            font-size: 34rpx;
+            color: black;
+            font-family: 'PingFangSC-Medium';
+            font-weight: 650;
+            padding: 24rpx 0 24rpx 40rpx;
+        }
         .record{
             width: 650rpx;
             height: 88rpx;
             font-size: 34rpx;
             color: black;
             font-family: 'PingFangSC-Medium';
-            font-weight: 650;
+            font-weight: 450;
             padding: 64rpx 0 24rpx 40rpx;
+            line-height: 44rpx;
         }
         button{
             background: #1890FF;
             color: #fff;
             width: 670rpx;
-            font-size: 34rpx;
+            height: 84rpx;
+            font-size: 36rpx;
+            font-weight: 600;
             font-family: "PingFangSC-Medium";
-            margin-top: 100rpx;
+            margin-top: 60rpx;
         }
         button::after{
             border:none;

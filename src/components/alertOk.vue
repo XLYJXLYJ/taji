@@ -7,8 +7,8 @@
             <div class="modalContent">
                 <p class="contentTip">优质班组数据库请求获取您的微信昵称、头像等公开信息，以便继续使用建筑业优质班组数据库</p>
                 <div class="modalBottom">
-                    <button @click="goNo">取消</button>
-                    <button @click="goOk">确认</button>
+                    <span class="button" style="border-right: 1px solid #cecece;"  @click="goNo">取消</span>
+                    <span class="button" @click="goOk">确认</span>
                 </div>
             </div>
         </div>
@@ -99,8 +99,8 @@ export default {
     .modalBottom{
         display: flex;
         justify-content: space-around;
-        button {
-            width: 295rpx;
+        .button {
+            width: 310rpx;
             height: 96rpx;
             margin-top: 40rpx;
             font-size: 34rpx;
@@ -111,6 +111,8 @@ export default {
             align-items: center;
             background: #fff;
             border-bottom: none;
+            border-top: 1px solid #cecece;
+            border-radius: none;
         }
         button::after{
             border:none;

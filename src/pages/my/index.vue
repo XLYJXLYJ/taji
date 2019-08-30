@@ -11,15 +11,14 @@
                 <p class="two" v-if="appid" style="font-size:28rpx">{{mobile || ''}}</p>
             </div>
             <div class="right" @click="edit">
-                <p>未完善</p>
-                <p v-if='myself && appid' style="font-size:28rpx;position:relative;top:-3rpx">未完善</p>
+                <p v-if='myself && appid' style="font-size:28rpx;position:relative;top:-2rpx">未完善</p>
                 <img src="/static/images/right.png" alt="">
             </div>
         </section>
         <section>
             <ul>
-                <li @click="goS"><span style="padding-left:32rpx;"><img style="padding-right:32rpx;width:38rpx;height:40rpx;position:relative;top:4rpx" src="/static/images/house.png">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
-                <li @click="goW"><span style="padding-left:32rpx;"><img style="padding-right:32rpx;width:38rpx;height:38rpx;position:relative;top:4rpx" src="/static/images/what.png">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goS"><span style="padding-left:30rpx;"><img style="padding-right:30rpx;width:38rpx;height:40rpx;position:relative;top:6rpx" src="/static/images/house.png">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goW"><span style="padding-left:30rpx;"><img style="padding-right:30rpx;width:38rpx;height:38rpx;position:relative;top:6rpx" src="/static/images/what.png">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
                 <!-- <li v-for="(item,index) in list" :key="index" @click="goUrl(item.url)"><span>{{item.name}}</span><span><img src="/static/images/right.png"></span></li> -->
             </ul>
         </section>
@@ -208,7 +207,7 @@ export default {
                 position: absolute;
                 left: 32rpx;
                 top: 30rpx;
-                border-radius: 4rpx;
+                border-radius: 8rpx;
             }
             .one{
                 font-size: 34rpx;
@@ -265,7 +264,7 @@ export default {
             display:flex;
             justify-content:space-between;
             align-items: center;
-            border-bottom: 1rpx solid #e5e5e5;
+            border-bottom: 1rpx solid #ededed;
             font-family: 'PingFangSC-Regular';
             background: #fff;
             img{
