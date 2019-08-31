@@ -246,8 +246,8 @@ export default {
             console.log(successRes)
             for(let i=0;i<=tempFilePaths.length;i++){
                 wx.uploadFile({
-                    url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                    // url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
+                    // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                    url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                     filePath: tempFilePaths[i],
                     name: 'file',
                     header: {
@@ -388,6 +388,7 @@ export default {
                 img{
                     height: 39rpx;
                     width: 45rpx;
+                    border-radius: 8rpx;
                 }
             }
         }

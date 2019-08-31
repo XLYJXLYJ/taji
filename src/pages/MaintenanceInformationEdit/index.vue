@@ -92,10 +92,15 @@
                         >现场照片</p>
 
                         <div class="j-pic-upload">
-                            <img @click="previewImg(index)" v-for="(src,index) in imgData" :key="src" :src="src.imagePath" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
-                            <!-- <img class="delete-icon" src="/static/images/delete.png"> -->
-                            <div class="j-upload-btn" @click="uploadImg()" :style="{'width':width || '120rpx','height':height || '120rpx'}">
-                            <span class="j-upload-add">+</span>
+                            <ul>
+                                <li v-for="(src,index) in imgData" :key="src">
+                                    <img @click="previewImg(index)" :src="src.imagePath" :style="{'width':width || '144rpx','height':height || '144rpx'}" class="img" >
+                                    <img class="delete-icon" @click="deleI(index)" src="/static/images/delete.png">
+                                </li>
+                            </ul>
+
+                            <div class="j-upload-btn" @click="uploadImg()" :style="{'width':width || '144rpx','height':height || '144rpx'}">
+                                <span class="j-upload-add">+</span>
                             </div>
                         </div>
 
@@ -269,8 +274,8 @@ export default {
                 for(let i=0;i<res.tempFilePaths.length;i++){
                   // let size = res.tempFiles[i].size
                   wx.uploadFile({
-                      url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                    //   url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
+                    //   url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                      url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                       filePath: res.tempFilePaths[i],
                       name: 'file',
                       header: {
@@ -295,28 +300,40 @@ export default {
             }
           })
         },
-        previewImg(index){
-          let This = this;
-          wx.showActionSheet({
-            itemList:["预览","删除"],
-            success: function(res) {
-                let arr = []
-                arr.push(This.imgData[index].imagePath)
-              if(res.tapIndex === 0){
-                wx.previewImage({
-                  current:This.imgData[index].imagePath,
-                  urls:arr
-                });
-              } else {
-                This.imgData.splice(index,1);
-                This.deleteImg(This.imgData)
-                // This.$emit("delete",This.imgData);
-              }
-            },
-          });
+        // previewImg(index){
+        //   let This = this;
+        //   wx.showActionSheet({
+        //     itemList:["预览","删除"],
+        //     success: function(res) {
+        //         let arr = []
+        //         arr.push(This.imgData[index].imagePath)
+        //       if(res.tapIndex === 0){
+        //         wx.previewImage({
+        //           current:This.imgData[index].imagePath,
+        //           urls:arr
+        //         });
+        //       } else {
+        //         This.imgData.splice(index,1);
+        //         This.deleteImg(This.imgData);
+        //         // This.$emit("delete",This.imgData);
+        //       }
+        //     },
+        //   });
+        // },
+        deleI(index){
+            let This = this;
+            This.imgData.splice(index,1);
+            This.deleteImg(This.imgData);
         },
-
-
+        previewImg(index){
+            let This = this;
+            let arr = []
+            arr.push(This.imgData[index].imagePath)
+            wx.previewImage({
+                current:This.imgData[index].imagePath,
+                urls:arr
+            });
+        },
         chooseImg(res){
             let This = this
             console.log(res)
@@ -369,8 +386,8 @@ export default {
                 duration: 3000
             })
             wx.uploadFile({
-                url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
-                // url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
+                // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
+                url: 'https://wbzsapi.jianzaogong.com/common/uploadImg', //正式环境
                 filePath: tempFilePaths[0],
                 name: 'file',
                 header: {
@@ -466,7 +483,7 @@ export default {
                     return;
                 }else{
                     wx.showToast({
-                        title: "申请加入成功",
+                        title: "保存成功",
                         icon: "none",
                         duration: 2000
                     });
@@ -698,24 +715,40 @@ export default {
         align-items: center;
         flex-wrap: wrap;
         position: relative;
-    }
+        ul{
+            height: auto;
+            width: auto;
+            li{
+                width: 144rpx;
+                height: 144rpx;
+                float: left;
+                position: relative;
+                margin-right:12rpx;
+                
+                .img{
 
-    .j-upload-btn{
-        border: 1px dashed #ddd;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        margin-right: 20rpx;
-    }
-    .j-upload-add{
-        font-size: 80rpx;
-        font-weight: 500;
-        color:#C9C9C9;
-    }
-    .img{
-        margin:10rpx 10rpx 10rpx 0;
-        border-radius: 8rpx;
+                    border-radius: 8rpx;
+                }
+                .delete-icon{
+                    position: absolute;
+                    right: 0rpx;
+                    top: 0rpx;
+                }
+            }
+        }
+
+        .j-upload-btn{
+            border: 1px dashed #ddd;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            .j-upload-add{
+                font-size: 80rpx;
+                font-weight: 500;
+                color:#C9C9C9;
+            }
+        }
     }
 
 }

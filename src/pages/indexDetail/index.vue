@@ -62,10 +62,10 @@
 
                             <div class="get-block">
                                 <p class="title">说明</p>
-                                <input type="text" v-model="getData.maintainRecord.explain" disabled placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                                <input type="text" v-model="getData.maintainRecord.explain" disabled placeholder="-" autocomplete="off" />
                             </div>
 
-                            <div class="img-block">
+                            <div class="img-block" v-if="getData.maintainRecord.images">
                                 <p
                                     class="title"
                                     style="margin-bottom:20rpx;"
@@ -423,6 +423,7 @@ export default {
                             float: left;
                             display: flex;
                             justify-content: space-around;
+                            margin-left: 10rpx;
                             img {
                                 width: 144rpx;
                                 height: 144rpx;

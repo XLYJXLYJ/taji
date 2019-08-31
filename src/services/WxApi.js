@@ -3,8 +3,8 @@ const fly = new Fly()
 
 // fly.config.baseURL = 'https://wbzsapi.jzanquan.com';
 // fly.config.baseURL = 'https://wbzsapi.test.jianzaogong.com'; // 正式环境
-// fly.config.baseURL = 'https://wbzsapi.jianzaogong.com'; // 正式环境
-fly.config.baseURL = 'https://wxtjapi.test.jianzaogong.com';
+fly.config.baseURL = 'https://wbzsapi.jianzaogong.com'; // 正式环境
+// fly.config.baseURL = 'https://wxtjapi.test.jianzaogong.com';
 fly.config.timeout = 50000
 fly.interceptors.request.use((request) => {
   //给所有请求添加自定义header
