@@ -211,6 +211,9 @@ export default {
             font-size: 34rpx;
             font-family: "PingFangSC-Medium";
         }
+        .confirm::after {
+            border:none;
+        }
     }
 }
 .getCode {

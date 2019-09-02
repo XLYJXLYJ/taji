@@ -72,7 +72,7 @@
                                 >现场照片</p>
                                 <ul class="two-ul">
                                     <li class="two-li" v-for="(item,index) in getData.maintainRecord.images" :key="index" @click="headPreviewImage(item.imagePath,getData.maintainRecord.images)">
-                                        <img :src="item.imagePath" />
+                                        <img :src="item.imagePath + '&isCompress =1'" />
                                     </li>
                                 </ul>
                             </div>
@@ -124,14 +124,12 @@ import editMessage from "@/components/editMessage.vue";
 import navigationBar from "@/components/navigationBar.vue";
 import equipDetail from "@/components/equipDetail.vue";
 import equipMessage  from "@/components/equipMessage.vue";
-import historyCard from "@/components/historyCard.vue";
 import goBackNav from "@/components/goIndex.vue";
 import add from "@/components/add.vue";
 import fly from "@/services/WxApi";
 export default {
     components: {
         navigationBar,
-        historyCard,
         add,
         goBackNav,
         equipMessage,
@@ -190,8 +188,9 @@ export default {
         fly.post('/maintain/getHistoryMaintain',data).then(function (res) {
             wx.hideLoading();
             This.ishistoryNull = res.response
-            if(This.historyPage == 1){    
-                if(res.response==null){
+            if(This.historyPage == 1){   
+                console.log(res.response.length) 
+                if(res.response.length == 0){
                     This.isHistoryShow = false
                 }else{
                     This.isHistoryShow = true
@@ -447,6 +446,9 @@ export default {
                     margin-bottom: 24rpx;
                     font-size: 34rpx;
                     font-family: "PingFangSC-Medium";
+                }
+                .confirm::after {
+                    border:none;
                 }
             }
         }

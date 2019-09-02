@@ -29,7 +29,7 @@
                             placeholder-style="color:#dadada;"
                             style="color:black"
                         />
-                        <p @click="cancel" v-if="iscompanyNumber">解除绑定</p>
+                        <p @click="cancel" v-if="iscompanyNumber" style="color:rgb(4,144,255)">解除绑定</p>
                     </div>
                 </div>
                 <p class="title-explain">
@@ -321,6 +321,9 @@ export default {
             bottom: 24rpx;
             font-size: 34rpx;
             font-family: "PingFangSC-Medium";
+        }
+        .confirm::after {
+            border:none;
         }
     }
 }

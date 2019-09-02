@@ -316,6 +316,10 @@ export default {
             .get-code {
                 display: flex;
                 justify-content: space-between;
+                button{
+                    position: relative;
+                    top: -8rpx;
+                }
             }
         }
         .img-block {

@@ -29,7 +29,7 @@
                         <div class="img-contain" v-if="isNull==0">
                             <img src="/static/images/none.png">
                         </div>
-                        <div v-if="isNull!=0">
+                        <div v-if="isNull!=0" style="margin-top:32rpx;">
                             <li v-for="(item,index) in list" :key="index" @click="goIntro(item.id)">
                                 <div class="one">
                                     <span class="identifier">编号 {{item.maintainNumber || ''}}</span>
@@ -355,7 +355,7 @@ export default {
         margin-top: 40rpx;
         background: #fcfcfc;
         text-align: center;
-        image {
+        .slide-image {
             width: 670rpx;
             height: 290rpx;
             border-radius: 8rpx;
@@ -399,6 +399,7 @@ export default {
         .card-contain {
             width: 100%;
             height: 100%;
+            margin-top: -38rpx;
             ul{
                 .img-contain{
                     width: 100%;

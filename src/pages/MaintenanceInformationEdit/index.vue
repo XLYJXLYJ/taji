@@ -25,6 +25,7 @@
                             v-model="maintainNumber"
                             autocomplete="off"
                             disabled
+                            style="width:100%;font-size:34rpx;"
                         />
                     </div>
                 </div>
@@ -37,7 +38,7 @@
                             v-model="equip_code"
                             autocomplete="off"
                             disabled
-                            style="width:100%"
+                            style="width:100%;font-size:34rpx;"
                         />
                     </div>
                 </div>
@@ -50,37 +51,38 @@
                             v-model="terminalRemarkName"
                             autocomplete="off"
                             disabled
+                            style="width:100%;font-size:34rpx;"
                         />
                     </div>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <p @click="showType" style="color:#5f5f5f;height:70rpx">{{typeName}}</p>
+                    <p @click="showType" style="color:#5f5f5f;height:70rpx;font-size:34rpx;">{{typeName}}</p>
                     <mp-picker ref="typePicker" themeColor="rgb(24,144,255)" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
                 </div>
 
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                   <p @click="showTime" style="color:#5f5f5f;height:70rpx">{{time}}</p> 
+                   <p @click="showTime" style="color:#5f5f5f;height:70rpx;font-size:34rpx;">{{time}}</p> 
                     <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <p @click="showStatus" style="color:#5f5f5f;height:70rpx">{{statusName}}</p>
+                    <p @click="showStatus" style="color:#5f5f5f;height:70rpx;font-size:34rpx;">{{statusName}}</p>
                     <mp-picker ref="statusPicker" themeColor="rgb(24,144,255)" :mode="statusMode" :deepLength=deepLength :pickerValueDefault="pickerStatusValueDefault" @onChange="onStatusChange" @onConfirm="onStatusConfirm" @onCancel="onStatusCancel" :pickerValueArray="statusPickerValueArray"></mp-picker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">维保记录标题</p>
-                    <input type="text" v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
+                    <input type="text" style="color:#5f5f5f;font-size:34rpx;" v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" style="color:#5f5f5f;font-size:34rpx;" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
                 
                 
@@ -94,7 +96,7 @@
                         <div class="j-pic-upload">
                             <ul>
                                 <li v-for="(src,index) in imgData" :key="src">
-                                    <img @click="previewImg(index)" :src="src.imagePath" :style="{'width':width || '144rpx','height':height || '144rpx'}" class="img" >
+                                    <img @click="previewImg(index)" :src="src.imagePath + '&isCompress =1'" :style="{'width':width || '144rpx','height':height || '144rpx'}" class="img" >
                                     <img class="delete-icon" @click="deleI(index)" src="/static/images/delete.png">
                                 </li>
                             </ul>
@@ -645,6 +647,9 @@ export default {
         .get-block {
             border-bottom: 1px solid rgb(204, 204, 204);
             margin-bottom: 48rpx;
+            .title{
+                font-size: 28rpx;
+            }
             .get-code {
                 display: flex;
                 justify-content: space-between;
@@ -691,6 +696,12 @@ export default {
                     align-items: center;
                     justify-content: center;
                 }
+                .confirm01::after {
+                    border:none;
+                }
+                .confirm02::after {
+                    border:none;
+                }
             }
             button::after{
                 border:none;
@@ -723,26 +734,27 @@ export default {
                 height: 144rpx;
                 float: left;
                 position: relative;
-                margin-right:12rpx;
-                
+                margin-right:20rpx;
+                margin-bottom: 32rpx;
                 .img{
-
                     border-radius: 8rpx;
                 }
                 .delete-icon{
                     position: absolute;
                     right: 0rpx;
                     top: 0rpx;
+                    z-index: 999;
                 }
             }
         }
 
         .j-upload-btn{
-            border: 1px dashed #ddd;
+            border: 1px solid #ddd;
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
+            border-radius: 12rpx;
             .j-upload-add{
                 font-size: 80rpx;
                 font-weight: 500;

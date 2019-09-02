@@ -109,7 +109,7 @@ export default {
         },
         getUserInfo (e) {
             let This = this
-
+            console.log(e)
             if(e.mp.detail.errMsg == 'getUserInfo:fail auth deny'){
 
             }else{
@@ -123,16 +123,7 @@ export default {
                     wx.setStorageSync('appid', res.response.watermark.appid)
                     wx.setStorageSync('avatarUrl', res.response.avatarUrl)
                     wx.setStorageSync('username', res.response.nickName)
-                    // This.getData()
                     This.$emit('userMessage',res.response)
-                    // if(!wx.getStorageSync('tiao')){
-                    //     wx.setStorageSync('tiao',1)
-                    //     wx.navigateTo({
-                    //         url:'/pages/index/main'
-                    //     });
-                    // }
-          
-                    // This.onLoad()
                 })
             }
 

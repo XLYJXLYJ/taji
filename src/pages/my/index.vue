@@ -17,8 +17,8 @@
         </section>
         <section>
             <ul>
-                <li @click="goS"><span style="padding-left:30rpx;"><img style="padding-right:30rpx;width:38rpx;height:40rpx;position:relative;top:6rpx" src="/static/images/house.png">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
-                <li @click="goW"><span style="padding-left:30rpx;"><img style="padding-right:30rpx;width:38rpx;height:38rpx;position:relative;top:6rpx" src="/static/images/what.png">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goS"><span style="padding-left:32rpx;"><img style="padding-right:30rpx;width:38rpx;height:40rpx;position:relative;top:6rpx" src="/static/images/house.png">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
+                <li @click="goW"><span style="padding-left:32rpx;"><img style="padding-right:30rpx;width:38rpx;height:38rpx;position:relative;top:6rpx" src="/static/images/what.png">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
                 <!-- <li v-for="(item,index) in list" :key="index" @click="goUrl(item.url)"><span>{{item.name}}</span><span><img src="/static/images/right.png"></span></li> -->
             </ul>
         </section>
@@ -145,32 +145,6 @@ export default {
             wx.navigateTo({
                 url:"/pages/editMy/main"
             });
-        },
-        getUserInfo (e) {
-            let userInfo = JSON.parse(e.mp.detail.rawData)
-            let data = {
-                nickName:userInfo.nickName,
-                headImg:userInfo.avatarUrl,
-                gender:userInfo.gender,
-                areaName:[userInfo.country,userInfo.province,userInfo.city]
-            }
-            fly.post('/contractor/weChatAuth',data).then(function (res) {
-                if(res.response.mobile){
-                    wx.setStorageSync('token', res.response.authorization) 
-                    wx.setStorageSync('gender', res.response.gender) 
-                    wx.setStorageSync('mobile', res.response.mobile) 
-                    wx.setStorageSync('nickName', res.response.nickName) 
-                    wx.setStorageSync('username', res.response.username) 
-                    wx.navigateTo({
-                        url:'/pages/my/main'
-                    })
-                }else{
-                    wx.navigateTo({
-                        url:'/pages/point/main'
-                    })
-                }
-
-            })
         }
     }
 };

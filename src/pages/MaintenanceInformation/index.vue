@@ -20,6 +20,7 @@
                             v-model="equip_code"
                             placeholder="请输入编号"
                             autocomplete="off"
+                            style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
                             placeholder-style='color:#e5e5e5'
                         />
                         <p @click="GetQbCode"><img src="/static/images/qb.png" alt=""></p>
@@ -28,13 +29,13 @@
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <!-- <p @click="showType" style="color:#5f5f5f;height:60rpx">{{type1}}</p> -->
+                    <!-- <p @click="showType" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;">{{type1}}</p> -->
                         <input
                             type="text"
                             v-model="type1"
                             placeholder="请输入类型"
                             autocomplete="off"
-                            style="color:#5f5f5f;height:60rpx"
+                            style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
                             placeholder-style='color:#e5e5e5'
                             disabled
                             @click="showType"
@@ -44,19 +45,28 @@
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                    <p @click="showTime" style="color:#5f5f5f;height:60rpx">{{time1}}</p> 
+                    <input
+                        type="text"
+                        v-model="time1"
+                        placeholder="请输入时间"
+                        autocomplete="off"
+                        style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
+                        placeholder-style='color:#e5e5e5'
+                        disabled
+                        @click="showTime"
+                    />
                     <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div>
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <!-- <p @click="showStatus" style="color:#5f5f5f;height:60rpx">{{status1}}</p> -->
+                    <!-- <p @click="showStatus" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;">{{status1}}</p> -->
                     <input
                         type="text"
                         v-model="status1"
                         placeholder="请输入状态"
                         autocomplete="off"
-                        style="color:#5f5f5f;height:60rpx"
+                        style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
                         placeholder-style='color:#e5e5e5'
                         disabled
                         @click="showStatus"
@@ -66,12 +76,12 @@
 
                 <div class="get-block">
                     <p class="title">维保记录标题</p>
-                    <input type="text" style="color:#5f5f5f;height:60rpx"  placeholder-style='color:#e5e5e5' v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
+                    <input type="text" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"  placeholder-style='color:#e5e5e5' v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="explain" style="color:#5f5f5f;height:60rpx"  placeholder-style='color:#e5e5e5' placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" v-model="explain" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"  placeholder-style='color:#e5e5e5' placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
 
                 <div class="img-control">
@@ -379,6 +389,9 @@ export default {
         .get-block {
             border-bottom: 1px solid #e5e5e5;
             margin-bottom: 48rpx;
+            p{
+                font-size: 28rpx;
+            }
             .get-code {
                 display: flex;
                 justify-content: space-between;
@@ -389,6 +402,7 @@ export default {
                     height: 39rpx;
                     width: 45rpx;
                     border-radius: 8rpx;
+                    margin-top: 10rpx;
                 }
             }
         }
@@ -418,6 +432,7 @@ export default {
                 font-family: "PingFangSC-Medium";
                 flex: 0;
                 width: 670rpx;
+                font-weight: 600;                
                 margin-top: 80rpx;
             }
             .confirm::after{
