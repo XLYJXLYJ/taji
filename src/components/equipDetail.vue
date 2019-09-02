@@ -38,8 +38,9 @@ export default {
         font-size: 34rpx;
         color: black;
         font-family: 'PingFangSC-Medium';
-        font-weight: 550;
+        font-weight: 650;
         margin-left: 42rpx;
+        margin-bottom: 24rpx;
     }
     ul{
         .img-contain{
@@ -61,10 +62,12 @@ export default {
         justify-content: flex-start;
         li{
             padding: 36rpx 32rpx;
+            height: 172rpx;
             margin-bottom: 32rpx;
             background: rgba(16,142,233,0.04);
+            border-radius: 8rpx;
             .one{
-                margin-bottom: 32rpx;
+                margin-bottom: 22rpx;
                 .identifier{
                     font-size: 28rpx;
                     color: black;
@@ -72,7 +75,7 @@ export default {
                 }
                 .name{
                     font-size: 28rpx;
-                    color:rgba(0,0,0,0.45);
+                    color:rgba(0,0,0,0.65);
                     font-family: 'PingFangSC-Regular';
                 }
             }
@@ -85,7 +88,7 @@ export default {
                     font-size: 34rpx;
                     color: black;
                     font-family: 'PingFangSC-Medium';
-                    font-weight: 550;
+                    font-weight: 650;
                 }
                 .go-icon{
                     // background: red;

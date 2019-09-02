@@ -347,15 +347,13 @@ export default {
     width: 100%;
     height: 100%;
     background: rgb(249,249,249);
-
-
     .img-contain {
         display: block;
         width: 100%;
-        height: 290rpx;
+        height: 296rpx;
         margin: 0 auto;
         border-radius: 8rpx;
-        margin-top: 40rpx;
+        margin-top: 48rpx;
         position: relative;
         background: #fff;
         padding: 48rpx 0rpx;
@@ -382,9 +380,9 @@ export default {
                 justify-content: space-between;
                 .one{
                     font-size: 34rpx;
-                    color: block;
+                    color: black;
                     font-family: "PingFangSC-Regular";
-                    font-weight: 550;
+                    font-weight: 650;
                 }
                 .two{
                     font-size: 28rpx;
@@ -403,6 +401,8 @@ export default {
                         justify-content: space-between;
                         input{
                             width:100%;
+                            font-size: 34rpx;
+                            color:#5f5f5f;
                         }
                         button{
                             height: 39rpx;
@@ -411,6 +411,11 @@ export default {
                         button::after{
                             border:none;
                         }
+                    }
+                    input{
+                        width:100%;
+                        font-size: 34rpx;
+                        color:#5f5f5f;
                     }
                 }
                 .img-block {
@@ -468,7 +473,7 @@ export default {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    background: rgba(16,142,233,0.04);
+                    background: #f8fbfe;
                     img{
                         width: 128rpx;
                         height: 134rpx;
@@ -483,7 +488,7 @@ export default {
                 li{
                     padding: 36rpx 32rpx;
                     margin-bottom: 32rpx;
-                    background: rgba(16,142,233,0.04);
+                    background: #f8fbfe;
                     .one{
                         margin-bottom: 32rpx;
                         .identifier{
@@ -516,7 +521,7 @@ export default {
                     }
                     .three{
                         font-size: 28rpx;
-                        color:rgba(0,0,0,0.65);
+                        color:#bfc2c4;
                         font-family: 'PingFangSC-Regular';
                         display: flex;
                         justify-content: space-between;
