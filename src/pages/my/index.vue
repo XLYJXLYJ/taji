@@ -11,7 +11,7 @@
                 <p class="two" v-if="appid" style="font-size:28rpx">{{mobile || ''}}</p>
             </div>
             <div class="right" @click="edit">
-                <p v-if='myself && appid' style="font-size:28rpx;position:relative;top:-2rpx">未完善</p>
+                <p v-if='myself && appid' style="font-size:28rpx;position:relative;top:2rpx">未完善</p>
                 <img src="/static/images/right.png" alt="">
             </div>
         </section>
@@ -19,7 +19,6 @@
             <ul>
                 <li @click="goS"><span style="padding-left:32rpx;"><img style="padding-right:30rpx;width:38rpx;height:40rpx;position:relative;top:6rpx" src="/static/images/house.png">企业归属</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
                 <li @click="goW"><span style="padding-left:32rpx;"><img style="padding-right:30rpx;width:38rpx;height:38rpx;position:relative;top:6rpx" src="/static/images/what.png">关于筑达云</span><span><img style="padding-right:32rpx;" src="/static/images/right.png"></span></li>
-                <!-- <li v-for="(item,index) in list" :key="index" @click="goUrl(item.url)"><span>{{item.name}}</span><span><img src="/static/images/right.png"></span></li> -->
             </ul>
         </section>
         <section class="add">
@@ -85,7 +84,6 @@ export default {
         })
     },
     onSaveExitState: function() {
-        console.log('隐藏')
         wx.navigateTo({
             url:"/pages/index/main"
         });
@@ -111,6 +109,18 @@ export default {
         })
     },
     methods:{
+        edit () {
+            let This = this
+            if(This.timer){
+                clearTimeout(This.timer)
+            }
+            This.timer = setTimeout(function () {
+                wx.navigateTo({
+                    url:"/pages/editMy/main"
+                });
+                This.timer = undefined;
+            },200)
+        },
         goUrl(url){
             wx.navigateTo({
                 url
@@ -141,11 +151,11 @@ export default {
                 url:"/pages/aboutUs/main"
             }); 
         },
-        edit(){
-            wx.navigateTo({
-                url:"/pages/editMy/main"
-            });
-        }
+        // edit(){
+        //     wx.navigateTo({
+        //         url:"/pages/editMy/main"
+        //     });
+        // }
     }
 };
 </script>
@@ -216,16 +226,6 @@ export default {
                 border-radius: 4rpx;
             }
         }
-        // img{
-        //     width: 120rpx;
-        //     height: 120rpx;
-        // }
-        // p{
-        //     margin-top: 28rpx;
-        //     font-size: 34rpx;
-        //     font-weight: bold;
-        //     color: rgb(51, 51, 51);
-        // }
     }
     ul{
         width: 100%;

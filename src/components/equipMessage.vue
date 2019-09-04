@@ -10,7 +10,7 @@
                     <span class="identifier">编号 {{getData.tower.towerNumber}}</span>
                 </div>
                 <div class="two">
-                     <span class="repair">塔身高{{getData.tower.height}} | 臂长{{getData.tower.armLength}} | 尾臂长{{getData.tower.armTailLength}}</span>
+                     <span class="repair">塔身高 {{getData.tower.height}} | 臂长 {{getData.tower.armLength}} | 尾臂长 {{getData.tower.armTailLength}}</span>
                 </div>
                 <div class="three">
                     <span>{{getData.tower.towerTypeName || '-'}}</span>
@@ -42,10 +42,11 @@ export default {
     ul{
         .img-contain{
             width: 100%;
-            height: 660rpx;
+            height: 244rpx;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #f8fbfe;
             img{
                 width: 128rpx;
                 height: 134rpx;
@@ -59,6 +60,7 @@ export default {
         justify-content: flex-start;
         li{
             padding: 36rpx 32rpx;
+            height: 172rpx;
             margin-bottom: 32rpx;
             background: #f8fbfe;
             border-radius: 8rpx;
@@ -71,7 +73,7 @@ export default {
                 }
                 .name{
                     font-size: 28rpx;
-                    color:#bfc2c4;
+                    color:rgba(0,0,0,0.45);
                     font-family: 'PingFangSC-Regular';
                 }
             }
@@ -85,10 +87,8 @@ export default {
                     color: black;
                     font-family: 'PingFangSC-Medium';
                     font-weight: 650;
-
                 }
                 .go-icon{
-                    // background: red;
                     height: 26rpx;
                     width: 16rpx;
                 }

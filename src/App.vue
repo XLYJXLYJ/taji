@@ -71,4 +71,10 @@ export default {
   -webkit-transition: width 2s;
   -o-transition: width 2s;
 }
+.picker__action:first-child {
+  color: #1890FF;
+}
+.mpvue-picker__action:first-child {
+  color: #1890FF;
+}
 </style>

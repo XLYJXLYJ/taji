@@ -1,16 +1,5 @@
 <template>
     <section class="tabBar-wrap">
-
-        <!-- <div>
-            <div class="modalMask" v-show="isModel" @click="hidePanel"></div>
-            <div class="modalDialog" v-show="changeModel">
-                <div class="modalContent">
-                    <p class="contentTip">优质班组数据库请求获取您的微信昵称、头像等公开信息，以便继续使用建筑业优质班组数据库</p>
-                    <p class="alert" @click="closeAlert"><button open-type="getUserInfo" @getuserinfo="getUserInfo">好的</button></p> 
-                </div>
-            </div>
-        </div> -->
-
         <article class="tabBar-box">
             <ul class="tabBar-nav" v-if="navList.length > 0">
                 <li class="item" v-for="(item, index) in navList" @click="selectNavItem(index,item.pagePath)" :key="index">
@@ -54,11 +43,6 @@ export default {
         };
     },
     methods: {
-        closeAlert(){
-            let This = this
-            This.changeModel = false
-            This.isModel = false 
-        },
         selectNavItem(index, pagePath) {
             let This = this
             if (index === this.selectNavIndex) {
@@ -75,23 +59,8 @@ export default {
             }else{
                 This.changeModel = false
                 This.isModel = false
-                // This.bindViewTap(pagePath);
             }
             This.$emit('indexId',index)
-            // if (index == 0 && this.selectNavIndex == -1) {
-            // this.$emit("fetchIndex",index);
-            // }
-        },
-        bindNavigateTo(url) {
-            wx.navigateTo({
-                url
-            });
-        },
-        bindViewTap(url) {
-            let page = getCurrentPages();
-            wx.reLaunch({
-                url
-            });
         },
         add(){
             let appid = wx.getStorageSync('appid')
@@ -106,27 +75,6 @@ export default {
                     url:'/pages/MaintenanceInformation/main'
                 });
             }
-        },
-        getUserInfo (e) {
-            let This = this
-            console.log(e)
-            if(e.mp.detail.errMsg == 'getUserInfo:fail auth deny'){
-
-            }else{
-                let userInfo = e.mp.detail
-                let data = {
-                    sessionKey:wx.getStorageSync('sessionKey'),
-                    encryptedData:userInfo.encryptedData,
-                    iv:userInfo.iv
-                }
-                fly.post('/user/getWxUserInfo',data).then(function (res) {
-                    wx.setStorageSync('appid', res.response.watermark.appid)
-                    wx.setStorageSync('avatarUrl', res.response.avatarUrl)
-                    wx.setStorageSync('username', res.response.nickName)
-                    This.$emit('userMessage',res.response)
-                })
-            }
-
         },
         isOk(){
             let This = this

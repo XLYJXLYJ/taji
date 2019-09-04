@@ -8,6 +8,7 @@
     "pages/editMy/main",
     "pages/indexDetail/main",
     "pages/my/main",
+    "pages/aboutUs/main",
     "pages/userAgreement/main"
   ],
   "window": {

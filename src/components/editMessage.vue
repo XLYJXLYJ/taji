@@ -64,13 +64,6 @@
                         </li>
                     </ul>
                 </div>
-                <!-- <div>
-                    <button class="confirm" @click="submitEquip">添加维保记录</button>
-                </div> -->
-                <!-- <p class="title">
-                    建筑业优秀班组数据库是建造工平台提供的服务，点击提交即表示同意
-                    <span style="color:rgb(252 184 19)">《建造工用户协议》</span>
-                </p> -->
             </form>
         </div>
     </div>

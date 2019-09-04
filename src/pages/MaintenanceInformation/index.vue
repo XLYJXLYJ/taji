@@ -29,11 +29,10 @@
 
                 <div class="get-block">
                     <p class="title">维保类型</p>
-                    <!-- <p @click="showType" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;">{{type1}}</p> -->
                         <input
                             type="text"
                             v-model="type1"
-                            placeholder="请输入类型"
+                            placeholder="请选择类型"
                             autocomplete="off"
                             style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
                             placeholder-style='color:#e5e5e5'
@@ -45,26 +44,25 @@
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                    <input
-                        type="text"
-                        v-model="time1"
-                        placeholder="请输入时间"
-                        autocomplete="off"
-                        style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
-                        placeholder-style='color:#e5e5e5'
-                        disabled
-                        @click="showTime"
-                    />
-                    <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
+
+                    <picker mode="date" :value="time1" start="2000-09-01" end="2200-09-01" @change="bindDateChange">
+                        <view class="picker" style="color:#5f5f5f;height:55rpx;padding-bottom:10rpx;font-size:34rpx;margin-top:6rpx;">
+                        {{time1}}
+                        </view>
+                    </picker>
+
+                    <!-- <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker> -->
                 </div>
+
+
+
 
                 <div class="get-block">
                     <p class="title">状态</p>
-                    <!-- <p @click="showStatus" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;">{{status1}}</p> -->
                     <input
                         type="text"
                         v-model="status1"
-                        placeholder="请输入状态"
+                        placeholder="请选择状态"
                         autocomplete="off"
                         style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
                         placeholder-style='color:#e5e5e5'
@@ -76,12 +74,12 @@
 
                 <div class="get-block">
                     <p class="title">维保记录标题</p>
-                    <input type="text" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"  placeholder-style='color:#e5e5e5' v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
+                    <input type="text" :adjust-position="false" @focus="goTop" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"  placeholder-style='color:#e5e5e5' v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" v-model="explain" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"  placeholder-style='color:#e5e5e5' placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" :adjust-position="false" @focus="goTop" v-model="explain" style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"  placeholder-style='color:#e5e5e5' placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
 
                 <div class="img-control">
@@ -183,7 +181,6 @@ export default {
         };
     },
     mounted() {
-        
         let This = this
         This.equip_code = ''
         This.type1 = ''
@@ -192,7 +189,6 @@ export default {
         This.explain = ''
         This.imgData = []
         this.$refs.uploader.clearFiles()
-
         let now = new Date();
         let year = now.getFullYear()
         let mon = now.getMonth() + 1
@@ -200,6 +196,7 @@ export default {
         let year1 = year + '-' + mon + '-'  + day
         This.notes = '维保记录 ' + year1 
         This.time1 = year1 
+
         let data1 = {
             code:'maintain_type',
             isShowAll:2
@@ -226,6 +223,12 @@ export default {
         })
     },
     methods: {
+        goTop(){
+            wx.pageScrollTo({
+                scrollTop: 300,
+                duration: 200
+            })
+        },
         showType(){
             this.$refs.typePicker.show();
         },
@@ -253,7 +256,6 @@ export default {
                 icon: "none",
                 duration: 3000
             })
-            console.log(successRes)
             for(let i=0;i<=tempFilePaths.length;i++){
                 wx.uploadFile({
                     // url: 'https://wxtjapi.test.jianzaogong.com/common/uploadImg', //仅为示例，非真实的接口地址
@@ -358,6 +360,15 @@ export default {
             let This = this
             This.time = e.label
             This.time1 = e.value.join("-")
+
+        },
+        bindDateChange(e){
+            console.log(e)
+            let This = this
+            This.time = e.target.value
+            This.time1 = e.target.value
+            console.log(This.time)
+            console.log(This.time1)
         },
         onTimeChange(e) {
 
@@ -401,7 +412,7 @@ export default {
                 img{
                     height: 39rpx;
                     width: 45rpx;
-                    border-radius: 8rpx;
+                    border-radius: 12rpx;
                     margin-top: 10rpx;
                 }
             }
@@ -434,17 +445,16 @@ export default {
                 width: 670rpx;
                 font-weight: 600;                
                 margin-top: 80rpx;
+                height: 84rpx;
+                font-weight: 650;
             }
             .confirm::after{
                 border:none;
             }
         }
     }
-
 }
-
 .getCode {
     color: black;
 }
-
 </style>

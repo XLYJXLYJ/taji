@@ -33,7 +33,7 @@
                             style="color:#5f5f5f"
                             type="text"
                             v-model="phone_code"
-                            placeholder="请输入您的手机号码"
+                            placeholder="-"
                             autocomplete="off"
                             disabled
                         />
@@ -43,7 +43,6 @@
 
                 <div class="get-block">
                     <p class="title">性别</p>
-                    <!-- <p @click="showg" style="color:#5f5f5f">{{gender}}</p> -->
                     <input
                         style="color:#5f5f5f"
                         type="text"
@@ -59,8 +58,6 @@
                     <p class="title">微信昵称</p>
                     <input type="text" v-model="wx" style="color:#5f5f5f" disabled autocomplete="off" />
                 </div>
-
-
 
                 <div>
                     <button class="confirm" @click="selfSave">保存</button>
@@ -88,10 +85,11 @@ export default {
 
     data() {
         return {
+            Timeout:'',
             isAlert:'',
             changeModel:'',
             isModel:'',
-            userNumber: "",
+            userNumber: "-",
             phone_code: "",
             name: "",
             company: "",
@@ -118,14 +116,16 @@ export default {
         
         fly.post('/user/getUserDetail').then(function (res) {
             let resData = res.response
-            This.userNumber = resData.userNumber
+            This.userNumber = resData.userNumber || '-'
             This.name = resData.fullName
             This.phone_code = resData.phoneNum
             This.pickerValueDefault = [resData.gender]
             This.gender = resData.gender==1?'男':'女'
-            
             This.wx = resData.wxNickName
         })
+    },
+    destroyed() {
+        clearTimeout(This.Timeout)
     },
     methods: {
         //  弹框取消
@@ -141,7 +141,6 @@ export default {
                 url:'/pages/login/main'
             });
         },
-
         showg(){
             let This = this
             This.$refs.mpPicker.show();
@@ -159,6 +158,14 @@ export default {
         selfSave(){
             let This = this
             let who = ''
+            if (!This.name) {
+                wx.showToast({
+                    title: "请输入姓名",
+                    icon: "none",
+                    duration: 2000
+                })
+                return;
+            } 
             if(This.gender=='男'){
                 who = 1
             }else{
@@ -200,9 +207,11 @@ export default {
                     });
                     wx.setStorageSync('username',This.name)
                     wx.setStorageSync('mobile',This.phone_code)
-                    wx.reLaunch({
-                        url:'/pages/index/main'
-                    });
+                    This.Timeout = setTimeout(function(){
+                        wx.reLaunch({
+                            url:'/pages/index/main'
+                        });
+                    },1000)
                 }
             })
         },

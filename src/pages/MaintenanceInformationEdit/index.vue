@@ -1,6 +1,7 @@
 <template>
-    <div class="register">
-        <goBackNav title="维保信息"></goBackNav>
+<div>
+    <goBackNav title="维保信息"></goBackNav>
+     <div class="register">
         <div v-if="isAlert">
             <!--弹窗的页面-->
             <div class="modalMask" v-show="isModel" @click="hidePanel"></div>
@@ -62,11 +63,14 @@
                     <mp-picker ref="typePicker" themeColor="rgb(24,144,255)" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
                 </div>
 
-
                 <div class="get-block">
                     <p class="title">维保日期</p>
-                   <p @click="showTime" style="color:#5f5f5f;height:70rpx;font-size:34rpx;">{{time}}</p> 
-                    <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
+
+                    <picker mode="date" :value="time" start="2000-09-01" end="2200-09-01" @change="bindDateChange">
+                        <view class="picker" style="color:#5f5f5f;height:55rpx;padding-bottom:10rpx;font-size:34rpx;margin-top:6rpx;">
+                        {{time}}
+                        </view>
+                    </picker>
                 </div>
 
                 <div class="get-block">
@@ -77,14 +81,13 @@
 
                 <div class="get-block">
                     <p class="title">维保记录标题</p>
-                    <input type="text" style="color:#5f5f5f;font-size:34rpx;" v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
+                    <input type="text" :adjust-position="false" @focus="goTop" style="color:#5f5f5f;font-size:34rpx;" v-model="notes" placeholder="请输入维保记录标题" autocomplete="off" />
                 </div>
 
                 <div class="get-block">
                     <p class="title">说明</p>
-                    <input type="text" style="color:#5f5f5f;font-size:34rpx;" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
+                    <input type="text" :adjust-position="false" @focus="goTop" style="color:#5f5f5f;font-size:34rpx;" v-model="explain" placeholder="请输入维保记录详细说明(选填)" autocomplete="off" />
                 </div>
-                
                 
                 <div class="img-block" v-if='isImg'>
                     <div class="i-block">
@@ -96,16 +99,15 @@
                         <div class="j-pic-upload">
                             <ul>
                                 <li v-for="(src,index) in imgData" :key="src">
-                                    <img @click="previewImg(index)" :src="src.imagePath + '&isCompress =1'" :style="{'width':width || '144rpx','height':height || '144rpx'}" class="img" >
+                                    <img @click="previewImg(index)" :src="src.imagePath + '&isCompress =1'" class="img" >
                                     <img class="delete-icon" @click="deleI(index)" src="/static/images/delete.png">
                                 </li>
                             </ul>
 
-                            <div class="j-upload-btn" @click="uploadImg()" :style="{'width':width || '144rpx','height':height || '144rpx'}">
+                            <div class="j-upload-btn" @click="uploadImg()" :style="{'width':width || '143rpx','height':height || '143rpx'}">
                                 <span class="j-upload-add">+</span>
                             </div>
                         </div>
-
                         <!-- <upload @choosed="chooseImg" @delete="deleteImg" :srcs="imgData"></upload> -->
                         <!-- <upload width="120rpx" height="120rpx" max="3" @choosed="chooseImg" @delete="deleteImg" :srcs="imgData"></upload> -->
                     </div>
@@ -114,15 +116,14 @@
                         <button class="confirm02" @click="submitEquip">保存</button>
                     </div>
                 </div>
-
                 <!-- <p class="title">
                     建筑业优秀班组数据库是建造工平台提供的服务，点击提交即表示同意
                     <span style="color:rgb(252 184 19)">《建造工用户协议》</span>
                 </p> -->
             </form>
         </div>
-
     </div>
+</div>
 </template>
 
 <script>
@@ -140,7 +141,6 @@ export default {
         mpDatepicker,
         upload
     },
-
     data() {
         return {
             isAlert:'',
@@ -260,7 +260,12 @@ export default {
 
     },
     methods: {
-
+        goTop(){
+            wx.pageScrollTo({
+                scrollTop: 300,
+                duration: 200
+            })
+        },
         uploadImg(){
           let This = this;
           let token = wx.getStorageSync('token') || '';
@@ -272,7 +277,6 @@ export default {
             //   res.tempFilePaths.forEach(v=>{
             //     This.imgData.push(v);
             //   });
-            console.log(res)
                 for(let i=0;i<res.tempFilePaths.length;i++){
                   // let size = res.tempFiles[i].size
                   wx.uploadFile({
@@ -292,36 +296,13 @@ export default {
                           let jdata = {createTime:null,fileSize:res.tempFiles[i].size,id:null,imagePath:data.response,mainId:null,module:null,type:1,user:null}
                           // This.imgData.push(jdata)
                           This.chooseImg({all:jdata,currentUpload:res.tempFilePaths[i]})
-                        //   This.$emit("choosed",{all:jdata,currentUpload:res.tempFilePaths[i]});
-                          //do something
+                          // This.$emit("choosed",{all:jdata,currentUpload:res.tempFilePaths[i]});
                       }
                   })
                 }
-
-            //   This.$emit("choosed",{all:This.imgData,currentUpload:res.tempFilePaths});
             }
           })
         },
-        // previewImg(index){
-        //   let This = this;
-        //   wx.showActionSheet({
-        //     itemList:["预览","删除"],
-        //     success: function(res) {
-        //         let arr = []
-        //         arr.push(This.imgData[index].imagePath)
-        //       if(res.tapIndex === 0){
-        //         wx.previewImage({
-        //           current:This.imgData[index].imagePath,
-        //           urls:arr
-        //         });
-        //       } else {
-        //         This.imgData.splice(index,1);
-        //         This.deleteImg(This.imgData);
-        //         // This.$emit("delete",This.imgData);
-        //       }
-        //     },
-        //   });
-        // },
         deleI(index){
             let This = this;
             This.imgData.splice(index,1);
@@ -338,22 +319,11 @@ export default {
         },
         chooseImg(res){
             let This = this
-            console.log(res)
-            // res.all.map(
-            //     function(item,index){
-            //         This.imgData.push(item)
-            //     }
-            // )
             This.imgData.push(res.all)
         },
         deleteImg(res){
             let This = this
             This.imgData = res
-            // res.map(
-            //     function(item,index){
-            //         This.imgData.push(item)
-            //     }
-            // )
         },
         dele(){
             let This = this
@@ -508,8 +478,19 @@ export default {
         },
         onTimeConfirm(e) {
             let This = this
-            This.time = e.label
+            console.log(e)
+            This.time = e.value.join("-")
             This.time1 = e.value.join("-")
+            console.log(This.time)
+            console.log(This.time1)
+        },
+        bindDateChange(e){
+            console.log(e)
+            let This = this
+            This.time = e.target.value
+            This.time1 = e.target.value
+            console.log(This.time)
+            console.log(This.time1)
         },
         onTimeChange(e) {
   
@@ -668,7 +649,7 @@ export default {
             }
             .button{
                 display: flex;
-                justify-content: space-around;
+                justify-content: space-between;
                 flex: 0;
                 margin-top: 80rpx;
                 .confirm01 {
@@ -678,7 +659,7 @@ export default {
                     margin-bottom: 24rpx;
                     font-size: 34rpx;
                     font-family: "PingFangSC-Medium";
-                    width: 322rpx;
+                    width: 312rpx;
                     height: 80rpx;
                     display: flex;
                     align-items: center;
@@ -690,7 +671,7 @@ export default {
                     margin-bottom: 24rpx;
                     font-size: 34rpx;
                     font-family: "PingFangSC-Medium";
-                    width: 322rpx;
+                    width: 312rpx;
                     height: 80rpx;
                     display: flex;
                     align-items: center;
@@ -736,8 +717,11 @@ export default {
                 position: relative;
                 margin-right:20rpx;
                 margin-bottom: 32rpx;
+                overflow: hidden;
+                border-radius: 12rpx;
                 .img{
-                    border-radius: 8rpx;
+                    width:144rpx;
+                    border-radius: 12rpx;
                 }
                 .delete-icon{
                     position: absolute;

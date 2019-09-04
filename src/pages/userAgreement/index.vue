@@ -1,8 +1,6 @@
 <template>
     <div class="agreement">
-        <goBackNav title></goBackNav>
         <div class="contain">
-            <p class="title">如何使用维保助手</p>
             <web-view :src="url"></web-view>
         </div>
     </div>
@@ -21,7 +19,7 @@ export default {
     },
     onLoad(options){
         let This = this
-        This.url = options.url
+        This.url = 'https://oaapi2.jianzaogong.com/news/html?newFrom=' + options.url
     }
 };
 </script>

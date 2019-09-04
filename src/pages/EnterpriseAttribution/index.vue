@@ -24,7 +24,7 @@
                             @input="search"
                             type="text"
                             v-model="companyNumber"
-                            placeholder="请输入编号"
+                            placeholder="请输入企业编号"
                             autocomplete="off"
                             placeholder-style="color:#dadada;"
                             style="color:black"
@@ -53,11 +53,9 @@ import mpDatepicker from 'mpvue-weui/src/date-picker';
 import goBackNav from "@/components/goBackNav.vue";
 import mpUploader from "mpvue-weui/src/uploader";
 import fly from "@/services/WxApi";
-import alertOk from "@/components/alertOk.vue";
 
 export default {
     components: {
-        alertOk,
         goBackNav,
         mpUploader,
         mpPicker,
@@ -73,7 +71,8 @@ export default {
             companyNumber: "",
             unCompanyNumber:'',
             iscompanyNumber: "",
-            timer:null
+            timer:null,
+            Timeout:''
         };
     },
     mounted() {
@@ -86,6 +85,9 @@ export default {
             This.companyName = resData.companyName || '-'
         })
     },
+    destroyed() {
+        clearTimeout(This.Timeout)
+    },
     methods: {
          //  弹框取消
         tapCancel() {
@@ -93,7 +95,6 @@ export default {
             this.changeModel = !this.changeModel;
             this.isModel = !this.isModel;
         },
-
         search () {
             let This = this
             if(This.timer){
@@ -140,9 +141,11 @@ export default {
                         icon: "none",
                         duration: 2000
                     });
-                    wx.reLaunch({
-                        url:'/pages/index/main'
-                    });
+                    This.Timeout = setTimeout(function(){
+                        wx.reLaunch({
+                            url:'/pages/index/main'
+                        });
+                    },1000)
                 }
             }) 
         },
@@ -187,9 +190,11 @@ export default {
                         icon: "none",
                         duration: 2000
                     });
-                    wx.reLaunch({
-                        url:'/pages/index/main'
-                    });
+                    This.Timeout = setTimeout(function(){
+                        wx.reLaunch({
+                            url:'/pages/index/main'
+                        });
+                    },1000)
                 }
             }) 
         }

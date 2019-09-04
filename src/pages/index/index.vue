@@ -4,16 +4,16 @@
             <section class="sec-nav">
                 <navigation-bar :title="videoTitle" :navBackgroundColor="'white'" :back-visible="true"></navigation-bar>
             </section>
-            <section class="img-contain" style="background:#fcfcfc;padding-top:40rpx;padding-bottom:40rpx">
+            <section class="img-contain" style="background:#fcfcfc;padding-top:40rpx;padding-bottom:40rpx;">
                 <swiper
-                    :indicator-dots="false"
+                    :indicator-dots="true"
                     autoplay
                     :interval="3000"
                     :duration="1000"
                     circular
                     indicator-color="rgba(255,255,255,.5)"
                     indicator-active-color="#ffffff"
-                    style="height:400rpx"
+                    style="height:300rpx"
                 >
                     <block v-for="(item,index) in imgUrls" :key="index">
                         <swiper-item style="height:280rpx">
@@ -43,6 +43,7 @@
                                 <div class="three">
                                     <span>{{item.maintainTime}}</span>
                                     <span>{{item.fullAreaName || ''}}</span>
+                                    <!-- <span>深圳市</span> -->
                                 </div>
                             </li>
                         </div>
@@ -69,15 +70,11 @@
 import fly from "@/services/WxApi";
 import navigationBar from "@/components/navigationBar.vue";
 import bottomNavigationBar from "@/components/bottomNavigationBar.vue";
-import card from "@/components/card.vue";
-import add from "@/components/add.vue";
 import my from "@/pages/my";
 export default {
     components: {
         bottomNavigationBar,
         navigationBar,
-        card,
-        add,
         my
     },
     onShareAppMessage: (res) => {
@@ -98,28 +95,22 @@ export default {
             over:''
         };
     },
-    //  onPullDownRefresh() {
-    //     wx.startPullDownRefresh
-    //     setTimeout(function(){
-    //         wx.stopPullDownRefresh()
-    //     },
-    //     2000);
-    // },
     onLoad(options) {
         let This = this
         This.list = ''
         This.page = 1
+        if(wx.getStorageSync('sessionKey')){
+
+        }else{
+            This.login(options)
+        }
         This.login(options)
         if(JSON.stringify(options) === '{}'){
             This.getOpenid = false
         }else{
             This.getOpenid = options.openid
-            // if(wx.getStorageSync('appid') || This.getOpenid){
-            //     This.getData()
-            // }
             This.bottomId = true
         }
-
     },
     onShow(){
         let This = this
@@ -149,11 +140,6 @@ export default {
         }
     },
     onReachBottom () {
-                // wx.startPullDownRefresh
-        // setTimeout(function(){
-        //     wx.stopPullDownRefresh()
-        // },
-        // 2000);
         let This = this
         This.page = This.page + 1
         This.getData()
@@ -163,8 +149,9 @@ export default {
             if(type==1){
                 console.log('不跳转')
             }else if(type==2){
+                let url01 = url.split('=')
                 wx.navigateTo({
-                    url:'/pages/userAgreement/main?url='+url
+                    url:'/pages/userAgreement/main?url=' + url01[1]
                 });
             }else{
                 wx.navigateTo({
@@ -178,22 +165,21 @@ export default {
                 success (res) {
                     if (res.code) {
                     //发起网络请求
-
-                            let data = {
-                                code:res.code,
-                                // authorization:wx.getStorageSync('token') || ''
+                        let data = {
+                            code:res.code,
+                            // authorization:wx.getStorageSync('token') || ''
+                        }
+                        fly.post('/user/wxLogin',data).then(function (res) {
+                            wx.setStorageSync('sessionKey', res.response.sessionKey) 
+                            wx.setStorageSync('openid', res.response.openid)
+                            wx.setStorageSync('token', res.response.token)
+                            if(options == {}){
+                                This.getOpenid = false
+                            }else{
+                                This.getOpenid = options.openid
                             }
-                            fly.post('/user/wxLogin',data).then(function (res) {
-                                wx.setStorageSync('sessionKey', res.response.sessionKey) 
-                                wx.setStorageSync('openid', res.response.openid)
-                                wx.setStorageSync('token', res.response.token)
-                                if(options == {}){
-                                    This.getOpenid = false
-                                }else{
-                                    This.getOpenid = options.openid
-                                }
-                                This.getData()
-                            })
+                            This.getData()
+                        })
                     } else {
 
                     }
@@ -219,7 +205,6 @@ export default {
         },
         getUserInfo (e) {
             let This = this
-            
             if(e.mp.detail.errMsg == 'getUserInfo:fail auth deny'){
 
             }else{
@@ -236,7 +221,6 @@ export default {
                     wx.navigateTo({
                         url:'/pages/index/main'
                     });
-                    // This.getData()
                 })
             }
         },
@@ -248,16 +232,13 @@ export default {
         },
         getData(){
             let This = this
-            console.log(This.isNull)
             if(This.isNull == null || This.isNull.length == 0){
                 // wx.showToast({
                 //     title: '已加载全部数据',
                 //     icon: "none",
                 //     duration: 2000
                 // })
-                console.log('1111')
             }else{
-                console.log(This.over)
                 if(This.over){
                     wx.showLoading({
                         title:'加载中'
@@ -269,8 +250,6 @@ export default {
                         duration: 2000
                     })
                 }
-
-                console.log('2222')
             }
             let data = {
                 pageNo:This.page,
@@ -284,25 +263,37 @@ export default {
                     This.over = res.response.list.length
                     This.list.map(
                         function(item,index){
-                            let da = new Date(item.maintainTime);
+                            let da = new Date(item.createTime);
                             let year = da.getFullYear()+'';
                             let month = da.getMonth()+1+'';
                             let date = da.getDate()+' ';
-                        //     let h = da.getHours()+'';
-                        //     let m = da.getMinutes()+'';
-                        //     let s = da.getSeconds()+'';
-                            item.maintainTime = [year,month,date].join('-');
+                            let h = da.getHours()+'';
+                            let m = da.getMinutes()+'';
+                            if(m<10){
+                                m = '0' + m
+                            }else{
+                                m = m
+                            }
+                            let s = da.getSeconds()+'';
+                            let hm = [h,m].join(':');
+                            item.maintainTime = [year,month,date].join('-') + ' ' + hm;
                         }
                     )
+                    This.list.map(
+                        function(item,index){
+                            item.title = item.title.length>13?item.title.substring(0,13)+'...':item.title
+                        }
+                    )
+
                     This.$nextTick(
                         function(){
-                            This.list = res.response.list
+                            // This.list = res.response.list
                             This.isNull = res.response.list.length
                         }
                     )
                 }else{
-                    //    This.list.push(JSON.parse(JSON.stringify([res.list])))
-                    //    This.list = This.list.concat(res.list)
+                    //This.list.push(JSON.parse(JSON.stringify([res.list])))
+                    //This.list = This.list.concat(res.list)
                     if(!res.response.list){
                         // wx.showToast({
                         //     title: '已加载全部数据',
@@ -312,17 +303,22 @@ export default {
                     }else{
                         let listArr = res.response.list
                         This.over = res.response.list.length
-                        console.log(This.over)
                         listArr.map(
                             function(item,index){
                                 let da = new Date(item.maintainTime);
                                 let year = da.getFullYear()+'';
                                 let month = da.getMonth()+1+'';
                                 let date = da.getDate()+' ';
-                            //     let h = da.getHours()+'';
-                            //     let m = da.getMinutes()+'';
-                            //     let s = da.getSeconds()+'';
+                                //let h = da.getHours()+'';
+                                //let m = da.getMinutes()+'';
+                                //let s = da.getSeconds()+'';
                                 item.maintainTime = [year,month,date].join('-');
+                            }
+                        )
+
+                        listArr.map(
+                            function(item,index){
+                                item.title = item.title.length>13?item.title.substring(0,13)+'...':item.title
                             }
                         )
                         This.list.push(...listArr)
@@ -360,7 +356,7 @@ export default {
             height: 290rpx;
             border-radius: 8rpx;
             padding-top: 5rpx;
-            box-shadow:0px 0px 12px #B8DFFA;
+            box-shadow:0px 0px 6px #B8DFFA;
         }
     }
     .maintenance{
@@ -407,7 +403,7 @@ export default {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    background: rgba(16,142,233,0.04);
+                    background: #f8fbfe;
                     img{
                         width: 128rpx;
                         height: 134rpx;
@@ -423,7 +419,7 @@ export default {
                     padding: 36rpx 32rpx;
                     height: 172rpx;
                     margin-bottom: 32rpx;
-                    background: rgba(16,142,233,0.04);
+                    background: #f8fbfe;
                     border-radius: 8rpx;
                     .one{
                         margin-bottom: 22rpx;
@@ -453,13 +449,11 @@ export default {
                             // background: red;
                             height: 26rpx;
                             width: 16rpx;
-                            position: relative;
-                            top: 4rpx;
                         }
                     }
                     .three{
                         font-size: 28rpx;
-                        color:rgba(0,0,0,0.65);
+                        color:#bfc2c4;
                         font-family: 'PingFangSC-Regular';
                         display: flex;
                         justify-content: space-between;

@@ -112,20 +112,15 @@ export default {
         width: 100%;
         z-index: 999;
         .nav-titlebar {
-            // border: 1px solid green;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             .bar-options {
-            // width: 87px;
-            // height: 30px;
             width: 170rpx;
             height: 60rpx;
             display: flex;
-            // border: 1px solid hsla(0, 0%, 100%, .25);
-            // border: 1px solid #ededed;
             box-sizing: border-box;
             align-items: center;
             justify-content: flex-start;

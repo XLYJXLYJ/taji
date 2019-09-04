@@ -3,11 +3,11 @@
         <section class="sec-nav">
             <goBackNav title="维保详情"></goBackNav>
         </section>
-        <div v-if="isShow">
-            <section class="img-contain" v-if="getData.terminal">
+        <div v-if="isShow" class="all-contain">
+            <section class="img-contain" v-if="getData.terminal" style="padding-bottom:72rpx">
                 <equipDetail :getData='getData'></equipDetail>
             </section>
-            <section class="img-contain" v-if="getData.tower">
+            <section class="img-contain" v-if="getData.tower" style="padding-bottom:72rpx">
                 <equipMessage :getData='getData'></equipMessage>
             </section>
             <section class="img-contain" v-if="getData.maintainRecord">
@@ -27,13 +27,36 @@
                     <div class="contain">
                         <form>
                             <!-- 第一个表单 -->
+                            <div class="get-block" style="border:none">
+                                <p class="title">维保编号</p>
+                                <div class="get-code">
+                                    <input
+                                        type="text"
+                                        v-model="getData.maintainRecord.maintainNumber"
+                                        autocomplete="off"
+                                        disabled
+                                    />
+                                </div>
+                            </div>
+
                             <div class="get-block">
                                 <p class="title">塔机监控设备编号</p>
                                 <div class="get-code">
                                     <input
                                         type="text"
                                         v-model="getData.maintainRecord.terminalNumber"
-                                        placeholder="请输入编号"
+                                        autocomplete="off"
+                                        disabled
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="get-block" style="border:none">
+                                <p class="title">设备备注名</p>
+                                <div class="get-code">
+                                    <input
+                                        type="text"
+                                        v-model="getData.maintainRecord.terminalRemarkName"
                                         autocomplete="off"
                                         disabled
                                     />
@@ -57,12 +80,14 @@
 
                             <div class="get-block">
                                 <p class="title">维保记录标题</p>
-                                <input type="text" v-model="getData.maintainRecord.title" disabled placeholder="请输入维保记录标题" autocomplete="off" />
+                                <p class="ptext">{{getData.maintainRecord.title}}</p>
+                                <!-- <input type="text" v-model="getData.maintainRecord.title" disabled placeholder="请输入维保记录标题" autocomplete="off" /> -->
                             </div>
 
                             <div class="get-block">
                                 <p class="title">说明</p>
-                                <input type="text" v-model="getData.maintainRecord.explain" disabled placeholder="-" autocomplete="off" />
+                                <p class="ptext">{{getData.maintainRecord.explain}}</p>
+                                <!-- <input type="text" v-model="getData.maintainRecord.explain" disabled placeholder="-" autocomplete="off" /> -->
                             </div>
 
                             <div class="img-block" v-if="getData.maintainRecord.images">
@@ -72,7 +97,7 @@
                                 >现场照片</p>
                                 <ul class="two-ul">
                                     <li class="two-li" v-for="(item,index) in getData.maintainRecord.images" :key="index" @click="headPreviewImage(item.imagePath,getData.maintainRecord.images)">
-                                        <img :src="item.imagePath + '&isCompress =1'" />
+                                        <img :src="item.imagePath + '&isCompress=1'" />
                                     </li>
                                 </ul>
                             </div>
@@ -87,7 +112,7 @@
                     </div>
                 </div>
 
-                <div class="card-contain" v-if='isHistoryShow'>
+                <div class="card-contain" style="margin-top:48rpx;padding-bottom:48rpx" v-if='isHistoryShow'>
                     <ul>
                         <p class="atitle">历史维保信息</p>
                         <!-- <div class="img-contain" v-if="!historyList">
@@ -108,6 +133,7 @@
                                 <span>{{item.fullAreaName || ''}}</span>
                             </div>
                         </li>
+                        <div style="height:61rpx;width:100%;background:rgb(249,249,249);"></div>
                     </ul>
                 </div>
             </section>
@@ -125,12 +151,10 @@ import navigationBar from "@/components/navigationBar.vue";
 import equipDetail from "@/components/equipDetail.vue";
 import equipMessage  from "@/components/equipMessage.vue";
 import goBackNav from "@/components/goIndex.vue";
-import add from "@/components/add.vue";
 import fly from "@/services/WxApi";
 export default {
     components: {
         navigationBar,
-        add,
         goBackNav,
         equipMessage,
         equipDetail,
@@ -146,7 +170,6 @@ export default {
             This.getOpenid = options.share
         }
 
-        
         let data1 = {
             id:This.id
         }
@@ -157,24 +180,26 @@ export default {
             let year = da.getFullYear()+'';
             let month = da.getMonth()+1+'';
             let date = da.getDate()+' ';
-        //     let h = da.getHours()+'';
-        //     let m = da.getMinutes()+'';
-        //     let s = da.getSeconds()+'';
-            This.getData.maintainRecord.maintainTime = [year,month,date].join('-');
+            //let h = da.getHours()+'';
+            //let m = da.getMinutes()+'';
+            //let s = da.getSeconds()+'';
+            let ym = [year,month].join(' 年 ')
+            let md = [ym,date].join(' 月 ');
+            This.getData.maintainRecord.maintainTime = [md,''].join('日');
             This.isShow = true
         })
         This.historyPage = 1
         // This.historyList = ''
         if(This.ishistoryNull == null || This.ishistoryNull.length == 0){
-            wx.showToast({
-                title: '数据已加载完',
-                icon: "none",
-                duration: 2000
-            })
+            // wx.showToast({
+            //     title: '数据已加载完',
+            //     icon: "none",
+            //     duration: 2000
+            // })
         }else{
-            wx.showLoading({
-                title:'加载中'
-            })
+            // wx.showLoading({
+            //     title:'加载中'
+            // })
         }
         if(!This.getOpenid){
             This.getOpenid = ''
@@ -189,7 +214,6 @@ export default {
             wx.hideLoading();
             This.ishistoryNull = res.response
             if(This.historyPage == 1){   
-                console.log(res.response.length) 
                 if(res.response.length == 0){
                     This.isHistoryShow = false
                 }else{
@@ -197,20 +221,31 @@ export default {
                     This.historyList = res.response
                     This.historyList.map(
                         function(item,index){
-                            let da = new Date(item.maintainTime);
+                            let da = new Date(item.createTime);
                             let year = da.getFullYear()+'';
                             let month = da.getMonth()+1+'';
                             let date = da.getDate()+' ';
-                        //     let h = da.getHours()+'';
-                        //     let m = da.getMinutes()+'';
-                        //     let s = da.getSeconds()+'';
-                            item.maintainTime = [year,month,date].join('-');
+                            let h = da.getHours()+'';
+                            let m = da.getMinutes()+'';
+                            if(m<10){
+                                m = '0' + m
+                            }else{
+                                m = m
+                            }
+                            let s = da.getSeconds()+'';
+                            let hm = [h,m].join(':');
+                            item.maintainTime = [year,month,date].join('-') + ' ' + hm;
+                        }
+                    )
+                    This.historyList.map(
+                        function(item,index){
+                            item.title = item.title.length>13?item.title.substring(0,13)+'...':item.title
                         }
                     )
                 }
             }else{
-                //    This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
-                //    This.historyList = This.historyList.concat(res.historyList)
+                //This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
+                //This.historyList = This.historyList.concat(res.historyList)
                 This.historyList.push(...res.response)
             } 
         })
@@ -250,15 +285,15 @@ export default {
                         let year = da.getFullYear()+'';
                         let month = da.getMonth()+1+'';
                         let date = da.getDate()+' ';
-                    //     let h = da.getHours()+'';
-                    //     let m = da.getMinutes()+'';
-                    //     let s = da.getSeconds()+'';
+                        //let h = da.getHours()+'';
+                        //let m = da.getMinutes()+'';
+                        //let s = da.getSeconds()+'';
                         item.maintainTime = [year,month,date].join('-');
                     }
                 )
             }else{
-                //    This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
-                //    This.historyList = This.historyList.concat(res.historyList)
+                //This.historyList.push(JSON.parse(JSON.stringify([res.historyList])))
+                //This.historyList = This.historyList.concat(res.historyList)
                 This.historyList.push(...res.response)
             } 
         })
@@ -309,8 +344,6 @@ export default {
     methods: {
         headPreviewImage(url,arr) {
             let This = this
-            console.log(url)
-            console.log(arr)
             let imgArr = []
             arr.map(
                 function(item,index){
@@ -347,24 +380,25 @@ export default {
     width: 100%;
     height: 100%;
     background: rgb(249,249,249);
-    .img-contain {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    .all-contain{
+        flex:1;
+        .img-contain {
         display: block;
         width: 100%;
         height: 296rpx;
         margin: 0 auto;
-        border-radius: 8rpx;
+        border-radius: 12rpx;
         margin-top: 48rpx;
         position: relative;
         background: #fff;
         padding: 48rpx 0rpx;
-        display: flex;
-        flex-direction: column;
-        min-height: 10vh;
-
         image {
             width: 670rpx;
             height: 290rpx;
-            border-radius: 8rpx;
+            border-radius: 12rpx;
         }
         .card-contain-01 {
             width: 100%;
@@ -372,10 +406,8 @@ export default {
             display: block;
             background: #fff;
             margin-bottom: 48rpx;
-            flex: 1;
             .titleNav{
                 padding: 0rpx 42rpx;
-                padding-top:48rpx;
                 display: flex;
                 justify-content: space-between;
                 .one{
@@ -417,21 +449,31 @@ export default {
                         font-size: 34rpx;
                         color:#5f5f5f;
                     }
+                    .ptext{
+                        width:100%;
+                        height: auto;
+                        font-size: 34rpx;
+                        color:#5f5f5f;
+                    }
                 }
                 .img-block {
-                    width: 100%;
-                    height: 330rpx;
+                display: flex;
+                flex-direction: column;
+                min-height: 10vh;
                     .two-ul {
-                        width: 100%;
+                        flex:1;
                         .two-li {
                             float: left;
-                            display: flex;
-                            justify-content: space-around;
-                            margin-left: 10rpx;
+                            margin-right: 22rpx;
+                            width: 144rpx;
+                            height: 144rpx;
+                            overflow: hidden;
+                            border-radius: 12rpx!important;
                             img {
-                                width: 144rpx;
-                                height: 144rpx;
+                                width:auto;
+                                // height: 144rpx;
                                 margin-top: 16rpx;
+                                border-radius: 12rpx;
                             }
                         }
                     }
@@ -460,13 +502,18 @@ export default {
         .getCode {
             color: black;
         }
-
         .card-contain {
             position: relative;
-            width: 100%;
+            width: 750rpx;
             height: auto;
             display: block;
+            background: rgb(249,249,249);
+            padding-bottom: 48rpx;
             ul{
+                position: relative;
+                top: 48rpx;
+                width: 100%;
+                background: #fff;
                 .img-contain{
                     width: 100%;
                     height: 244rpx;
@@ -479,18 +526,20 @@ export default {
                         height: 134rpx;
                     }
                 }
-                width: 670rpx;
                 height: auto;
                 margin: 0 auto;
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
                 li{
+                    width: 606rpx;
                     padding: 36rpx 32rpx;
-                    margin-bottom: 32rpx;
+                    margin: 0 auto;
+                    margin-bottom: 48rpx;
                     background: #f8fbfe;
+                    border-radius: 8rpx;
                     .one{
-                        margin-bottom: 32rpx;
+                        margin-bottom: 22rpx;
                         .identifier{
                             font-size: 28rpx;
                             color: black;
@@ -511,10 +560,9 @@ export default {
                             font-size: 34rpx;
                             color: black;
                             font-family: 'PingFangSC-Medium';
-                            font-weight: 550;
+                            font-weight: 650;
                         }
                         .go-icon{
-                            // background: red;
                             height: 26rpx;
                             width: 16rpx;
                         }
@@ -531,13 +579,14 @@ export default {
                     font-size: 34rpx;
                     color: black;
                     font-family: 'PingFangSC-Medium';
-                    font-weight: 550;
+                    font-weight: 650;
+                    margin-bottom: 24rpx;
+                    margin-top: 48rpx;
+                    margin-left: 40rpx;
                 }
             }
         }
-
-
     }
-
+    }
 }
 </style>

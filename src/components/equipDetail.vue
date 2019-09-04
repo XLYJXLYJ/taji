@@ -45,10 +45,11 @@ export default {
     ul{
         .img-contain{
             width: 100%;
-            height:auto;
+            height: 244rpx;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #f8fbfe;
             img{
                 width: 128rpx;
                 height: 134rpx;
@@ -64,7 +65,7 @@ export default {
             padding: 36rpx 32rpx;
             height: 172rpx;
             margin-bottom: 32rpx;
-            background: rgba(16,142,233,0.04);
+            background: #f8fbfe;
             border-radius: 8rpx;
             .one{
                 margin-bottom: 22rpx;
@@ -75,7 +76,7 @@ export default {
                 }
                 .name{
                     font-size: 28rpx;
-                    color:rgba(0,0,0,0.65);
+                    color:rgba(0,0,0,0.45);
                     font-family: 'PingFangSC-Regular';
                 }
             }
@@ -91,14 +92,13 @@ export default {
                     font-weight: 650;
                 }
                 .go-icon{
-                    // background: red;
                     height: 26rpx;
                     width: 16rpx;
                 }
             }
             .three{
                 font-size: 28rpx;
-                color:rgba(0,0,0,0.65);
+                color:#bfc2c4;
                 font-family: 'PingFangSC-Regular';
                 display: flex;
                 justify-content: space-between;
