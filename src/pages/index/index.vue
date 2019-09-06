@@ -95,6 +95,7 @@ export default {
             over:''
         };
     },
+
     onLoad(options) {
         let This = this
         This.list = ''
@@ -145,6 +146,13 @@ export default {
         This.getData()
     },
     methods: {
+        confirm(e){
+            let da = new Date(e.mp.detail);
+            let year = da.getFullYear()+'';
+            let month = da.getMonth()+1+'';
+            let date = da.getDate()+' ';
+        },
+
         go(type,url){
             if(type==1){
                 console.log('不跳转')

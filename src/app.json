@@ -17,5 +17,9 @@
     "navigationStyle":"custom",
     "navigationBarTitleText": "维保助手",
     "navigationBarTextStyle": "black"
+  },
+  "usingComponents": {
+      "van-popup": "/static/vant/popup/index",
+      "van-datetime-picker": "/static/vant/datetime-picker/index"
   }
 }

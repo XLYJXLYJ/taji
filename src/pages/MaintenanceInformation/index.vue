@@ -1,6 +1,17 @@
 <template>
     <div class="register">
         <goBackNav title="维保信息"></goBackNav>
+        <div v-show="vanShow" style="position:fixed;bottom:0rpx;width:100%;background:#fff;z-index:999">
+            <van-datetime-picker
+           
+                :value="currentDate" 
+                type="date" 
+      
+                :filter="formatter"
+                @cancel="cancel"
+                @confirm="confirm"
+            />
+        </div> 
         <div v-if="isAlert">
             <selfAlert
                 v-bind:changeModel="ischangeModel"
@@ -42,7 +53,7 @@
                     <mp-picker ref="typePicker" themeColor="rgb(24,144,255)" :mode="TypeMode" :deepLength=deepLength :pickerValueDefault="pickerTypeValueDefault" @onChange="onTypeChange" @onConfirm="onTypeConfirm" @onCancel="onTypeCancel" :pickerValueArray="typePickerValueArray"></mp-picker>
                 </div>
 
-                <div class="get-block">
+                <!-- <div class="get-block">
                     <p class="title">维保日期</p>
 
                     <picker mode="date" :value="time1" start="2000-09-01" end="2200-09-01" @change="bindDateChange">
@@ -50,11 +61,29 @@
                         {{time1}}
                         </view>
                     </picker>
-
-                    <!-- <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker> -->
+                </div> -->
+                <div class="get-block">
+                    <p class="title">维保日期</p>
+                    <input
+                        type="text"
+                        v-model="time1"
+                        placeholder="请输入时间"
+                        autocomplete="off"
+                        style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
+                        placeholder-style='color:#e5e5e5'
+                        disabled
+                        @click="showTime"
+                    />
+  
                 </div>
 
 
+
+                <!-- <div class="get-block">
+                    <p class="title">维保日期</p>
+                    <p @click="showTime" style="color:#5f5f5f;height:60rpx">{{time1}}</p> 
+                    <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
+                </div> -->
 
 
                 <div class="get-block">
@@ -130,6 +159,11 @@ export default {
 
     data() {
         return {
+            Timeout:'',
+            vanShow:false,
+            // minDate: new Date().getTime(),
+            // maxDate: new Date(2099,1,1),
+            currentDate: new Date().getTime(),
             type: 1,
             type1:'',
             equip_code: "",
@@ -141,6 +175,7 @@ export default {
             TypeMode: "selector",
             arrayBuffer :'',
             imgData:[],
+            defaultDate: new Date('2019-3-24'),
             typePickerValueArray:[
                 {
                     label: '类型一',
@@ -193,6 +228,12 @@ export default {
         let year = now.getFullYear()
         let mon = now.getMonth() + 1
         let day = now.getDate()
+        if(mon<10){
+            mon = '0' + mon
+        }
+        if(day<10){
+            day = '0' + day
+        }
         let year1 = year + '-' + mon + '-'  + day
         This.notes = '维保记录 ' + year1 
         This.time1 = year1 
@@ -222,7 +263,39 @@ export default {
             This.statusPickerValueArray = arr
         })
     },
+    destroyed() {
+        let This = this
+        clearTimeout(This.Timeout)
+    },
     methods: {
+        confirm(e){
+             let This = this
+            This.vanShow = false
+            let da = new Date(e.mp.detail);
+            let year = da.getFullYear()+'';
+            let month = da.getMonth()+1+'';
+            let date = da.getDate()+' ';
+            if(month<10){
+                month = '0' + month
+            }
+            if(date<10){
+                date = '0' + date
+            }
+            This.time = year + '-' + month + '-' + date
+            This.time1 = year + '-' + month + '-' + date
+        },
+        cancel(){
+            let This = this
+            This.vanShow = false
+        },
+        formatter(type, value) {
+            if (type === 'year') {
+                return `${value}年`;
+            } else if (type === 'month') {
+                return `${value}月`;
+            }
+            return value;
+        },
         goTop(){
             wx.pageScrollTo({
                 scrollTop: 300,
@@ -236,7 +309,9 @@ export default {
             this.$refs.statusPicker.show();
         },
         showTime(){
-            this.$refs.mpDatePicker.show();
+            // this.$refs.mpDatePicker.show();
+            let This = this
+            This.vanShow = true
         },
         GetQbCode() {
             let This = this
@@ -336,11 +411,13 @@ export default {
                     wx.showToast({
                         title: "保存成功",
                         icon: "none",
-                        duration: 2000
+                        duration: 1000
                     });
-                    wx.navigateTo({
-                        url:'/pages/index/main'
-                    });
+                    This.Timeout = setTimeout(function(){
+                        wx.reLaunch({
+                            url:'/pages/index/main'
+                        });
+                    },1000)
                 }
 
             })
@@ -363,12 +440,9 @@ export default {
 
         },
         bindDateChange(e){
-            console.log(e)
             let This = this
             This.time = e.target.value
             This.time1 = e.target.value
-            console.log(This.time)
-            console.log(This.time1)
         },
         onTimeChange(e) {
 

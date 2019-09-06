@@ -465,15 +465,14 @@ export default {
                         .two-li {
                             float: left;
                             margin-right: 22rpx;
+                            margin-bottom: 22rpx;
                             width: 144rpx;
                             height: 144rpx;
                             overflow: hidden;
-                            border-radius: 12rpx!important;
+                            border-radius: 12rpx;
                             img {
-                                width:auto;
+                                // width:auto;
                                 // height: 144rpx;
-                                margin-top: 16rpx;
-                                border-radius: 12rpx;
                             }
                         }
                     }

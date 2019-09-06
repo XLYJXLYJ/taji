@@ -1,6 +1,17 @@
 <template>
 <div>
     <goBackNav title="维保信息"></goBackNav>
+    <div v-show="vanShow" style="position:fixed;bottom:0rpx;width:100%;background:#fff;z-index:999">
+        <van-datetime-picker
+        
+            :value="currentDate" 
+            type="date" 
+    
+            :filter="formatter"
+            @cancel="cancel"
+            @confirm="confirm"
+        />
+    </div> 
      <div class="register">
         <div v-if="isAlert">
             <!--弹窗的页面-->
@@ -65,12 +76,16 @@
 
                 <div class="get-block">
                     <p class="title">维保日期</p>
-
-                    <picker mode="date" :value="time" start="2000-09-01" end="2200-09-01" @change="bindDateChange">
-                        <view class="picker" style="color:#5f5f5f;height:55rpx;padding-bottom:10rpx;font-size:34rpx;margin-top:6rpx;">
-                        {{time}}
-                        </view>
-                    </picker>
+                    <input
+                        type="text"
+                        v-model="time"
+                        placeholder="请输入时间"
+                        autocomplete="off"
+                        style="color:#5f5f5f;height:65rpx;padding-bottom:10rpx;font-size:34rpx;"
+                        placeholder-style='color:#e5e5e5'
+                        disabled
+                        @click="showTime"
+                    />
                 </div>
 
                 <div class="get-block">
@@ -143,6 +158,11 @@ export default {
     },
     data() {
         return {
+            Timeout:'',
+            vanShow:false,
+            // minDate: new Date().getTime(),
+            // maxDate: new Date(2099,1,1),
+            currentDate: new Date().getTime(),
             isAlert:'',
             changeModel:'',
             isModel:'',
@@ -225,6 +245,12 @@ export default {
             //let h = da.getHours()+'';
             //let m = da.getMinutes()+'';
             //let s = da.getSeconds()+'';
+            if(month<10){
+                month = '0' + month
+            }
+            if(date<10){
+                date = '0' + date
+            }
             This.time = [year,month,date].join('-');
             This.time1 =  [year,month,date].join('-');
             This.notes = This.getData.maintainRecord.title,
@@ -259,7 +285,39 @@ export default {
         })
 
     },
+    destroyed() {
+        let This = this
+        clearTimeout(This.Timeout)
+    },
     methods: {
+        confirm(e){
+             let This = this
+            This.vanShow = false
+            let da = new Date(e.mp.detail);
+            let year = da.getFullYear()+'';
+            let month = da.getMonth()+1+'';
+            let date = da.getDate()+' ';
+            if(month<10){
+                month = '0' + month
+            }
+            if(date<10){
+                date = '0' + date
+            }
+            This.time = year + '-' + month + '-' + date
+            This.time1 = year + '-' + month + '-' + date
+        },
+        cancel(){
+            let This = this
+            This.vanShow = false
+        },
+        formatter(type, value) {
+            if (type === 'year') {
+                return `${value}年`;
+            } else if (type === 'month') {
+                return `${value}月`;
+            }
+            return value;
+        },
         goTop(){
             wx.pageScrollTo({
                 scrollTop: 300,
@@ -338,7 +396,9 @@ export default {
             this.$refs.statusPicker.show();
         },
         showTime(){
-            this.$refs.mpDatePicker.show();
+            // this.$refs.mpDatePicker.show();
+            let This = this
+            This.vanShow = true
         },
         GetQbCode() {
             wx.scanCode({
@@ -457,11 +517,13 @@ export default {
                     wx.showToast({
                         title: "保存成功",
                         icon: "none",
-                        duration: 2000
+                        duration: 1000
                     });
-                    wx.reLaunch({
-                        url:'/pages/index/main'
-                    });
+                    This.Timeout = setTimeout(function(){
+                        wx.reLaunch({
+                            url:'/pages/index/main'
+                        });
+                    },1000)
                 }
             })
         },
@@ -478,19 +540,13 @@ export default {
         },
         onTimeConfirm(e) {
             let This = this
-            console.log(e)
             This.time = e.value.join("-")
             This.time1 = e.value.join("-")
-            console.log(This.time)
-            console.log(This.time1)
         },
         bindDateChange(e){
-            console.log(e)
             let This = this
             This.time = e.target.value
             This.time1 = e.target.value
-            console.log(This.time)
-            console.log(This.time1)
         },
         onTimeChange(e) {
   
@@ -727,7 +783,7 @@ export default {
                     position: absolute;
                     right: 0rpx;
                     top: 0rpx;
-                    z-index: 999;
+                    z-index: 100;
                 }
             }
         }

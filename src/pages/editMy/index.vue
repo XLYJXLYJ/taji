@@ -125,6 +125,7 @@ export default {
         })
     },
     destroyed() {
+        let This = this
         clearTimeout(This.Timeout)
     },
     methods: {
