@@ -175,7 +175,7 @@ export default {
         }
         fly.post('/maintain/getMaintainDetail',data1).then(function (res) {
             This.getData = res.response
-            
+
             let da = new Date(This.getData.maintainRecord.maintainTime);
             let year = da.getFullYear()+'';
             let month = da.getMonth()+1+'';
