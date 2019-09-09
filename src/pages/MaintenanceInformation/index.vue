@@ -1,16 +1,17 @@
 <template>
     <div class="register">
         <goBackNav title="维保信息"></goBackNav>
-        <div v-show="vanShow" style="position:fixed;bottom:0rpx;width:100%;background:#fff;z-index:999">
-            <van-datetime-picker
-           
-                :value="currentDate" 
-                type="date" 
-      
-                :filter="formatter"
-                @cancel="cancel"
-                @confirm="confirm"
-            />
+        <div v-show="vanShow">
+            <div class="modalMask" @click="hidePanel"></div>
+            <div style="position:fixed;bottom:0rpx;width:100%;background:#fff;z-index:999">
+                <van-datetime-picker
+                    :value="currentDate" 
+                    type="date" 
+                    :filter="formatter"
+                    @cancel="cancel"
+                    @confirm="confirm"
+                />
+            </div>
         </div> 
         <div v-if="isAlert">
             <selfAlert
@@ -74,17 +75,13 @@
                         disabled
                         @click="showTime"
                     />
-  
                 </div>
-
-
 
                 <!-- <div class="get-block">
                     <p class="title">维保日期</p>
                     <p @click="showTime" style="color:#5f5f5f;height:60rpx">{{time1}}</p> 
                     <mp-datepicker ref="mpDatePicker" themeColor="rgb(24,144,255)" :defaultDate="defaultDate" @onChange="onTimeChange" @onConfirm="onTimeConfirm" @onCancel="onTimeCancel"></mp-datepicker>
                 </div> -->
-
 
                 <div class="get-block">
                     <p class="title">状态</p>
@@ -159,6 +156,7 @@ export default {
 
     data() {
         return {
+            isModel:'',
             Timeout:'',
             vanShow:false,
             // minDate: new Date().getTime(),
@@ -223,7 +221,7 @@ export default {
         This.notes = ''
         This.explain = ''
         This.imgData = []
-        this.$refs.uploader.clearFiles()
+        This.$refs.uploader.clearFiles()
         let now = new Date();
         let year = now.getFullYear()
         let mon = now.getMonth() + 1
@@ -268,6 +266,10 @@ export default {
         clearTimeout(This.Timeout)
     },
     methods: {
+        hidePanel(){
+            let This = this
+            This.vanShow = false
+        },
         confirm(e){
              let This = this
             This.vanShow = false
@@ -462,9 +464,22 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.modalMask {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    opacity: 0.5;
+    overflow: hidden;
+    z-index: 100;
+    color: #fff;
+}
 .register {
     width: 100%;
     height: 100%;
+
     .contain {
         width: 670rpx;
         height: auto;
