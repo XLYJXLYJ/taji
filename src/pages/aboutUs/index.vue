@@ -1,6 +1,6 @@
 <template>
     <div class="aboutUs">
-        <goBackNav title url='/pages/index/main'></goBackNav>
+        <goBackNav title url='/pages/indexList/main'></goBackNav>
         <img class="logo" src="/static/images/logo.png" alt />
         <p class="about">   江西飛达科技有限公司是一家从事建筑起重机械一体化监管服务的科技企业，解决建筑行业在施工过程中的起重机械如塔吊、施工升降机等设备的管理问题。“筑达云”为本公司倾力打造的建筑起重机械管理平台，面向设备制造企业、租赁企业、施工企业、安全监管部门、设备操作人员等提供物联网大数据平台服务，有效提高企业管理效率，降低管理成本；同时减低安全风险，保障财产和生命安全，避免建筑工地重大安全事故发生。</p>
         <div class="share">

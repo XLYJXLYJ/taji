@@ -85,7 +85,7 @@ export default {
     },
     onSaveExitState: function() {
         wx.navigateTo({
-            url:"/pages/index/main"
+            url:"/pages/indexList/main"
         });
     },
     mounted() {

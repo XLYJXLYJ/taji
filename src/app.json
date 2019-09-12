@@ -1,10 +1,9 @@
 {
   "pages": [  
     "pages/index/main", 
+    "pages/indexList/main", 
     "pages/MaintenanceInformation/main",
-
     "pages/MaintenanceInformationEdit/main",
-  
     "pages/EnterpriseAttribution/main",
     "pages/login/main",
     "pages/editMy/main",

@@ -1,8 +1,6 @@
 const Fly = require("flyio/dist/npm/wx");
 const fly = new Fly()
 
-// fly.config.baseURL = 'https://wbzsapi.jzanquan.com';
-// fly.config.baseURL = 'https://wbzsapi.test.jianzaogong.com'; // 正式环境
 fly.config.baseURL = 'https://wbzsapi.jianzaogong.com'; // 正式环境
 // fly.config.baseURL = 'https://wxtjapi.test.jianzaogong.com';
 fly.config.timeout = 50000

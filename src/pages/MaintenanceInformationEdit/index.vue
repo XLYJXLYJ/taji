@@ -521,7 +521,7 @@ export default {
                     });
                     This.Timeout = setTimeout(function(){
                         wx.reLaunch({
-                            url:'/pages/index/main'
+                            url:'/pages/indexList/main'
                         });
                     },1000)
                 }
@@ -584,7 +584,7 @@ export default {
                         duration: 2000
                     });
                     wx.reLaunch({
-                        url:'/pages/index/main'
+                        url:'/pages/indexList/main'
                     });
                 }
             })

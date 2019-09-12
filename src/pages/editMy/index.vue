@@ -210,7 +210,7 @@ export default {
                     wx.setStorageSync('mobile',This.phone_code)
                     This.Timeout = setTimeout(function(){
                         wx.reLaunch({
-                            url:'/pages/index/main'
+                            url:'/pages/indexList/main'
                         });
                     },1000)
                 }

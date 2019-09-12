@@ -86,7 +86,7 @@ export default {
         backClick() {
             
             wx.reLaunch({
-                url: '/pages/index/main'
+                url: '/pages/indexList/main'
             });
 
             // wx.redirectTo({

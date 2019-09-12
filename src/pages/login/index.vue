@@ -137,7 +137,7 @@ export default {
                     // wx.setStorageSync('nickName', res.response.nickName) 
                     // wx.setStorageSync('username', res.response.username) 
                     wx.navigateTo({
-                        url:'/pages/index/main'
+                        url:'/pages/indexList/main'
                     });
                 }
             })

@@ -30,7 +30,7 @@ export default {
                 {
                     selectedIconPath: "/static/tabs/home-active.png",
                     iconPath: "/static/tabs/home.png",
-                    pagePath: "/pages/index/main",
+                    pagePath: "/pages/indexList/main",
                     text: "维保"
                 },
                 {

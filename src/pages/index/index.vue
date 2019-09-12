@@ -1,173 +1,77 @@
 <template>
-    <div class="container">
-        <div v-if="bottomId">
-            <section class="sec-nav">
-                <navigation-bar :title="videoTitle" :navBackgroundColor="'white'" :back-visible="true"></navigation-bar>
-            </section>
-            <section class="img-contain" style="background:#fcfcfc;padding-top:40rpx;padding-bottom:40rpx;">
-                <swiper
-                    :indicator-dots="true"
-                    autoplay
-                    :interval="3000"
-                    :duration="1000"
-                    circular
-                    indicator-color="rgba(255,255,255,.5)"
-                    indicator-active-color="#ffffff"
-                    style="height:300rpx"
-                >
-                    <block v-for="(item,index) in imgUrls" :key="index">
-                        <swiper-item style="height:280rpx">
-                            <image :src="item.img" class="slide-image" @click="go(item.jumpType,item.url)" />
-                        </swiper-item>
-                    </block>
-                </swiper>
-            </section>
-            <section class="maintenance" v-if="appid || getOpenid" style="margin-bottom:130rpx;">
-                <p class="record-01">维保记录</p>
-                <div class="card-contain">
-                    <ul>
-                        <div class="img-contain" v-if="isNull==0">
-                            <img src="/static/images/none.png">
-                        </div>
-                        <div v-if="isNull!=0" style="margin-top:32rpx;">
-                            <li v-for="(item,index) in list" :key="index" @click="goIntro(item.id)">
-                                <div class="one">
-                                    <span class="identifier">编号 {{item.maintainNumber || ''}}</span>
-                                    <span style="color:rgba(0,0,0,0.45)"> / </span>
-                                    <span class="name">{{item.terminalRemarkName || ''}}</span>
-                                </div>
-                                <div class="two">
-                                    <span class="repair">{{item.typeName || ''}} | {{item.title}}</span>
-                                    <img class="go-icon" src="/static/images/right.png" alt="">
-                                </div>
-                                <div class="three">
-                                    <span>{{item.maintainTime}}</span>
-                                    <span>{{item.fullAreaName || ''}}</span>
-                                    <!-- <span>深圳市</span> -->
-                                </div>
-                            </li>
-                        </div>
-                    </ul>
+    <div class="containe">
+        <div v-if="isAlert">
+            <!--弹窗的页面-->
+            <div class="modalMask" v-if="isModel" @click="hidePanel"></div>
+            <div class="modalDialog" v-if="changeModel">
+                <div class="modalContent">
+                    <img class="img3" src="/static/images/logo1.png" />
+                    <p class="contentTip">筑达云维保助手</p>
+                    <p class="detail">本程序将获取以下授权：</p>
+                    <p class="detail1">获取您的公开信息（昵称、头像等）</p>
+                    <div class="button">
+                        <button class="no" @click="no">拒绝</button>
+                        <button class="yes" open-type="getUserInfo" lang="zh_CN" @getuserinfo="getUserInfo">允许</button>
+                    </div>
+
                 </div>
-            </section>
-            <section class="maintenance" v-if="!appid && !getOpenid">
-                <p class="record">请先授权获取您的微信昵称、头像等公开信息，以便开始使用维保助手</p>
-                <button open-type="getUserInfo" lang="zh_CN" @getuserinfo="getUserInfo">授权微信公开信息</button>
-            </section>
+            </div>
         </div>
 
-        <div class="my" v-if="!bottomId">
-            <my :user='user'></my>
-        </div>
-
-        <section class="add" v-if="appid && !getOpenid">
-            <bottomNavigationBar :selectNavIndex="selectNavIndex" @indexId='indexFuc' @userMessage='userMessage'></bottomNavigationBar>
+        <section class="sec-nav">
+            <navigation-bar title="维保助手" :navBackgroundColor="'white'" :back-visible="true"></navigation-bar>
         </section>
+       <img  class="img1" src="/static/images/1.png" alt="">
+       <div class="middle">
+            <div class="text">
+                <p><img class="img2" src="/static/images/gou.png" alt="">塔机巡检</p>
+                <p><img class="img2" src="/static/images/gou.png" alt="">塔机安装</p>
+            </div>
+                <div class="text">
+                <p><img class="img2" src="/static/images/gou.png" alt="">塔机维修</p>
+                <p><img class="img2" src="/static/images/gou.png" alt="">录入维保记录</p>
+            </div>
+       </div>
+       <button class="confirm" @click="login">登录/注册</button>
     </div>
 </template>
 
 <script>
 import fly from "@/services/WxApi";
 import navigationBar from "@/components/navigationBar.vue";
-import bottomNavigationBar from "@/components/bottomNavigationBar.vue";
-import my from "@/pages/my";
 export default {
-    components: {
-        bottomNavigationBar,
-        navigationBar,
-        my
-    },
-    onShareAppMessage: (res) => {
-
-    },
     data() {
         return {
-            imgUrls:[],
-            appid:'',
-            bottomId:true,
-            selectNavIndex:0,
-            user:'',
-            list:'',
-            page:1,
-            isNull:'',
-            openid:'',
-            getOpenid:'',
-            over:''
-        };
-    },
-
-    onLoad(options) {
-        let This = this
-        This.list = ''
-        This.page = 1
-        if(wx.getStorageSync('sessionKey')){
-
-        }else{
-            This.login(options)
+            isAlert: false,
+            isModel:'',
+            changeModel:'',
         }
-        This.login(options)
-        if(JSON.stringify(options) === '{}'){
-            This.getOpenid = false
+    },
+    components: {
+        navigationBar
+    },
+    onLoad() {
+        let This = this
+        if(wx.getStorageSync('appid')){
+            wx.navigateTo({
+                url:'/pages/indexList/main'
+            });
         }else{
-            This.getOpenid = options.openid
-            This.bottomId = true
+            This.loginInit()
         }
     },
     onShow(){
         let This = this
-    },
-    onReady(){
-        let This = this
-        if(wx.getStorageSync('appid') || This.getOpenid){
-            This.getData()
+        if(wx.getStorageSync('appid')){
+            wx.navigateTo({
+                url:'/pages/indexList/main'
+            });
+        }else{
+            This.loginInit()
         }
-    },
-    mounted() {
-        let This = this
-        This.appid = wx.getStorageSync('appid')
-
-        let data1 = {
-            code:'WBZS_MAIN_BANNER'
-        }
-        fly.post('/common/getBanner',data1).then(function (res) {
-            This.imgUrls = res.response
-        })
-    },
-    onShareAppMessage: (res) => {
-        let This = this
-        return{
-            title:'建筑业优质班组数据库',
-            path:'/pages/index/main?openid=' + wx.getStorageSync('openid')
-        }
-    },
-    onReachBottom () {
-        let This = this
-        This.page = This.page + 1
-        This.getData()
     },
     methods: {
-        confirm(e){
-            let da = new Date(e.mp.detail);
-            let year = da.getFullYear()+'';
-            let month = da.getMonth()+1+'';
-            let date = da.getDate()+' ';
-        },
-
-        go(type,url){
-            if(type==1){
-                console.log('不跳转')
-            }else if(type==2){
-                let url01 = url.split('=')
-                wx.navigateTo({
-                    url:'/pages/userAgreement/main?url=' + url01[1]
-                });
-            }else{
-                wx.navigateTo({
-                    url:url
-                });
-            }
-        },
-        login(options){
+        loginInit(){
             let This = this
             wx.login({
                 success (res) {
@@ -181,12 +85,6 @@ export default {
                             wx.setStorageSync('sessionKey', res.response.sessionKey) 
                             wx.setStorageSync('openid', res.response.openid)
                             wx.setStorageSync('token', res.response.token)
-                            if(options == {}){
-                                This.getOpenid = false
-                            }else{
-                                This.getOpenid = options.openid
-                            }
-                            This.getData()
                         })
                     } else {
 
@@ -194,25 +92,29 @@ export default {
                 }
             })
         },
-        indexFuc(data){
+        login(){
             let This = this
-            This.selectNavIndex = data
-            if(data==0){
-                This.bottomId = true
-            }else{
-                This.bottomId = false
-            }
+            This.isAlert = true
+            This.isModel = true
+            This.changeModel = true
         },
-        userMessage(data){
+        no(){
             let This = this
-            This.user = data
-            This.appid = wx.getStorageSync('appid')
-            // wx.navigateTo({
-            //     url:'/pages/index/main'
-            // });
+            This.isAlert = false
+            This.isModel = false
+            This.changeModel = false
+        },
+        hidePanel(){
+            let This = this
+            This.isAlert = false
+            This.isModel = false
+            This.changeModel = false
         },
         getUserInfo (e) {
             let This = this
+            This.isAlert = false
+            This.isModel = false
+            This.changeModel = false
             if(e.mp.detail.errMsg == 'getUserInfo:fail auth deny'){
 
             }else{
@@ -226,249 +128,163 @@ export default {
                     wx.setStorageSync('appid', res.response.watermark.appid)
                     wx.setStorageSync('avatarUrl', res.response.avatarUrl)
                     wx.setStorageSync('username', res.response.nickName)
-                    wx.navigateTo({
-                        url:'/pages/index/main'
+                    wx.reLaunch({
+                        url:'/pages/indexList/main'
                     });
                 })
             }
         },
-        goIntro(id){
-            let This = this
-            wx.navigateTo({
-                url:'/pages/indexDetail/main?id=' + id + '&share=' + This.getOpenid
-            });
-        },
-        getData(){
-            let This = this
-            if(This.isNull == null || This.isNull.length == 0){
-                // wx.showToast({
-                //     title: '已加载全部数据',
-                //     icon: "none",
-                //     duration: 2000
-                // })
-            }else{
-                if(This.over){
-                    wx.showLoading({
-                        title:'加载中'
-                    })
-                }else{
-                    wx.showToast({
-                        title: '已加载完全部数据',
-                        icon: "none",
-                        duration: 2000
-                    })
-                }
-            }
-            let data = {
-                pageNo:This.page,
-                pageSize:3,
-                share:This.getOpenid || ''
-            }
-            fly.post('/maintain/getUserMaintainList',data).then(function (res) {
-                wx.hideLoading();
-                if(This.page == 1){
-                    This.list = res.response.list
-                    This.over = res.response.list.length
-                    This.list.map(
-                        function(item,index){
-                            let da = new Date(item.createTime);
-                            let year = da.getFullYear()+'';
-                            let month = da.getMonth()+1+'';
-                            let date = da.getDate()+' ';
-                            let h = da.getHours()+'';
-                            let m = da.getMinutes()+'';
-                            if(m<10){
-                                m = '0' + m
-                            }else{
-                                m = m
-                            }
-                            let s = da.getSeconds()+'';
-                            let hm = [h,m].join(':');
-                            item.maintainTime = [year,month,date].join('-') + ' ' + hm;
-                        }
-                    )
-                    This.list.map(
-                        function(item,index){
-                            item.title = item.title.length>13?item.title.substring(0,13)+'...':item.title
-                        }
-                    )
-
-                    This.$nextTick(
-                        function(){
-                            // This.list = res.response.list
-                            This.isNull = res.response.list.length
-                        }
-                    )
-                }else{
-                    //This.list.push(JSON.parse(JSON.stringify([res.list])))
-                    //This.list = This.list.concat(res.list)
-                    if(!res.response.list){
-                        // wx.showToast({
-                        //     title: '已加载全部数据',
-                        //     icon: "none",
-                        //     duration: 2000
-                        // })
-                    }else{
-                        let listArr = res.response.list
-                        This.over = res.response.list.length
-                        listArr.map(
-                            function(item,index){
-                                let da = new Date(item.maintainTime);
-                                let year = da.getFullYear()+'';
-                                let month = da.getMonth()+1+'';
-                                let date = da.getDate()+' ';
-                                //let h = da.getHours()+'';
-                                //let m = da.getMinutes()+'';
-                                //let s = da.getSeconds()+'';
-                                item.maintainTime = [year,month,date].join('-');
-                            }
-                        )
-
-                        listArr.map(
-                            function(item,index){
-                                item.title = item.title.length>13?item.title.substring(0,13)+'...':item.title
-                            }
-                        )
-                        This.list.push(...listArr)
-                    }
-                } 
-            })
-        }
     },
-};
+}
 </script>
 
 <style scoped lang='scss'>
-.container {
+.containe{
     width: 100%;
     height: 100%;
-    .title {
-        display: block;
-        width: 100%;
-        height: 128rpx;
+    .modalMask {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #000;
+    opacity: 0.5;
+    overflow: hidden;
+    z-index: 900;
+    color: #fff;
+}
+.modalDialog {
+    box-sizing: border-box;
+    width: 590rpx;
+    height: 692rpx;
+    overflow: hidden;
+    position: fixed;
+    top: 30%;
+    left: 80rpx;
+    z-index: 999;
+    background: #fff;
+    border-radius: 8rpx;
+}
+.modalContent {
+    box-sizing: border-box;
+    display: flex;
+    font-size: 32rpx;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .img3 {
+        width: 92rpx;
+        height: 92rpx;
+        margin-bottom: 24rpx;
+        margin-top: 100rpx;
+    }
+    .contentTip {
+        font-size: 36rpx;
+        color: black;
+        font-weight: 650;
+        font-family: "PingFangSC-Medium";
+    }
+    .detail {
+        font-size: 34rpx;
+        color: black;
+        margin-top: 86rpx;
+        font-family: "PingFangSC-Regular";
         display: flex;
-        align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        margin-left: -116rpx;
     }
-    .img-contain {
-        display: block;
-        width: 100%;
-        height: 300rpx;
-        margin: 0 auto;
-        border-radius: 8rpx;
-        margin-top: 40rpx;
-        background: #fcfcfc;
-        text-align: center;
-        .slide-image {
-            width: 670rpx;
-            height: 290rpx;
-            border-radius: 8rpx;
-            padding-top: 5rpx;
-            box-shadow:0px 0px 6px #B8DFFA;
-        }
+    .detail1{
+        font-size: 30rpx;
+        color: #585858;
+        margin-top: 10rpx;
+        display: flex;
+        justify-content: flex-start;
+        font-family: "PingFangSC-Regular";
+        margin-left: -20rpx;
     }
-    .maintenance{
-        .record-01{
-            width: 650rpx;
-            height: auto;
-            font-size: 34rpx;
-            color: black;
-            font-family: 'PingFangSC-Medium';
-            font-weight: 650;
-            padding: 24rpx 0 24rpx 40rpx;
-        }
-        .record{
-            width: 650rpx;
-            height: 88rpx;
-            font-size: 34rpx;
-            color: black;
-            font-family: 'PingFangSC-Medium';
-            font-weight: 450;
-            padding: 64rpx 0 24rpx 40rpx;
-            line-height: 44rpx;
-        }
-        button{
-            background: #1890FF;
-            color: #fff;
-            width: 670rpx;
+    .button {
+        width: 590rpx;
+        display: flex;
+        justify-content: space-around;
+        margin-top: 80rpx;
+        .yes{
+            width: 236rpx;
             height: 84rpx;
-            font-size: 36rpx;
-            font-weight: 600;
+            margin-top: 20rpx;
+            font-size: 34rpx;
+            color: #fff;
             font-family: "PingFangSC-Medium";
-            margin-top: 60rpx;
+            font-weight: 650;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1890FF;
+            border: none;
+            margin-bottom: 40rpx;
+            margin-left: 15rpx;
         }
-        button::after{
-            border:none;
+        .no{
+            width: 236rpx;
+            height: 84rpx;
+            margin-top: 20rpx;
+            font-size: 34rpx;
+            color: black;
+            font-family: "PingFangSC-Medium";
+            font-weight: 650;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ededed;
+            border: none;
+            margin-bottom: 40rpx;
+            margin-right: 15rpx;
         }
-        .card-contain {
-            width: 100%;
-            height: 100%;
-            margin-top: -38rpx;
-            ul{
-                .img-contain{
-                    width: 100%;
-                    height: 244rpx;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    background: #f8fbfe;
-                    img{
-                        width: 128rpx;
-                        height: 134rpx;
-                    }
-                }
-                width: 670rpx;
-                height: auto;
-                margin: 0 auto;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                li{
-                    padding: 36rpx 32rpx;
-                    height: 172rpx;
-                    margin-bottom: 32rpx;
-                    background: #f8fbfe;
-                    border-radius: 8rpx;
-                    .one{
-                        margin-bottom: 22rpx;
-                        .identifier{
-                            font-size: 28rpx;
-                            color: black;
-                            font-family: 'PingFangSC-Regular';
-                        }
-                        .name{
-                            font-size: 28rpx;
-                            color:rgba(0,0,0,0.45);
-                            font-family: 'PingFangSC-Regular';
-                        }
-                    }
-                    .two{
-                        margin-bottom: 12rpx;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        .repair{
-                            font-size: 34rpx;
-                            color: black;
-                            font-family: 'PingFangSC-Medium';
-                            font-weight: 650;
-                        }
-                        .go-icon{
-                            // background: red;
-                            height: 26rpx;
-                            width: 16rpx;
-                        }
-                    }
-                    .three{
-                        font-size: 28rpx;
-                        color:#bfc2c4;
-                        font-family: 'PingFangSC-Regular';
-                        display: flex;
-                        justify-content: space-between;
-                    }
-                }
+    }
+    button::after {
+        border: none;
+    }
+}
+    .img1{
+        width: 100%;
+        height: 750rpx;
+    }
+    .middle{
+        width:570rpx;
+        height: auto;
+        margin: 0 auto;
+        margin-top: 46rpx;
+        .text{
+            display: flex;
+            justify-content: space-between;
+            p{
+                width: 270rpx;
+                font-size: 34rpx;
+                color:black;
+                margin-bottom: 24rpx;
+            }
+            .img2{
+                width:44rpx;
+                height: 44rpx;
+                margin-right: 20rpx;
+                position: relative;
+                top: 10rpx;
             }
         }
+    }
+    .confirm {
+        background: #1890FF;
+        color: #fff;
+        margin: 0 auto;
+        margin-bottom: 64rpx;
+        margin-top: 70rpx;
+        font-size: 34rpx;
+        font-weight: 650;
+        font-family: "PingFangSC-Medium";
+        width: 670rpx;
+    }
+    .confirm::after {
+        border:none;
     }
 }
 </style>
