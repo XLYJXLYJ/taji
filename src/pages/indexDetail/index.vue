@@ -302,7 +302,7 @@ export default {
         let This = this
         let data = '/pages/indexDetail/main?share=' + wx.getStorageSync('openid') +'&id=' + wx.getStorageSync('id') +'&pageNo=1&pageSize=20'
         return{
-            title:'建筑业优质班组数据库',
+            title:'筑达云维保助手',
             path:data
         }
     },

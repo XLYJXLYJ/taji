@@ -776,7 +776,6 @@ export default {
                 overflow: hidden;
                 border-radius: 12rpx;
                 .img{
-                    width:144rpx;
                     border-radius: 12rpx;
                 }
                 .delete-icon{

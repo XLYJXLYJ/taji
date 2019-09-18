@@ -50,7 +50,7 @@
 <script>
 import mpPicker from 'mpvue-weui/src/picker';
 import mpDatepicker from 'mpvue-weui/src/date-picker';
-import goBackNav from "@/components/goBackNav.vue";
+import goBackNav from "@/components/goIndex01.vue";
 import mpUploader from "mpvue-weui/src/uploader";
 import fly from "@/services/WxApi";
 

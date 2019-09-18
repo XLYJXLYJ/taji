@@ -22,7 +22,7 @@
                     </block>
                 </swiper>
             </section>
-            <section class="maintenance" v-if="appid || getOpenid" style="margin-bottom:130rpx;">
+            <section class="maintenance" style="margin-bottom:130rpx;">
                 <p class="record-01">维保记录</p>
                 <div class="card-contain">
                     <ul>
@@ -60,7 +60,7 @@
             <my :user='user'></my>
         </div>
 
-        <section class="add" v-if="appid && !getOpenid">
+        <section class="add">
             <bottomNavigationBar :selectNavIndex="selectNavIndex" @indexId='indexFuc' @userMessage='userMessage'></bottomNavigationBar>
         </section>
     </div>
@@ -125,7 +125,11 @@ export default {
     mounted() {
         let This = this
         This.appid = wx.getStorageSync('appid')
-
+        if(!This.appid){
+            wx.reLaunch({
+                url:'/pages/index/main'
+            });
+        }
         let data1 = {
             code:'WBZS_MAIN_BANNER'
         }
@@ -134,11 +138,11 @@ export default {
         })
     },
     onShareAppMessage: (res) => {
-        let This = this
-        return{
-            title:'建筑业优质班组数据库',
-            path:'/pages/indexList/main?openid=' + wx.getStorageSync('openid')
-        }
+        // let This = this
+        // return{
+        //     title:'筑达云维保助手',
+        //     path:'/pages/indexList/main?openid=' + wx.getStorageSync('openid')
+        // }
     },
     onReachBottom () {
         let This = this
@@ -248,9 +252,11 @@ export default {
                 // })
             }else{
                 if(This.over){
-                    wx.showLoading({
-                        title:'加载中'
-                    })
+                    if(This.bottomId){
+                        wx.showLoading({
+                            title:'加载中'
+                        })
+                    }
                 }else{
                     wx.showToast({
                         title: '已加载完全部数据',
@@ -261,7 +267,7 @@ export default {
             }
             let data = {
                 pageNo:This.page,
-                pageSize:3,
+                pageSize:5,
                 share:This.getOpenid || ''
             }
             fly.post('/maintain/getUserMaintainList',data).then(function (res) {

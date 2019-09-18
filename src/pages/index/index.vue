@@ -24,13 +24,16 @@
        <img  class="img1" src="/static/images/1.png" alt="">
        <div class="middle">
             <div class="text">
-                <p><img class="img2" src="/static/images/gou.png" alt="">塔机巡检</p>
-                <p><img class="img2" src="/static/images/gou.png" alt="">塔机安装</p>
+                <ul>
+                    <li><img class="img2" src="/static/images/2.png" alt="">塔机信息</li>
+                    <li><img class="img2" src="/static/images/3.png" alt=""><span style="position:relative;top:-2rpx">塔机安装/巡检/维修/保养</span></li>
+                    <li><img class="img2" src="/static/images/4.png" alt="">维保记录</li>
+                </ul>
             </div>
-                <div class="text">
+            <!-- <div class="text">
                 <p><img class="img2" src="/static/images/gou.png" alt="">塔机维修</p>
                 <p><img class="img2" src="/static/images/gou.png" alt="">录入维保记录</p>
-            </div>
+            </div> -->
        </div>
        <button class="confirm" @click="login">登录/注册</button>
     </div>
@@ -69,6 +72,13 @@ export default {
         }else{
             This.loginInit()
         }
+    },
+    onShareAppMessage: (res) => {
+        // let This = this
+        // return{
+        //     title:'筑达云维保助手',
+        //     path:'/pages/indexList/main?openid=' + wx.getStorageSync('openid')
+        // }
     },
     methods: {
         loginInit(){
@@ -257,13 +267,23 @@ export default {
         .text{
             display: flex;
             justify-content: space-between;
-            p{
-                width: 270rpx;
-                font-size: 34rpx;
-                color:black;
-                margin-bottom: 24rpx;
+            ul{
+                list-style: none;
+                width: 450rpx;
+                margin: 0 auto;
+                li{
+                    float: left;
+                    margin-bottom: 20rpx;
+                }
             }
             .img2{
+                width:44rpx;
+                height: 48rpx;
+                margin-right: 20rpx;
+                position: relative;
+                top: 10rpx;
+            }
+            .img3{
                 width:44rpx;
                 height: 44rpx;
                 margin-right: 20rpx;
@@ -277,7 +297,7 @@ export default {
         color: #fff;
         margin: 0 auto;
         margin-bottom: 64rpx;
-        margin-top: 70rpx;
+        margin-top: 50rpx;
         font-size: 34rpx;
         font-weight: 650;
         font-family: "PingFangSC-Medium";
